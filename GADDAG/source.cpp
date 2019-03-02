@@ -1,14 +1,14 @@
 #include "GADDAG.h"
 
 int main(){
-    GADDAG Dag;
-    string InputPath = "../assets/Dict.txt";
-    Dag.LoadDag(InputPath);
+	string InputPath = "../assets/Dict.txt";
+    GADDAG Dag(InputPath);
+
+	string Hook = "";
+	string Rack = "abcdefghijklmnopqrstuvwxyz";
 
     vector <string> possible;
-	string Hook = "";
-	string Rack = "perslaywhattgr";
-	possible = Dag.ContainsHookWithRank(Hook,Rack);
+	possible = Dag.ContainsHookWithRack(Hook,Rack);
 
 	for (int i = 0; i < possible.size(); i++) {
 		cout << possible[i] << endl;
