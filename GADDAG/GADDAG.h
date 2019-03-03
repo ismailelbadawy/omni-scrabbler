@@ -4,38 +4,50 @@
 #include <set>
 
 class GADDAG {
-    private:
-	    Node* RootNode;
-		
-	    void SetRoot(Node *NewNode) {RootNode = NewNode;}
+private:
+	Node* RootNode;
 
-        //add new word to GADDAG
-        void add(string NewWord);
+	void SetRoot(Node *NewNode) { RootNode = NewNode; }
 
-        //recursive function to get all possible combinations
-        void ContainsHookWithRackRecursive(Node* CurrentNode, set<string> &SetOfPossibleWords, string letters, string rack, string hook);
+	//add new word to GADDAG
+	void add(string NewWord);
 
-        //adjust word to be added in the list of possible combinations
-	    string GetWord(string str);
+	//recursive function to get all possible combinations
+	void ContainsHookWithRackRecursive(Node* CurrentNode, set<string> &SetOfPossibleWords, string letters, string rack, string hook);
 
-        //Load dag with dictionary hard coded
-		void LoadDagHardCoded() {}
+	//recursive function to get all possible combinations such that the first letter of the hook exists at [0..MaxPos] only
+	//the function handles the spaces between letters represented by a dot '.'
+	void ContainsHookWithRackRecursiveAtPos(Node* CurrentNode, set<string> &SetOfPossibleWords, string letters, string rack, string hook, int MaxPos, int CurrentCount, bool found, int MaxLength);
 
-		//Function to read the dictionary represented as an input file 
-		//in the assets folder, it takes the inputPath and loads the GADDAG
-		void LoadDag(string InputPath);
+	//adjust word to be added in the list of possible combinations
+	string GetWord(string str);
 
-    public:
-        //constructor to initialize Root and load dictionary
-		GADDAG(); //uses LoadDagHardCoded Function
-		GADDAG(string InputPath); //uses LoadDag function and requires the input path of dictionary
+	//Load dag with dictionary hard coded
+	void LoadDagHardCoded() {}
 
-        //get RootNode
-	    Node* GetRoot() {return RootNode;}
+	//Function to read the dictionary represented as an input file 
+	//in the assets folder, it takes the inputPath and loads the GADDAG
+	void LoadDag(string InputPath);
 
-        //Function to be called to return a vector of all possible words 
-        //it has parameters: hook (word on board to add letters to it) and rack (available letters)
-        //if hook= ay and rack= persl --> vector={play, player, plays} 
-        //hook can be sent as "" or " " to get all combinations based on the rack only (for the first move in the game)
-	    vector<string> ContainsHookWithRack(string hook, string rack);
+public:
+	//constructor to initialize Root and load dictionary
+	GADDAG(); //uses LoadDagHardCoded Function
+	GADDAG(string InputPath); //uses LoadDag function and requires the input path of dictionary
+
+	//get RootNode
+	Node* GetRoot() { return RootNode; }
+
+	//Function to be called to return a vector of all possible words 
+	//it has parameters: hook (word on board to add letters to it) and rack (available letters)
+	//if hook= ay and rack= persl --> vector={play, player, plays} 
+	//hook can be sent as "" or " " to get all combinations based on the rack only (for the first move in the game)
+	vector<string> ContainsHookWithRack(string hook, string rack);
+
+	//function to get all possible combinations such that the first letter of the hook exists at [0..MaxPos] only
+	//the function handles the spaces between letters represented by a dot '.'
+	//example given hook= fi....arr...es.., and MaxPos= 0, function will return fire, fissfwarrt but NOT fisswwatrrt (if all letters exist in rack)
+	//then if hook= arr...es.., MaxPos= 3 function will return array, arranges, barr, traarr, .. but NOT arrange and so on 
+	//function is supposed to handle MaxLength too if given 
+	//MaxLength can be dynamic based on the position of letters on board, but to be handled later
+	vector<string> ContainsHookWithRackAtPos(string hook, string rack, int pos, int MaxLength);
 };
