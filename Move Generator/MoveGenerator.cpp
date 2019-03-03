@@ -1,18 +1,125 @@
 #include <iostream>
 #include<vector>
+#include <string>
 using namespace std;
 
 
 char Board[15][15];
-char Rack[7];
+char Rack[7]={"0","0","0","0","0","0","0"};
+
+initializeBoard()
+{
+	for (int i=0;i<15;i++)
+	{
+		for (int j=0;j<15;j++)
+			Board[i][j]="0";
+	}
+}
+
+struct R 
+
+{
+	string str;
+}
+
+vector<R> RackPermutations;
+
+void swap(char& a, char& b)
+{
+    char temp;
+    temp = a;
+    a = b;
+    b = temp;
+}
+
+void sortGADDAGlist (vector<string> DAGvect)
+{
+	for (int i=0;i<DAGvect.size();i++)
+	{
+		int max=DAGvect[i].length();
+		int currIndex=i;
+		for (int j=i;j<DAGvect.size();j++)
+		{
+			if (DAGvect[j].length()>max)
+			{
+				max=DAGvect[j].length();
+				currIndex=j;
+			}
+		}
+		string temp=DAGvect[currIndex];
+		DAGvect[currIndex]=DAGvect[i];
+		DAGvect[i]=temp;
+	}
+}
+
+void permutations(string aString, int i, int n) 
+{
+   int j; 
+   
+   if (i == n)
+   {
+	   R tempRack=new R;
+	   for (int i=0;i<n;i++)
+	   {
+		   tempRack.str[i]=aString[i];
+	   }
+	   RackPermutations.push_back(tempRack);
+   }
+
+   else
+   {
+        for (j = i; j <= n; j++)
+       {
+          swap((aString+i), (aString+j));
+          permutations(aString, i+1, n);  //recusrion
+          swap((aString+i), (aString+j)); //backtrack
+       }
+   }
+} //end permute function 
+ 
+void TestBoardWithRack()
+{
+	for (int i=0;i<15;i++)
+	{
+		int j=0;
+		while (Board[i][j++]=="0"&&j<15);     //Look for the first character in the row	to test it with the entire rack
+		if (j!=15)							  //After finding the letter we will concatinate 
+		{
+			j = ((j-7)>-1?(j-7):0);
+			string concatinated;
+			for (int i=0;i<7;i++)
+				concatina
+		}
+	}
+}
 
 // returns an array of 2d arrays
 // each 2D array in the 3d array represents a view of the board after a specific move
 char*** GenerateRackWords() {
-	// 1. sends all possible permutations of the rack to the GADDAG
-	// 2. GADDAG returns all possible words to be played
-	// 3. sort the words by length 
+
+	//Send Rack Permutations to GAD-DAG here via the vector RackPermutations
+
+	// 1. sends all possible permutations of the rack to the GADDAG ....  v/
+	
+	int k=0;
+
+	while (rack[k++]!="0");  	//k=current size of rack (Letters in rack now)
+
+	RackPermutations.clear();
+
+	permutations(rack,0,k-1);
+
+	
+	// 2. GADDAG returns all possible words to be played...TBD
+	
+	// 3. sort the words by length.... v/
+	
+	//sortGADDAGlist(GADDAG_Output_List);
+	
 	// 4. loops vertically and horizontally to fit any of the words
+	
+
+
 	// 5. adds a board for each possible word that could be added on the board
 }
 
