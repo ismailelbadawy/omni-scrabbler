@@ -98,25 +98,20 @@ void GADDAG::ContainsHookWithRackRecursive(Node* CurrentNode, set<string> &SetOf
 	}
 }
 
-vector<string> GADDAG::ContainsHookWithRackAtPos(string hook, string rack, int pos, int CurrPosOnBoard) {
+vector<pair<string, vector<int>>> GADDAG::ContainsHookWithRackAtPos(string hook, string rack, int pos, int CurrPosOnBoard) {
 	transform(hook.begin(), hook.end(), hook.begin(), ::tolower);
 
-	set<string> SetOfPossibleWords;
-	vector<string> vectorOfPossibleWords;
+	vector<pair<string, vector<int>>> VectorOfPossibleWords;
 
 	if (RootNode->ContainsKey(hook[0])) {
 		Node* newNode = RootNode->AT(hook[0]);
-		ContainsHookWithRackRecursiveAtPos(newNode, SetOfPossibleWords, "", rack, hook.erase(0,1), pos, 0, false, CurrPosOnBoard);
+		ContainsHookWithRackRecursiveAtPos(newNode, VectorOfPossibleWords, "", rack, hook.erase(0,1), pos, 0, false, CurrPosOnBoard);
 	}
 
-	set <string>::iterator k;
-	for (k = SetOfPossibleWords.begin(); k != SetOfPossibleWords.end(); k++) {
-		vectorOfPossibleWords.push_back(*k);
-	}
-	return vectorOfPossibleWords;
+	return VectorOfPossibleWords;
 }
 
-void GADDAG::ContainsHookWithRackRecursiveAtPos(Node* CurrentNode, set<string> &SetOfPossibleWords, string letters, string rack, string hook, int MaxPos, int CurrentCount, bool found, int CurrPosOnBoard) {
+void GADDAG::ContainsHookWithRackRecursiveAtPos(Node* CurrentNode, vector<pair<string, vector<int>>> &VectorOfPossibleWords, string letters, string rack, string hook, int MaxPos, int CurrentCount, bool found, int CurrPosOnBoard) {
 	if (found) {
 		if ((CurrentNode!=NULL && CurrentNode->get_Letter() != Node::Break && CurrentNode->get_Letter()!= Node::EOW) || CurrentNode==NULL) {
 			int MaxLength = 15 - CurrPosOnBoard + CurrentCount; // ----er- if currposonboard= 12 (enters)
@@ -132,10 +127,18 @@ void GADDAG::ContainsHookWithRackRecursiveAtPos(Node* CurrentNode, set<string> &
 
 	if (CurrentNode == NULL) {
 		string Word = GetWord(letters);
-		set<string>::iterator it;
-		it = SetOfPossibleWords.find(Word);
-		if (it == SetOfPossibleWords.end()) { //word not found in set
-			SetOfPossibleWords.insert(Word);
+		vector<pair<string, vector<int>>>::iterator it;
+		for (it = VectorOfPossibleWords.begin(); it != VectorOfPossibleWords.end(); it++) {
+			if (it->first ==  Word) break;
+		}
+
+		if (it == VectorOfPossibleWords.end()) { //word not found in Vector
+			vector<int> Positions;
+			Positions.push_back(CurrPosOnBoard-CurrentCount);
+			VectorOfPossibleWords.push_back(pair<string, vector<int>>(Word, Positions));
+		}
+		else {
+			it->second.push_back(CurrPosOnBoard - CurrentCount);
 		}
 		return;
 	}
@@ -161,7 +164,7 @@ void GADDAG::ContainsHookWithRackRecursiveAtPos(Node* CurrentNode, set<string> &
 				string NewRack = rack;
 				NewRack = (Key != Node::EOW && Key != Node::Break) ? NewRack.erase(FoundInRack, 1) : NewRack;
 				if (Key != Node::Break && Key != Node::EOW && NewFound) NewHook.erase(0, 1);
-				ContainsHookWithRackRecursiveAtPos(CurrentNode->AT(Key), SetOfPossibleWords, letters, NewRack, NewHook, MaxPos, NewCount, NewFound, CurrPosOnBoard);
+				ContainsHookWithRackRecursiveAtPos(CurrentNode->AT(Key), VectorOfPossibleWords, letters, NewRack, NewHook, MaxPos, NewCount, NewFound, CurrPosOnBoard);
 			}
 		}
 	}
@@ -184,7 +187,7 @@ void GADDAG::ContainsHookWithRackRecursiveAtPos(Node* CurrentNode, set<string> &
 			string NewHook = hook;
 			if (Key == hook[0] && Key != Node::Break && Key!= Node::EOW) NewHook = NewHook.erase(0, 1);
 			
-			ContainsHookWithRackRecursiveAtPos(CurrentNode->AT(Key), SetOfPossibleWords, letters, rack, NewHook, MaxPos, NewCount, NewFound, CurrPosOnBoard);
+			ContainsHookWithRackRecursiveAtPos(CurrentNode->AT(Key), VectorOfPossibleWords, letters, rack, NewHook, MaxPos, NewCount, NewFound, CurrPosOnBoard);
 		}
 	}
 	else if (hook == "") {
@@ -205,7 +208,7 @@ void GADDAG::ContainsHookWithRackRecursiveAtPos(Node* CurrentNode, set<string> &
 			if (Key == Node::EOW || Key == Node::Break || FoundInRack != std::string::npos) {
 				string NewRack = rack;
 				NewRack = (Key != Node::EOW && Key != Node::Break) ? NewRack.erase(FoundInRack, 1) : NewRack;
-				ContainsHookWithRackRecursiveAtPos(CurrentNode->AT(Key), SetOfPossibleWords, letters, NewRack, hook, MaxPos, NewCount, NewFound, CurrPosOnBoard);
+				ContainsHookWithRackRecursiveAtPos(CurrentNode->AT(Key), VectorOfPossibleWords, letters, NewRack, hook, MaxPos, NewCount, NewFound, CurrPosOnBoard);
 			}
 		}
 	}
