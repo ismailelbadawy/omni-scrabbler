@@ -17,7 +17,8 @@ private:
 
 	//recursive function to get all possible combinations such that the first letter of the hook exists at [0..MaxPos] only
 	//the function handles the spaces between letters represented by a dot '.'
-	void ContainsHookWithRackRecursiveAtPos(Node* CurrentNode, set<string> &SetOfPossibleWords, string letters, string rack, string hook, int MaxPos, int CurrentCount, bool found, int MaxLength);
+	//it handles maxLength of the possible words too
+	void ContainsHookWithRackRecursiveAtPos(Node* CurrentNode, set<string> &SetOfPossibleWords, string letters, string rack, string hook, int MaxPos, int CurrentCount, bool found, int CurrPosOnBoard);
 
 	//adjust word to be added in the list of possible combinations
 	string GetWord(string str);
@@ -43,11 +44,14 @@ public:
 	//hook can be sent as "" or " " to get all combinations based on the rack only (for the first move in the game)
 	vector<string> ContainsHookWithRack(string hook, string rack);
 
-	//function to get all possible combinations such that the first letter of the hook exists at [0..MaxPos] only
+	//function to get all possible combinations such that the first letter of the hook exists at [0..MaxIndex] only
 	//the function handles the spaces between letters represented by a dot '.'
 	//example given hook= fi....arr...es.., and MaxPos= 0, function will return fire, fissfwarrt but NOT fisswwatrrt (if all letters exist in rack)
 	//then if hook= arr...es.., MaxPos= 3 function will return array, arranges, barr, traarr, .. but NOT arrange and so on 
-	//function is supposed to handle MaxLength too if given 
-	//MaxLength can be dynamic based on the position of letters on board, but to be handled later
-	vector<string> ContainsHookWithRackAtPos(string hook, string rack, int pos, int MaxLength);
+	
+	//function handles max length of the word based on CurrPosOnBoard and Index of pattern in range [0..MaxIndex]
+	//example given hook= arr...es.., MaxIndex= 2, CurrPosOnBoard= 5 (this means that a row on the board may be= fi..arr...es..)
+	//then if arr is placed at pos 0, MaxLength will be 10
+	//at pos 1, MaxLength = 11, at pos 2, MaxLength = 12, at Pos 3 is invalid as it will exceed MaxIndex =2
+	vector<string> ContainsHookWithRackAtPos(string hook, string rack, int MaxIndex, int CurrPosOnBoard);
 };

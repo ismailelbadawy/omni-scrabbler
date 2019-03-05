@@ -9,7 +9,7 @@ int main(){
 
     vector <string> possible;
 	
-	possible = Dag.ContainsHookWithRackAtPos(Hook,Rack, 3, 15);
+	possible = Dag.ContainsHookWithRackAtPos(Hook,Rack, 2, 5);
 
 	for (int i = 0; i < possible.size(); i++) {
 		cout << possible[i] << endl;
