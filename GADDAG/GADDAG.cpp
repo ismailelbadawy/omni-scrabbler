@@ -235,3 +235,24 @@ void GADDAG::LoadDag(string InputPath){
         }
     }
 }
+
+bool GADDAG::CheckWordInDict(string Word)
+{
+	transform(Word.begin(), Word.end(), Word.begin(), ::tolower);
+	reverse(Word.begin(), Word.end());
+	Word += ">$";
+	Node* CurrentNode = RootNode;
+	for (int i = 0; i < Word.length(); i++)
+	{
+		if (CurrentNode->ContainsKey(Word[i]))
+		{
+			CurrentNode = CurrentNode->AT(Word[i]);
+		}
+		else
+		{
+			return false;
+		}
+
+	}
+	return true;
+}

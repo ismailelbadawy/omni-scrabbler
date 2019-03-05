@@ -54,4 +54,9 @@ public:
 	//then if arr is placed at pos 0, MaxLength will be 10
 	//at pos 1, MaxLength = 11, at pos 2, MaxLength = 12, at Pos 3 is invalid as it will exceed MaxIndex =2
 	vector<string> ContainsHookWithRackAtPos(string hook, string rack, int MaxIndex, int CurrPosOnBoard);
+
+	//Function to check whether a string (Word)is in the dictionary
+	//returns true if it was found
+	//returns false if it wasnot found
+	bool CheckWordInDict(string Word);
 };

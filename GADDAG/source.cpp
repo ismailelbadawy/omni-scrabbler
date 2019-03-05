@@ -14,5 +14,8 @@ int main(){
 	for (int i = 0; i < possible.size(); i++) {
 		cout << possible[i] << endl;
 	}
+	bool check = Dag.CheckWordInDict("zebra");
+	cout << check;
+
     return 0;
 }
