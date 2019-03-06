@@ -1,17 +1,23 @@
-#include "GADDAG.h"
+#include<iostream>
+#include<vector>
+
+#include"GADDAG/GADDAG.h"
+using namespace std;
 
 int main(){
-	string InputPath = "../assets/Dict.txt";
-    GADDAG Dag(InputPath);
+	// string InputPath = "../assets/Dict.txt";
+    // GADDAG Dag(InputPath);
 
-	string Hook = "";
-	string Rack = "abcdefghijklmnopqrstuvwxyz";
+	// string Hook = "";
+	// string Rack = "abcdefghijklmnopqrstuvwxyz";
 
-    vector <string> possible;
-	possible = Dag.ContainsHookWithRack(Hook,Rack);
+    // vector <string> possible;
+	// possible = Dag.ContainsHookWithRack(Hook,Rack);
 
-	for (int i = 0; i < possible.size(); i++) {
-		cout << possible[i] << endl;
-	}
+	// for (int i = 0; i < possible.size(); i++) {
+	// 	cout << possible[i] << endl;
+	// }
+	cout<<"Hello World"<<endl;
+
     return 0;
 }
