@@ -42,3 +42,5 @@ build/CMakeFiles/omniscrabbler.dir/manifest.rc
 build/CMakeFiles/omniscrabbler.dir/manifest.res
 build/CMakeFiles/omniscrabbler.dir/vc140.pdb
 .vscode/c_cpp_properties.json
+.vscode/c_cpp_properties.json
+build/Testing/Temporary/LastTest.log
