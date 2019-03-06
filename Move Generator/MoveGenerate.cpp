@@ -5,18 +5,6 @@
 #include"Models/Rack.h"
 
 
-
-Move::Move(Board &board, bool horizontal)
-{
-	string word;
-	ishorizontal_ = horizontal;
-	for (int i = 0; i < (int)plays_.size(); i++)
-	{
-		word[i] = plays_.at(i).GetLetter();
-	}
-	board.UpdateBoard(word,plays_.at(0).GetRow(),plays_.at(0).GetColumn(),ishorizontal_);
-}
-
 bool check_other_dimension(Board board,string word,int row,int col,bool horizontal) //True when called from send_Row
 {
 	char boardTiles[15[15]];
@@ -124,7 +112,7 @@ bool check_other_dimension(Board board,string word,int row,int col,bool horizont
 }
 
 void check_words(Board board,vector<string> returnedWords,int row,int col,bool horizontal)	//returnedWords--> words from GAD-DAG
-														//This function will add the possible moves to the play vector and discard the rest
+	//This function will add the possible moves to the play vector and discard the rest
 {														//Row & Col will give the index of the hook
 	for (int i=0;i<returnedWords.size();i++)
 	{
