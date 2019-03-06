@@ -1,4 +1,6 @@
 CMakeLists.txt
+main.cpp
+.vscode/c_cpp_properties.json
 build/.ninja_deps
 build/.ninja_log
 build/CMakeCache.txt
