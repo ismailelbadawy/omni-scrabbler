@@ -49,8 +49,11 @@ bool check_other_dimension(Board board,string word,int row,int col,bool horizont
 			}	
 			
 			string toTest(arr);
-
-			delete []arr;
+			for(int i = 0; i < endInex-startIndex+1; i++)
+					{
+						delete arr[i];
+					}
+			
 
 			//if (!test_string_GADDAG(toTest));
 			//	return false;
@@ -101,7 +104,10 @@ bool check_other_dimension(Board board,string word,int row,int col,bool horizont
 			
 			string toTest(arr);
 
-			delete []arr;
+			for(int i = 0; i < endInex-startIndex+1; i++)
+					{
+						delete arr[i];
+					}
 			//if (!test_string_GADDAG(toTest));
 			//	return false;
 		}
@@ -111,22 +117,30 @@ bool check_other_dimension(Board board,string word,int row,int col,bool horizont
 	}
 }
 
-void check_words(Board board,vector<string> returnedWords,int row,int col,bool horizontal)	//returnedWords--> words from GAD-DAG
+vector<Move> check_words(Board board,vector<string> returnedWords,int row,int col,bool horizontal)	//returnedWords--> words from GAD-DAG
 	//This function will add the possible moves to the play vector and discard the rest
-{														//Row & Col will give the index of the hook
+{  //Row & Col will give the index of the hook
+vector<Move> moves;
 	for (int i=0;i<returnedWords.size();i++)
 	{
 		if (check_other_dimension(returnedWords[i],int row,int col, horizontal))
 		{
-			plays_.insert(returnedWords[i]);
+			vector<Tile> tiles;
+			for (int j =0;j<returnedWords[i].size();j++){
+			Tile t(returnedWords[i],row,column);
+			tiles.push_back(t);
+			}
+			Move m(board,horizontal);
+			m.SetPlays(tiles,horizontal);
+			moves.push_back(m);
 		}
 	}
-
+return moves;
 }
 
 void send_Row(Board &board)
 {
-	char boardTiles[15[15]];
+	char boardTiles[15][15];
 	board.GetTiles(boardTiles);
 
 	for (int i=0;i<15; i++)
@@ -157,7 +171,7 @@ void send_Row(Board &board)
 				//Now we fill out the hook to be sent		//
 				for (int k=0;k<hookSize;k++)
 				{
-					hook[k]=boardTiles[i][k+hookIndex];
+					hook[k].GetLetter()=boardTiles[i][k+hookIndex];
 				}
 				
 				if (reverseIter==-1) //We have reached the beginning of the row (First pattern special case)
@@ -166,14 +180,25 @@ void send_Row(Board &board)
 					//possibleWords=send_to_GADDAG(hook,rack_,1,1) 
 					int possibleWordsCount=possibleWords.size();
 					int iter=0;
-					delete []hook;
+					for(int i = 0; i < hookSize; i++)
+					{
+						delete hook[i];
+					}
+					for(int i = 0; i < hookSize; i++)
+					{
+						delete hook[i];
+					}
 				}
 				
 				//A previous pattern --->    _ _ a r r _ _ b a _ _ _ _ _ _ -->here we reach the 'r' at pos 4...
 				else if (boardTiles[i][reverseIter]!="0")    
 				{
 					//possibleWords=send_to_GADDAG(hook,rack_,hookIndex-(reverseIter+2),hookIndex)
-					delete []hook;
+					for(int i = 0; i < hookSize; i++)
+					{
+						delete hook[i];
+					}
+			
 				}
 				
 				//Here is the general case, we are moving backingwards without hitting a previous pattern yet or reaching start of row
@@ -203,7 +228,11 @@ void send_Row(Board &board)
 							check_words(possibleWords[i].first,i,possibleWords[i].second[z],true);
 						}
 					}
-					delete []hook;		
+					for(int i = 0; i < hookSize; i++)
+					{
+						delete hook[i];
+					}
+						
 				}
 				
 				patternSize=0;
@@ -215,7 +244,7 @@ void send_Row(Board &board)
 
 void send_Col(Board &board)
 {
-	char boardTiles[15[15]];
+	char boardTiles[15][15];
 	board.GetTiles(boardTiles);
 
 	for (int i=0;i<15; i++)
@@ -246,7 +275,7 @@ void send_Col(Board &board)
 				//Now we fill out the hook to be sent
 				for (int k=0;k<hookSize;k++)
 				{
-					hook[k]=boardTiles[k+hookIndex][i];
+					hook[k].GetLetter()=boardTiles[k+hookIndex][i];
 				}
 				
 				if (reverseIter==-1) //We have reached the beginning of the row (First pattern special case)
@@ -255,14 +284,22 @@ void send_Col(Board &board)
 					//possibleWords=send_to_GADDAG(hook,rack_,1,1) 
 					int possibleWordsCount=possibleWords.size();
 					int iter=0;
-					delete []hook;
+					for(int i = 0; i < hookSize; i++)
+					{
+						delete hook[i];
+					}
+				
 				}
 				
 				//A previous pattern --->    _ _ a r r _ _ b a _ _ _ _ _ _ -->here we reach the 'r' at pos 4...
 				else if (boardTiles[reverseIter][i]!="0")    
 				{
 					//possibleWords=send_to_GADDAG(hook,rack_,hookIndex-(reverseIter+2),hookIndex)
-					delete []hook;
+					for(int i = 0; i < hookSize; i++)
+					{
+						delete hook[i];
+					}
+				
 				}
 				
 				//Here is the general case, we are moving backingwards without hitting a previous pattern yet or reaching start of row
@@ -292,7 +329,10 @@ void send_Col(Board &board)
 							check_words(possibleWords[i].first,possibleWords[i].second[z],i,true);
 						}
 					}
-					delete []hook;		
+					for(int i = 0; i < hookSize; i++)
+					{
+						delete hook[i];
+					}	
 				}
 				
 				patternSize=0;
