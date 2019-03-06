@@ -7,7 +7,7 @@
 
 bool check_other_dimension(Board board,string word,int row,int col,bool horizontal) //True when called from send_Row
 {
-	char boardTiles[15[15]];
+	char boardTiles[15][15];
 	board.GetTiles(boardTiles);
 	if (horizontal)  //word is horizontal, we need to check the columns of the letters
 	{
