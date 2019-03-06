@@ -1,9 +1,17 @@
-#include "Board.h"
+#include "Board.h";
 
 
 
-Board::Board()
+Board::Board()  //Default constructor
 {
+	for (int i = 0; i < 15; i++)
+	{
+		for (int j= 0; j<15;j++)
+		{
+			//This should compute somehow the bonus of each tile and place it while contructing the board
+			tiles_[i][j] = "0"; 				//Initialize all tiles first with zeroes
+		}
+	}	
 }
 
 Board::Board(char tiles[15][15])
@@ -18,7 +26,7 @@ Board::Board(char tiles[15][15])
 	}
 }
 
-void Board::GetTiles(Tile tiles[15][15])
+void Board::GetTiles(Tile&tiles[15][15])
 {
 	for (int i = 0; i < 15; i++)
 	{
