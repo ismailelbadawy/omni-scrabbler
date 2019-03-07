@@ -7,7 +7,7 @@
 
 bool check_other_dimension(Board board,string word,int row,int col,bool horizontal) //True when called from send_Row
 {
-	char boardTiles[15][15];
+	Tile boardTiles[15][15];
 	board.GetTiles(boardTiles);
 	if (horizontal)  //word is horizontal, we need to check the columns of the letters
 	{
@@ -21,7 +21,7 @@ bool check_other_dimension(Board board,string word,int row,int col,bool horizont
 			
 			if(row!=0)											//We are at the top row...
 			{
-				while (boardTiles[row-rowIterUp][col+i]!="0")
+				while (boardTiles[row-rowIterUp][col+i].GetLetter()!='0')
 				{
 					rowIterUp++;
 					if (row-rowIterUp==0)						//We must check so that we will not access an out of bound memory
@@ -30,7 +30,7 @@ bool check_other_dimension(Board board,string word,int row,int col,bool horizont
 			}
 			if (row!=14)										//We are at the bottow row...
 			{
-				while (boardTiles[row+rowIterDown][col+i]!="0")
+				while (boardTiles[row+rowIterDown][col+i].GetLetter()!='0')
 				{
 					rowIterDown++;
 					if (row+rowIterDown==14)					//We must check so that we will not access an out of bound memory
@@ -43,16 +43,15 @@ bool check_other_dimension(Board board,string word,int row,int col,bool horizont
 			
 			char * arr= new char[endIndex-startIndex+1];
 			
-			for (int iter=0;iter<endInex-startIndex+1;iter++)
+			for (int iter=0;iter<endIndex-startIndex+1;iter++)
 			{
-				arr[iter]=boardTiles[startIndex+iter][col+i];
+				arr[iter]=boardTiles[startIndex+iter][col+i].GetLetter();
 			}	
 			
 			string toTest(arr);
-			for(int i = 0; i < endInex-startIndex+1; i++)
-					{
-						delete arr[i];
-					}
+			
+			delete [] arr;
+					
 			
 
 			//if (!test_string_GADDAG(toTest));
@@ -74,7 +73,7 @@ bool check_other_dimension(Board board,string word,int row,int col,bool horizont
 			
 			if(col!=0)											//We are at the top row...
 			{
-				while (boardTiles[row+i][col-colIterLeft]!="0")
+				while (boardTiles[row+i][col-colIterLeft].GetLetter()!='0')
 				{
 					colIterLeft++;
 					if (col-colIterLeft==0)						//We must check so that we will not access an out of bound memory
@@ -84,7 +83,7 @@ bool check_other_dimension(Board board,string word,int row,int col,bool horizont
 
 			if (col!=14)										//We are at the bottow row...
 			{
-				while (boardTiles[row+i][col+colIterRight]!="0")
+				while (boardTiles[row+i][col+colIterRight].GetLetter()!='0')
 				{
 					colIterRight++;
 					if (col+colIterRight==14)					//We must check so that we will not access an out of bound memory
@@ -97,17 +96,15 @@ bool check_other_dimension(Board board,string word,int row,int col,bool horizont
 			
 			char * arr= new char[endIndex-startIndex+1];
 			
-			for (int iter=0;iter<endInex-startIndex+1;iter++)
+			for (int iter=0;iter<endIndex-startIndex+1;iter++)
 			{
-				arr[iter]=boardTiles[col+i][startIndex+iter];
+				arr[iter]=boardTiles[col+i][startIndex+iter].GetLetter();
 			}	
 			
 			string toTest(arr);
 
-			for(int i = 0; i < endInex-startIndex+1; i++)
-					{
-						delete arr[i];
-					}
+			delete [] arr;
+					
 			//if (!test_string_GADDAG(toTest));
 			//	return false;
 		}
@@ -117,30 +114,32 @@ bool check_other_dimension(Board board,string word,int row,int col,bool horizont
 	}
 }
 
-vector<Move> check_words(Board board,vector<string> returnedWords,int row,int col,bool horizontal)	//returnedWords--> words from GAD-DAG
+vector<Play> check_words(Board&board,vector<string> returnedWords,int row,int col,bool horizontal)	//returnedWords--> words from GAD-DAG
 	//This function will add the possible moves to the play vector and discard the rest
 {  //Row & Col will give the index of the hook
-vector<Move> moves;
+vector<Play> possiblePlays;
 	for (int i=0;i<returnedWords.size();i++)
 	{
-		if (check_other_dimension(returnedWords[i],int row,int col, horizontal))
+		if (check_other_dimension(board,returnedWords[i],row,col, horizontal))
 		{
-			vector<Tile> tiles;
-			for (int j =0;j<returnedWords[i].size();j++){
-			Tile t(returnedWords[i],row,column);
-			tiles.push_back(t);
-			}
-			Move m(board,horizontal);
-			m.SetPlays(tiles,horizontal);
-			moves.push_back(m);
+			//vector<Tile> tiles;
+			//for (int j =0;j<returnedWords[i].size();j++){
+			//Tile t(returnedWords[i],row,column);
+			//tiles.push_back(t);
+			//}
+			//Move m(board,horizontal);
+			//m.SetPlays(tiles,horizontal);
+			//possiblePlays.push_back(returnedWords[i]);
+			Play P(returnedWords[i],row,col,horizontal);
+			possiblePlays.push_back(P);
 		}
 	}
-return moves;
+return possiblePlays;
 }
 
 void send_Row(Board &board)
 {
-	char boardTiles[15][15];
+	Tile boardTiles[15][15];
 	board.GetTiles(boardTiles);
 
 	for (int i=0;i<15; i++)
@@ -152,7 +151,7 @@ void send_Row(Board &board)
 
 		for (int j=0;j<15;j++)
 		{
-			while (boardTiles[i][j]!="0")
+			while (boardTiles[i][j].GetLetter()!='0')
 			{
 				patternSize++;
 				j++;
