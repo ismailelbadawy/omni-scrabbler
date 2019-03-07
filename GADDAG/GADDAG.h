@@ -38,4 +38,9 @@ class GADDAG {
         //if hook= ay and rack= persl --> vector={play, player, plays} 
         //hook can be sent as "" or " " to get all combinations based on the rack only (for the first move in the game)
 	    vector<string> ContainsHookWithRack(string hook, string rack);
+
+		//Function to check whether a string (Word)is in the dictionary
+		//returns true if it was found
+		//returns false if it wasnot found
+		bool CheckWordInDict(string Word);
 };
