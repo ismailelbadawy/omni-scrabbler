@@ -45,3 +45,4 @@ build/CMakeFiles/omniscrabbler.dir/vc140.pdb
 .vscode/c_cpp_properties.json
 build/Testing/Temporary/LastTest.log
 .vscode/settings.json
+*.log
