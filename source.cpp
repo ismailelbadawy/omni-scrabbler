@@ -18,6 +18,8 @@ Board 	BOARD;
 Bag   	BAG(BAG_PATH);
 Rack  	RACK;
 GADDAG	DAG(GADDAG_PATH);
+
+
 void main(){
 
 }
