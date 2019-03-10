@@ -20,6 +20,7 @@ class Bag{
     int GetOccurences(Tile tile);
     int GetRemainingTiles();
     void TakeLetters(vector<Tile> tiles);
+    void GiveTiles(vector<Tile> tiles);
     ~Bag();
     
 

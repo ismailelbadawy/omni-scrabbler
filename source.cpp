@@ -12,43 +12,12 @@
 #include"GADDAG/GADDAG.h"
 
 using namespace std;
-Board board;
-map<Tile,int> m;
-
+string 	GADDAG_PATH = "assets/Dict.txt";
+string 	BAG_PATH = "assets/letters.txt";
+Board 	BOARD;
+Bag   	BAG(BAG_PATH);
+Rack  	RACK;
+GADDAG	DAG(GADDAG_PATH);
 void main(){
-	// string InputPath = "../assets/Dict.txt";
-    // GADDAG Dag(InputPath);
-
-	// string Hook = "";
-	// string Rack = "abcdefghijklmnopqrstuvwxyz";
-
-    // vector <string> possible;
-	// possible = Dag.ContainsHookWithRack(Hook,Rack);
-
-	// for (int i = 0; i < possible.size(); i++) {
-	// 	cout << possible[i] << endl;
-	// }
-	cout<<"Hello World"<<endl;
-	string InputPath = "assets/Dict.txt";
-	string Bagpath = "assets/letters.txt";
-	Bag bag(Bagpath);
-	int a = bag.GetOccurences('a');
-	GADDAG Dag(InputPath);
-	//string Hook = "arr...es..";
-	string Hook = "e......t";
-	string Rack = "aaabrrcdefgdhijklsswwwrrrt";
-
-    vector<pair<string, vector<int>>> possible;
-	
-	possible = Dag.ContainsHookWithRackAtPos(Hook,Rack, 2, 4);
-
-	for (int i = 0; i < (int)possible.size(); i++) {
-		cout << possible[i].first << " at positions: ";
-		for (int j = 0; j <(int) possible[i].second.size(); j++)
-			cout << possible[i].second[j] << " ";
-		cout << endl;
-	}
-	bool check = Dag.CheckWordInDict("zebra");
-	cout << check;
 
 }

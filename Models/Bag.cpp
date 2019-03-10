@@ -28,9 +28,6 @@ int Bag::GetOccurences(char letter)
     tile.SetParams(letter,0,0,0,0);
 
 return bag_.at(tile);
-
-
-
 }
 int Bag::GetOccurences(Tile tile){
 return bag_.at(tile);
@@ -41,9 +38,21 @@ int Bag::GetRemainingTiles(){
 return 0;
 }
 
-void TakeLetters(vector<Tile> tiles){
+void Bag::TakeLetters(vector<Tile> tiles){
+for (int i =0;i<(int)tiles.size();i++){
+
+   if(this->bag_[tiles.at(i)]>0){
+       this->bag_[tiles.at(i)]--;
+   }
+}
+
+}
 
 
+void Bag::GiveTiles(vector<Tile> tiles){
+for (int i =0;i<(int)tiles.size();i++){
+       this->bag_[tiles.at(i)]++;
+   }
 }
 
 Bag::~Bag(){
