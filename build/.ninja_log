@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # ninja log v5
 1029	2404	573941374	omniscrabbler.exe	90d9995df453fe88
 1	991	573604283	CMakeFiles/omniscrabbler.dir/main.cpp.obj	1208cd74fd73e607
@@ -72,18 +71,3 @@
 15	1193	573943484	CMakeFiles/omniscrabbler.dir/source.cpp.obj	6a83cf8720a60ca3
 3	1202	573943484	CMakeFiles/omniscrabbler.dir/Models/Bag.cpp.obj	8246a407670e10fb
 1202	2128	573943485	omniscrabbler.exe	90d9995df453fe88
-=======
-# ninja log v5
-0	361	573412025	CMakeFiles/omniscrabbler.dir/main.cpp.obj	1208cd74fd73e607
-361	1462	573412026	omniscrabbler.exe	ba8fb4e16fa50f98
-1	991	573604283	CMakeFiles/omniscrabbler.dir/main.cpp.obj	1208cd74fd73e607
-992	3510	573604285	omniscrabbler.exe	ba8fb4e16fa50f98
-1	1147	573604476	CMakeFiles/omniscrabbler.dir/source.cpp.obj	6a83cf8720a60ca3
-2	1548	573604534	CMakeFiles/omniscrabbler.dir/source.cpp.obj	6a83cf8720a60ca3
-1	1722	573604559	CMakeFiles/omniscrabbler.dir/source.cpp.obj	6a83cf8720a60ca3
-1	1136	573604610	CMakeFiles/omniscrabbler.dir/source.cpp.obj	6a83cf8720a60ca3
-1	1085	573604674	CMakeFiles/omniscrabbler.dir/source.cpp.obj	6a83cf8720a60ca3
-1085	1687	573604675	omniscrabbler.exe	50dae68a353782
-1	1160	573721448	CMakeFiles/omniscrabbler.dir/source.cpp.obj	6a83cf8720a60ca3
-1161	1712	573721449	omniscrabbler.exe	50dae68a353782
->>>>>>> a016673ff00eb873821d383777e5c2e3092dd43b
