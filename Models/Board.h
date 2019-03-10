@@ -13,6 +13,7 @@ public:
 	Board(char tiles[15][15]);
 	void GetTiles(Tile tiles[15][15]);
 	void UpdateBoard(string word, int row, int column, bool horizontal);
+	void Probe(char c,int row,int col);
 	~Board();
 };
 

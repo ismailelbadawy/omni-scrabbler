@@ -7,9 +7,12 @@ Bag::Bag(string InputPath){
  ifstream InputFile;
 
     InputFile.open(InputPath);
-    if (InputFile.is_open()) {
+    if (InputFile.is_open()) 
+    {
         string Line;
-        while (getline(InputFile, Line,' ')) {
+    
+        while (getline(InputFile, Line,' ')) 
+        {
 			char letter = Line[0];
             getline(InputFile,Line,' ');
             int occurence = stoi(Line);
@@ -18,8 +21,8 @@ Bag::Bag(string InputPath){
             Tile t;
             t.SetParams(letter,-1,-1,score,1);
              bag_.insert(pair<Tile,int>(t,occurence));
-          // bag_[t]=occurence;
         }
+    
     }
 }
 int Bag::GetOccurences(char letter)
@@ -28,7 +31,6 @@ int Bag::GetOccurences(char letter)
     tile.SetParams(letter,0,0,0,0);
 
 return bag_.at(tile);
-
 
 
 }

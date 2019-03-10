@@ -50,6 +50,10 @@ void Board::UpdateBoard(string word, int row, int column, bool horizontal)
 	}
 }
 
+void Board::Probe(char c,int row,int col) //For testing purposes only
+{
+	tiles_[row][col].SetParams(c,row,col,1,1);
+}
 
 
 Board::~Board()

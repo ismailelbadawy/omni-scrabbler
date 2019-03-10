@@ -35,12 +35,10 @@ void main(){
 	int a = bag.GetOccurences('a');
 	GADDAG Dag(InputPath);
 	//string Hook = "arr...es..";
-	string Hook = "e......t";
-	string Rack = "aaabrrcdefgdhijklsswwwrrrt";
 
     vector<pair<string, vector<int>>> possible;
 	
-	possible = Dag.ContainsHookWithRackAtPos(Hook,Rack, 2, 4);
+//	possible = Dag.ContainsHookWithRackAtPos(Hook,Rack, 2, 4);
 
 	for (int i = 0; i < (int)possible.size(); i++) {
 		cout << possible[i].first << " at positions: ";
@@ -50,5 +48,24 @@ void main(){
 	}
 	bool check = Dag.CheckWordInDict("zebra");
 	cout << check;
+	/////////////////////////////////////Khaled's Testing Part//////////////////////////////////////////////////////////////
+	MoveGenerate movGen(InputPath);		//A move generator insatance
+	board.Probe('e',7,4);		//Inserting letters 'e' and 't' to the empty board
+	board.Probe('t',7,11);		//_ _ _ _ e _ _ _ _ _ _ t _ _ _---->Row 7
 
+	Tile RackTiles[7];          //A simple array to carry the rack's letters
+
+	RackTiles[0].SetLetter['p'];
+	RackTiles[1].SetLetter['n'];
+	RackTiles[2].SetLetter['o'];
+	RackTiles[3].SetLetter['h'];
+	RackTiles[4].SetLetter['e'];
+	RackTiles[5].SetLetter['l'];
+	RackTiles[6].SetLetter['a'];
+	
+	Rack rack(RackTiles);
+
+	movGen.set_Rack(rack);
+
+	movGen.send_Row(board);
 }
