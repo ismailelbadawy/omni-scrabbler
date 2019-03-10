@@ -1,4 +1,4 @@
-#include "GADDAG.h"
+#include"GADDAG.h"
 
 GADDAG:: GADDAG() {
 	RootNode = new Node(Node::Root);
@@ -15,17 +15,17 @@ void GADDAG::add(string NewWord) {
 	transform(NewWord.begin(), NewWord.end(), NewWord.begin(), ::tolower);
 	vector <Node*> PrevNode;
 
-	for (int i = 1; i <= NewWord.length(); i++) {
+	for (int i = 1; i <=(int) NewWord.length(); i++) {
 		string Prefix = NewWord.substr(0, i);
 		string Suffix = "";
-		if (i != NewWord.length()) Suffix = NewWord.substr(i, NewWord.length() - (i));
+		if (i !=(int) NewWord.length()) Suffix = NewWord.substr(i, NewWord.length() - (i));
 		reverse(Prefix.begin(), Prefix.end());
 		string AddWord = Prefix + Node::Break + Suffix + Node::EOW;
 
 		Node * CurrentNode = RootNode;
 		bool BreakFound = false;
 		int j = 0;
-		for (int i = 0;i<AddWord.length();i++) {
+		for (int i = 0;i<(int)AddWord.length();i++) {
 			//long words can be joined back together after the break point, cutting the tree size in half.
 			if (BreakFound && PrevNode.size() > j) {
 				CurrentNode->AddChild(AddWord[i], PrevNode[j]);
@@ -245,7 +245,7 @@ bool GADDAG::CheckWordInDict(string Word)
 	reverse(Word.begin(), Word.end());
 	Word += ">$";
 	Node* CurrentNode = RootNode;
-	for (int i = 0; i < Word.length(); i++)
+	for (int i = 0; i <(int) Word.length(); i++)
 	{
 		if (CurrentNode->ContainsKey(Word[i]))
 		{
@@ -256,24 +256,4 @@ bool GADDAG::CheckWordInDict(string Word)
 			return false;
 		}
 	}
-}
-bool GADDAG::CheckWordInDict(string Word)
-{
-	transform(Word.begin(), Word.end(), Word.begin(), ::tolower);
-	reverse(Word.begin(), Word.end());
-	Word += ">$";
-	Node* CurrentNode = RootNode;
-	for (int i = 0; i < Word.length(); i++)
-	{
-		if (CurrentNode->ContainsKey(Word[i]))
-		{
-			CurrentNode = CurrentNode->AT(Word[i]);
-		}
-		else
-		{
-			return false;
-		}
-
-	}
-	return true;
 }

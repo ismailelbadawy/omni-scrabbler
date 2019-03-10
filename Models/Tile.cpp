@@ -4,15 +4,6 @@ Tile::Tile()
 {
 }
 
-Tile::Tile(char letter,int row, int column, int score=1, int bonus=1)
-{
-	this->letter_ = letter;
-	this->score_ = score;
-	this->bonus_ = bonus;
-	this->row_ = row;
-	this->column_ = column;
-}
-
 void Tile::GetIndex(int & row, int & column)
 {
 	row = row_;
@@ -37,11 +28,11 @@ int Tile::GetBonus()
 	return bonus_;
 }
 
-void Tile::SetParams(char letter,int row,int col,int score=1,int bonus=1)
+void Tile::SetParams(char letter,int row,int col,int score,int bonus)
 {
 	letter_=letter;
 	row_=row;
-	col=column_;
+	column_=col;
 	score_=score;
 	bonus_=bonus;
 }

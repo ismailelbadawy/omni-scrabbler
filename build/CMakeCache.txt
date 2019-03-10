@@ -110,7 +110,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELEASE:STRING=/INCREMENTAL:NO
 CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO:STRING=/debug /INCREMENTAL
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=omniscrabbler
+CMAKE_PROJECT_NAME:STATIC=omni-scrabbler
 
 //RC compiler
 CMAKE_RC_COMPILER:FILEPATH=C:/Program Files (x86)/Windows Kits/10/bin/10.0.17763.0/x86/rc.exe
@@ -251,6 +251,12 @@ SLURM_SRUN_COMMAND:FILEPATH=SLURM_SRUN_COMMAND-NOTFOUND
 
 //Path to a program.
 SVNCOMMAND:FILEPATH=SVNCOMMAND-NOTFOUND
+
+//Value Computed by CMake
+omni-scrabbler_BINARY_DIR:STATIC=D:/D/CUFE CHS/Semester 8/Machine Intelligence/omni-scrabbler/build
+
+//Value Computed by CMake
+omni-scrabbler_SOURCE_DIR:STATIC=D:/D/CUFE CHS/Semester 8/Machine Intelligence/omni-scrabbler
 
 //Value Computed by CMake
 omniscrabbler_BINARY_DIR:STATIC=D:/D/CUFE CHS/Semester 8/Machine Intelligence/omni-scrabbler/build

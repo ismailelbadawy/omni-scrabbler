@@ -5,10 +5,9 @@
 Play::Play()
 {
 }
-
 Play::Play(string word,int row, int col,bool horizontal)
 {
-	size_=word.length();
+	size_=(int)word.size();
 	tile_=new Tile[size_];
 	//tile_ = Tile(letter.GetLetter(), row, column, letter.GetScore(), letter.GetBonus());
 	if (horizontal)
@@ -26,10 +25,6 @@ Play::Play(string word,int row, int col,bool horizontal)
 			tile_[i].SetParams(word[i],row+i,col);
 		}
 	}
-	
-	row_ = row;
-	column_ = col;
-	isHorizontal=horizontal;
 }
 
 //Play::Play(char letter, int row, int column)

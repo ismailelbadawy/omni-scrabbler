@@ -7,16 +7,16 @@ Move::Move()
 }
 
 
-Move::Move(Board &board, bool horizontal)
-{
-	string word;
-	ishorizontal_ = horizontal;
-	for (int i = 0; i < (int)plays_.size(); i++)
-	{
-		word[i] = plays_.at(i).GetLetter();
-	}
-	board.UpdateBoard(word,plays_.at(0).GetRow(),plays_.at(0).GetColumn(),ishorizontal_);
-}
+// Move::Move(Board &board, bool horizontal)
+// {
+// 	string word;
+// 	ishorizontal_ = horizontal;
+// 	for (int i = 0; i < (int)plays_.size(); i++)
+// 	{
+// 		word[i] = plays_.at(i).GetLetter();
+// 	}
+// 	board.UpdateBoard(word,plays_.at(0).GetRow(),plays_.at(0).GetColumn(),ishorizontal_);
+// }
 void Move::UpdateRack(string newRack)
 {
 	for (int i = 0; i < (int)newRack.size(); i++) {
@@ -36,16 +36,19 @@ void Move::SetPlays(vector<Tile> letters, bool horizontal)
 {
 	ishorizontal_ = horizontal;
 	
-	for (int i = 0; i < (int)letters.size(); i++)
-	{		
-		Tile t = letters.at(i);
+			
+		Tile t = letters.at(0);
 		int row;
 		int column;
 		t.GetIndex(row, column);
-		Play p = Play(t,row,column);
-		plays_.push_back(p);
+		char*words=new char[letters.size()];
+		for (int i=0;i<(int)letters.size();i++){
+			words[i]=letters.at(i).GetLetter();
+		}
+	
+	string word (words);
+	Play p(word,row,column,horizontal);
 	}
-}
 
 vector<Play> Move::GetPlays()
 {

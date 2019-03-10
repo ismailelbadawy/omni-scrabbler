@@ -1,4 +1,4 @@
-#include "GADDAG/Node.h"
+#include "Node.h"
 #include <string>
 #include <fstream>
 #include <set>

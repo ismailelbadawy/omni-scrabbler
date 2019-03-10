@@ -8,7 +8,6 @@ class Tile
 	int bonus_;
 public:
 	Tile();
-	Tile(char letter,int row,int column,int score = 1,int bonus = 1);
 	void GetIndex(int &row, int&column);
 	int GetScore();
 	char GetLetter();
@@ -16,6 +15,11 @@ public:
 	void SetParams(char letter,int row,int col,int score=1,int bonus=1);
 	int GetBonus();
 	void CalculateTotalScore();
+	bool operator< (const Tile& tile) const{
+		 
+        return  tile.letter_ > letter_;
+    
+	}
 	~Tile();
 };
 

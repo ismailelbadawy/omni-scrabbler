@@ -1,11 +1,11 @@
-#include<iostream>
-#include<vector>
-#include"Models/Board.h"
-#include"Models/Move.h"
-#include"Models/Rack.h"
+#include"MoveGenerate.h"
 
 
-bool check_other_dimension(Board board,string word,int row,int col,bool horizontal) //True when called from send_Row
+MoveGenerate::MoveGenerate(){
+
+
+}
+bool MoveGenerate::check_other_dimension(Board board,string word,int row,int col,bool horizontal) //True when called from send_Row
 {
 	Tile boardTiles[15][15];
 	board.GetTiles(boardTiles);
@@ -13,7 +13,7 @@ bool check_other_dimension(Board board,string word,int row,int col,bool horizont
 	{
 																//_ _ _ _ _ _|c|_ _ _ _ _ _ _ _			-->>Here we want to insert "ay" after
 																//_ _ _ a r r|_|_ _ _ _ _ _ _ _  		"arr", but at col 6 we have to check
-		for (int i=0;i<word.size();i++)							//_ _ _ _ _ _|t|_ _ _ _ _ _ _ _ 		if inserting "a" is ok. "cat" is ok!!
+		for (int i=0;i<(int)word.size();i++)							//_ _ _ _ _ _|t|_ _ _ _ _ _ _ _ 		if inserting "a" is ok. "cat" is ok!!
 		{	
 			int startIndex=0;
 			int endIndex=0;										//Index that will get us the word to test using the GAD-DAG
@@ -64,7 +64,7 @@ bool check_other_dimension(Board board,string word,int row,int col,bool horizont
 	{
 																//_ _ _ _ _ _ c _ _ _ _ _ _ _ _			-->>Here we want to insert "a" between
 																//_ _ _|a|t|t|_|c|k|_ _ _ _ _ _  		"c" and "t", but at row 1 we have to 
-		for (int i=0;i<word.size();i++)							//_ _ _ _ _ _ t _ _ _ _ _ _ _ _ 		check if inserting "a" is ok.
+		for (int i=0;i<(int)word.size();i++)							//_ _ _ _ _ _ t _ _ _ _ _ _ _ _ 		check if inserting "a" is ok.
 																										//"attack" is ok!!
 		{			
 			int startIndex=0;
@@ -113,17 +113,17 @@ bool check_other_dimension(Board board,string word,int row,int col,bool horizont
 
 	}
 }
-
-vector<Play> check_words(Board&board,vector<pair<string,vector<int> > > returnedWords,int row,int col,bool horizontal)	//returnedWords--> words from GAD-DAG
-	//This function will add the possible moves to the play vector and discard the rest
-{  //Row & Col will give the index of the hook
+//This function will add the possible moves to the play vector and discard the rest
+//Row & Col will give the index of the hook
+vector<Play> MoveGenerate::check_words(Board&board,vector<pair<string,vector<int> > > returnedWords,int row,int col,bool horizontal)	//returnedWords--> words from GAD-DAG
+{
 vector<Play> possiblePlays;
-	for (int i=0;i<returnedWords.size();i++)
+	for (int i=0;i<(int)returnedWords.size();i++)
 	{
 
 		if (horizontal)
 		{
-			for (int j=0;j<returnedWords[i].second.size();j++)
+			for (int j=0;j<(int)returnedWords[i].second.size();j++)
 			{
 			
 				if (check_other_dimension(board,returnedWords[i].first,row,returnedWords[i].second[j], horizontal))
@@ -136,7 +136,7 @@ vector<Play> possiblePlays;
 		}	
 		else
 		{
-			for (int j=0;j<returnedWords[i].second.size();j++)
+			for (int j=0;j<(int)returnedWords[i].second.size();j++)
 			{
 				if (check_other_dimension(board,returnedWords[i].first,returnedWords[i].second[j],col, horizontal))
 				{
@@ -145,12 +145,12 @@ vector<Play> possiblePlays;
 				}
 			}
 		}
-
 	}
 return possiblePlays;
 }
 
-void send_Row(Board &board)
+
+void MoveGenerate::send_Row(Board &board)
 {
 	Tile boardTiles[15][15];
 	board.GetTiles(boardTiles);
@@ -230,7 +230,7 @@ void send_Row(Board &board)
 }
 
 
-void send_Col(Board &board)
+void MoveGenerate::send_Col(Board &board)
 {
 	Tile boardTiles[15][15];
 	board.GetTiles(boardTiles);
@@ -312,4 +312,8 @@ void send_Col(Board &board)
 			}
 		}
 	}
+}
+
+MoveGenerate::~MoveGenerate(){
+	
 }

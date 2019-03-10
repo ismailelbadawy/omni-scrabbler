@@ -3,10 +3,10 @@
         {
             "name": "Win32",
             "includePath": [
+                
+                "${workspaceFolder}/",
                 "${workspaceRoot}/",
-                "C:/Program Files (x86)/Windows Kits/10/Include/10.0.17763.0/ucrt",
-                "${workspaceFolder}",
-                "${workspaceFolder}/GADDAG"
+                "C:/Program Files (x86)/Windows Kits/10/Include/10.0.17763.0/ucrt"
             ],
             "defines": [
                 "_DEBUG",
@@ -19,7 +19,7 @@
             "cppStandard": "c++17",
             "intelliSenseMode": "msvc-x64",
             "configurationProvider": "vector-of-bool.cmake-tools",
-            "compileCommands": "${workspaceFolder}/build/compile_commands.json"
+            "compileCommands": "${workspaceRoot}/build/compile_commands.json"
         }
     ],
     "version": 4

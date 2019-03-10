@@ -2,9 +2,7 @@
     "files.associations": {
         "vector": "cpp",
         "xstring": "cpp",
-        "iostream": "cpp"
-    },
-    "C_Cpp.intelliSenseEngineFallback": "Disabled",
-    "C_Cpp.errorSquiggles": "Disabled",
-    "C_Cpp.configurationWarnings": "Disabled"
+        "iostream": "cpp",
+        "string": "cpp"
+    }
 }

@@ -2,6 +2,7 @@
 #include<iostream>
 #include"Tile.h"
 using namespace std;
+
 class Play
 {
 	Tile* tile_;

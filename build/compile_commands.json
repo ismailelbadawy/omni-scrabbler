@@ -1,6 +1,60 @@
 [
 {
   "directory": "d:/D/CUFE CHS/Semester 8/Machine Intelligence/omni-scrabbler/build",
+  "command": "C:\\PROGRA~2\\MICROS~1\\2017\\COMMUN~1\\VC\\Tools\\MSVC\\1416~1.270\\bin\\Hostx86\\x86\\cl.exe  /nologo /TP   /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1   /FoCMakeFiles\\omniscrabbler.dir\\GADDAG\\GADDAG.cpp.obj /FdTARGET_COMPILE_PDB /FS -c \"D:\\D\\CUFE CHS\\Semester 8\\Machine Intelligence\\omni-scrabbler\\GADDAG\\GADDAG.cpp\"",
+  "file": "D:/D/CUFE CHS/Semester 8/Machine Intelligence/omni-scrabbler/GADDAG/GADDAG.cpp"
+},
+
+{
+  "directory": "d:/D/CUFE CHS/Semester 8/Machine Intelligence/omni-scrabbler/build",
+  "command": "C:\\PROGRA~2\\MICROS~1\\2017\\COMMUN~1\\VC\\Tools\\MSVC\\1416~1.270\\bin\\Hostx86\\x86\\cl.exe  /nologo /TP   /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1   /FoCMakeFiles\\omniscrabbler.dir\\GADDAG\\Node.cpp.obj /FdTARGET_COMPILE_PDB /FS -c \"D:\\D\\CUFE CHS\\Semester 8\\Machine Intelligence\\omni-scrabbler\\GADDAG\\Node.cpp\"",
+  "file": "D:/D/CUFE CHS/Semester 8/Machine Intelligence/omni-scrabbler/GADDAG/Node.cpp"
+},
+
+{
+  "directory": "d:/D/CUFE CHS/Semester 8/Machine Intelligence/omni-scrabbler/build",
+  "command": "C:\\PROGRA~2\\MICROS~1\\2017\\COMMUN~1\\VC\\Tools\\MSVC\\1416~1.270\\bin\\Hostx86\\x86\\cl.exe  /nologo /TP   /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1   /FoCMakeFiles\\omniscrabbler.dir\\GADDAG\\trial.cpp.obj /FdTARGET_COMPILE_PDB /FS -c \"D:\\D\\CUFE CHS\\Semester 8\\Machine Intelligence\\omni-scrabbler\\GADDAG\\trial.cpp\"",
+  "file": "D:/D/CUFE CHS/Semester 8/Machine Intelligence/omni-scrabbler/GADDAG/trial.cpp"
+},
+
+{
+  "directory": "d:/D/CUFE CHS/Semester 8/Machine Intelligence/omni-scrabbler/build",
+  "command": "C:\\PROGRA~2\\MICROS~1\\2017\\COMMUN~1\\VC\\Tools\\MSVC\\1416~1.270\\bin\\Hostx86\\x86\\cl.exe  /nologo /TP   /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1   /FoCMakeFiles\\omniscrabbler.dir\\Models\\Bag.cpp.obj /FdTARGET_COMPILE_PDB /FS -c \"D:\\D\\CUFE CHS\\Semester 8\\Machine Intelligence\\omni-scrabbler\\Models\\Bag.cpp\"",
+  "file": "D:/D/CUFE CHS/Semester 8/Machine Intelligence/omni-scrabbler/Models/Bag.cpp"
+},
+
+{
+  "directory": "d:/D/CUFE CHS/Semester 8/Machine Intelligence/omni-scrabbler/build",
+  "command": "C:\\PROGRA~2\\MICROS~1\\2017\\COMMUN~1\\VC\\Tools\\MSVC\\1416~1.270\\bin\\Hostx86\\x86\\cl.exe  /nologo /TP   /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1   /FoCMakeFiles\\omniscrabbler.dir\\Models\\Board.cpp.obj /FdTARGET_COMPILE_PDB /FS -c \"D:\\D\\CUFE CHS\\Semester 8\\Machine Intelligence\\omni-scrabbler\\Models\\Board.cpp\"",
+  "file": "D:/D/CUFE CHS/Semester 8/Machine Intelligence/omni-scrabbler/Models/Board.cpp"
+},
+
+{
+  "directory": "d:/D/CUFE CHS/Semester 8/Machine Intelligence/omni-scrabbler/build",
+  "command": "C:\\PROGRA~2\\MICROS~1\\2017\\COMMUN~1\\VC\\Tools\\MSVC\\1416~1.270\\bin\\Hostx86\\x86\\cl.exe  /nologo /TP   /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1   /FoCMakeFiles\\omniscrabbler.dir\\Models\\Move.cpp.obj /FdTARGET_COMPILE_PDB /FS -c \"D:\\D\\CUFE CHS\\Semester 8\\Machine Intelligence\\omni-scrabbler\\Models\\Move.cpp\"",
+  "file": "D:/D/CUFE CHS/Semester 8/Machine Intelligence/omni-scrabbler/Models/Move.cpp"
+},
+
+{
+  "directory": "d:/D/CUFE CHS/Semester 8/Machine Intelligence/omni-scrabbler/build",
+  "command": "C:\\PROGRA~2\\MICROS~1\\2017\\COMMUN~1\\VC\\Tools\\MSVC\\1416~1.270\\bin\\Hostx86\\x86\\cl.exe  /nologo /TP   /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1   /FoCMakeFiles\\omniscrabbler.dir\\Models\\Play.cpp.obj /FdTARGET_COMPILE_PDB /FS -c \"D:\\D\\CUFE CHS\\Semester 8\\Machine Intelligence\\omni-scrabbler\\Models\\Play.cpp\"",
+  "file": "D:/D/CUFE CHS/Semester 8/Machine Intelligence/omni-scrabbler/Models/Play.cpp"
+},
+
+{
+  "directory": "d:/D/CUFE CHS/Semester 8/Machine Intelligence/omni-scrabbler/build",
+  "command": "C:\\PROGRA~2\\MICROS~1\\2017\\COMMUN~1\\VC\\Tools\\MSVC\\1416~1.270\\bin\\Hostx86\\x86\\cl.exe  /nologo /TP   /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1   /FoCMakeFiles\\omniscrabbler.dir\\Models\\Rack.cpp.obj /FdTARGET_COMPILE_PDB /FS -c \"D:\\D\\CUFE CHS\\Semester 8\\Machine Intelligence\\omni-scrabbler\\Models\\Rack.cpp\"",
+  "file": "D:/D/CUFE CHS/Semester 8/Machine Intelligence/omni-scrabbler/Models/Rack.cpp"
+},
+
+{
+  "directory": "d:/D/CUFE CHS/Semester 8/Machine Intelligence/omni-scrabbler/build",
+  "command": "C:\\PROGRA~2\\MICROS~1\\2017\\COMMUN~1\\VC\\Tools\\MSVC\\1416~1.270\\bin\\Hostx86\\x86\\cl.exe  /nologo /TP   /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1   /FoCMakeFiles\\omniscrabbler.dir\\Models\\Tile.cpp.obj /FdTARGET_COMPILE_PDB /FS -c \"D:\\D\\CUFE CHS\\Semester 8\\Machine Intelligence\\omni-scrabbler\\Models\\Tile.cpp\"",
+  "file": "D:/D/CUFE CHS/Semester 8/Machine Intelligence/omni-scrabbler/Models/Tile.cpp"
+},
+
+{
+  "directory": "d:/D/CUFE CHS/Semester 8/Machine Intelligence/omni-scrabbler/build",
   "command": "C:\\PROGRA~2\\MICROS~1\\2017\\COMMUN~1\\VC\\Tools\\MSVC\\1416~1.270\\bin\\Hostx86\\x86\\cl.exe  /nologo /TP   /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1   /FoCMakeFiles\\omniscrabbler.dir\\source.cpp.obj /FdTARGET_COMPILE_PDB /FS -c \"D:\\D\\CUFE CHS\\Semester 8\\Machine Intelligence\\omni-scrabbler\\source.cpp\"",
   "file": "D:/D/CUFE CHS/Semester 8/Machine Intelligence/omni-scrabbler/source.cpp"
 }
