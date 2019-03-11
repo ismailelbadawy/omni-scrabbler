@@ -1,7 +1,0 @@
-[
-{
-  "directory": "d:/D/CUFE CHS/Semester 8/Machine Intelligence/omni-scrabbler/build",
-  "command": "C:\\PROGRA~2\\MICROS~1\\2017\\COMMUN~1\\VC\\Tools\\MSVC\\1416~1.270\\bin\\Hostx86\\x86\\cl.exe  /nologo /TP   /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1   /FoCMakeFiles\\omniscrabbler.dir\\main.cpp.obj /FdTARGET_COMPILE_PDB /FS -c \"D:\\D\\CUFE CHS\\Semester 8\\Machine Intelligence\\omni-scrabbler\\main.cpp\"",
-  "file": "D:/D/CUFE CHS/Semester 8/Machine Intelligence/omni-scrabbler/main.cpp"
-}
-]
