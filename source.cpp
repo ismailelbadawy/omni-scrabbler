@@ -1,9 +1,8 @@
 #pragma once
 #include<iostream>
 #include<vector>
-
 #include<map>
-#include"Move Generator/MoveGenerate.h"
+#include"MoveGenerator/MoveGenerate.h"
 #include"Models/Board.h"
 #include"Models/Play.h"
 #include"Models/Rack.h"
@@ -17,50 +16,32 @@ string 	BAG_PATH = "assets/letters.txt";
 Board 	BOARD;
 Bag   	BAG(BAG_PATH);
 Rack  	RACK;
-GADDAG	DAG(GADDAG_PATH);
+//GADDAG	DAG(GADDAG_PATH);
 
-
+int main(){
 	// for (int i = 0; i < possible.size(); i++) {
 	// 	cout << possible[i] << endl;
 	// }
-	cout<<"Hello World"<<endl;
-	string InputPath = "assets/Dict.txt";
-	string Bagpath = "assets/letters.txt";
-	Bag bag(Bagpath);
-	int a = bag.GetOccurences('a');
-	GADDAG Dag(InputPath);
-	//string Hook = "arr...es..";
 
-    vector<pair<string, vector<int>>> possible;
-	
-//	possible = Dag.ContainsHookWithRackAtPos(Hook,Rack, 2, 4);
-
-	for (int i = 0; i < (int)possible.size(); i++) {
-		cout << possible[i].first << " at positions: ";
-		for (int j = 0; j <(int) possible[i].second.size(); j++)
-			cout << possible[i].second[j] << " ";
-		cout << endl;
-	}
-	bool check = Dag.CheckWordInDict("zebra");
-	cout << check;
 	/////////////////////////////////////Khaled's Testing Part//////////////////////////////////////////////////////////////
-	MoveGenerate movGen(InputPath);		//A move generator insatance
-	board.Probe('e',7,4);		//Inserting letters 'e' and 't' to the empty board
-	board.Probe('t',7,11);		//_ _ _ _ e _ _ _ _ _ _ t _ _ _---->Row 7
+	MoveGenerate movGen(GADDAG_PATH);		//A move generator insatance
+	BOARD.Probe('e',7,4);		//Inserting letters 'e' and 't' to the empty board
+	BOARD.Probe('t',7,11);		//_ _ _ _ e _ _ _ _ _ _ t _ _ _---->Row 7
 
 	Tile RackTiles[7];          //A simple array to carry the rack's letters
 
-	RackTiles[0].SetLetter['p'];
-	RackTiles[1].SetLetter['n'];
-	RackTiles[2].SetLetter['o'];
-	RackTiles[3].SetLetter['h'];
-	RackTiles[4].SetLetter['e'];
-	RackTiles[5].SetLetter['l'];
-	RackTiles[6].SetLetter['a'];
+
+	RackTiles[0].SetLetter('p');
+	RackTiles[1].SetLetter('n');
+	RackTiles[2].SetLetter('g');
+	RackTiles[3].SetLetter('g');
+	RackTiles[4].SetLetter('e');
+	RackTiles[5].SetLetter('l');
+	RackTiles[6].SetLetter('a');
 	
 	Rack rack(RackTiles);
 
 	movGen.set_Rack(rack);
 
-	movGen.send_Row(board);
+	movGen.send_Row(BOARD);
 }

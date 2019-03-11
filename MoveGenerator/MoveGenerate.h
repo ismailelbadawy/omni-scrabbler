@@ -1,20 +1,23 @@
 #pragma once
 #include<iostream>
 #include<vector>
-#include"Models/Board.h"
-#include"Models/Move.h"
-#include"Models/Rack.h"
-#include"GADDAG/GADDAG.h"
+#include"../Models/Board.h"
+#include"../Models/Move.h"
+#include"../Models/Rack.h"
+#include"../GADDAG/GADDAG.h"
+
 
 using namespace std;
 
 class MoveGenerate{
    
     GADDAG *dag;
-    char rack_[7];
+    string rack_;
+   
     public:
-    MoveGenerate(string gaddagpath);
     MoveGenerate();
+    MoveGenerate(string gaddagpath);
+   
     void send_Col(Board &board);
     void send_Row(Board &board);
     void set_Rack(Rack gameRack);
