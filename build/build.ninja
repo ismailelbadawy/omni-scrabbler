@@ -11,7 +11,7 @@
 # =============================================================================
 
 # =============================================================================
-# Project: omni-scrabbler
+# Project: omniscrabbler
 # Configuration: Debug
 # =============================================================================
 
@@ -187,67 +187,7 @@ build ContinuousCoverage: phony CMakeFiles\ContinuousCoverage
 # Order-only phony target for omniscrabbler
 
 build cmake_object_order_depends_target_omniscrabbler: phony
-build CMakeFiles\omniscrabbler.dir\MoveGenerator\MoveGenerate.cpp.obj: CXX_COMPILER__omniscrabbler ..\MoveGenerator\MoveGenerate.cpp || cmake_object_order_depends_target_omniscrabbler
-  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
-  OBJECT_DIR = CMakeFiles\omniscrabbler.dir
-  OBJECT_FILE_DIR = CMakeFiles\omniscrabbler.dir\MoveGenerator
-  TARGET_COMPILE_PDB = CMakeFiles\omniscrabbler.dir\
-  TARGET_PDB = omniscrabbler.pdb
-build CMakeFiles\omniscrabbler.dir\GADDAG\GADDAG.cpp.obj: CXX_COMPILER__omniscrabbler ..\GADDAG\GADDAG.cpp || cmake_object_order_depends_target_omniscrabbler
-  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
-  OBJECT_DIR = CMakeFiles\omniscrabbler.dir
-  OBJECT_FILE_DIR = CMakeFiles\omniscrabbler.dir\GADDAG
-  TARGET_COMPILE_PDB = CMakeFiles\omniscrabbler.dir\
-  TARGET_PDB = omniscrabbler.pdb
-build CMakeFiles\omniscrabbler.dir\GADDAG\Node.cpp.obj: CXX_COMPILER__omniscrabbler ..\GADDAG\Node.cpp || cmake_object_order_depends_target_omniscrabbler
-  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
-  OBJECT_DIR = CMakeFiles\omniscrabbler.dir
-  OBJECT_FILE_DIR = CMakeFiles\omniscrabbler.dir\GADDAG
-  TARGET_COMPILE_PDB = CMakeFiles\omniscrabbler.dir\
-  TARGET_PDB = omniscrabbler.pdb
-build CMakeFiles\omniscrabbler.dir\GADDAG\trial.cpp.obj: CXX_COMPILER__omniscrabbler ..\GADDAG\trial.cpp || cmake_object_order_depends_target_omniscrabbler
-  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
-  OBJECT_DIR = CMakeFiles\omniscrabbler.dir
-  OBJECT_FILE_DIR = CMakeFiles\omniscrabbler.dir\GADDAG
-  TARGET_COMPILE_PDB = CMakeFiles\omniscrabbler.dir\
-  TARGET_PDB = omniscrabbler.pdb
-build CMakeFiles\omniscrabbler.dir\Models\Bag.cpp.obj: CXX_COMPILER__omniscrabbler ..\Models\Bag.cpp || cmake_object_order_depends_target_omniscrabbler
-  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
-  OBJECT_DIR = CMakeFiles\omniscrabbler.dir
-  OBJECT_FILE_DIR = CMakeFiles\omniscrabbler.dir\Models
-  TARGET_COMPILE_PDB = CMakeFiles\omniscrabbler.dir\
-  TARGET_PDB = omniscrabbler.pdb
-build CMakeFiles\omniscrabbler.dir\Models\Board.cpp.obj: CXX_COMPILER__omniscrabbler ..\Models\Board.cpp || cmake_object_order_depends_target_omniscrabbler
-  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
-  OBJECT_DIR = CMakeFiles\omniscrabbler.dir
-  OBJECT_FILE_DIR = CMakeFiles\omniscrabbler.dir\Models
-  TARGET_COMPILE_PDB = CMakeFiles\omniscrabbler.dir\
-  TARGET_PDB = omniscrabbler.pdb
-build CMakeFiles\omniscrabbler.dir\Models\Move.cpp.obj: CXX_COMPILER__omniscrabbler ..\Models\Move.cpp || cmake_object_order_depends_target_omniscrabbler
-  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
-  OBJECT_DIR = CMakeFiles\omniscrabbler.dir
-  OBJECT_FILE_DIR = CMakeFiles\omniscrabbler.dir\Models
-  TARGET_COMPILE_PDB = CMakeFiles\omniscrabbler.dir\
-  TARGET_PDB = omniscrabbler.pdb
-build CMakeFiles\omniscrabbler.dir\Models\Play.cpp.obj: CXX_COMPILER__omniscrabbler ..\Models\Play.cpp || cmake_object_order_depends_target_omniscrabbler
-  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
-  OBJECT_DIR = CMakeFiles\omniscrabbler.dir
-  OBJECT_FILE_DIR = CMakeFiles\omniscrabbler.dir\Models
-  TARGET_COMPILE_PDB = CMakeFiles\omniscrabbler.dir\
-  TARGET_PDB = omniscrabbler.pdb
-build CMakeFiles\omniscrabbler.dir\Models\Rack.cpp.obj: CXX_COMPILER__omniscrabbler ..\Models\Rack.cpp || cmake_object_order_depends_target_omniscrabbler
-  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
-  OBJECT_DIR = CMakeFiles\omniscrabbler.dir
-  OBJECT_FILE_DIR = CMakeFiles\omniscrabbler.dir\Models
-  TARGET_COMPILE_PDB = CMakeFiles\omniscrabbler.dir\
-  TARGET_PDB = omniscrabbler.pdb
-build CMakeFiles\omniscrabbler.dir\Models\Tile.cpp.obj: CXX_COMPILER__omniscrabbler ..\Models\Tile.cpp || cmake_object_order_depends_target_omniscrabbler
-  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
-  OBJECT_DIR = CMakeFiles\omniscrabbler.dir
-  OBJECT_FILE_DIR = CMakeFiles\omniscrabbler.dir\Models
-  TARGET_COMPILE_PDB = CMakeFiles\omniscrabbler.dir\
-  TARGET_PDB = omniscrabbler.pdb
-build CMakeFiles\omniscrabbler.dir\source.cpp.obj: CXX_COMPILER__omniscrabbler ..\source.cpp || cmake_object_order_depends_target_omniscrabbler
+build CMakeFiles\omniscrabbler.dir\main.cpp.obj: CXX_COMPILER__omniscrabbler ..\main.cpp || cmake_object_order_depends_target_omniscrabbler
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
   OBJECT_DIR = CMakeFiles\omniscrabbler.dir
   OBJECT_FILE_DIR = CMakeFiles\omniscrabbler.dir
@@ -261,7 +201,7 @@ build CMakeFiles\omniscrabbler.dir\source.cpp.obj: CXX_COMPILER__omniscrabbler .
 #############################################
 # Link the executable omniscrabbler.exe
 
-build omniscrabbler.exe: CXX_EXECUTABLE_LINKER__omniscrabbler CMakeFiles\omniscrabbler.dir\MoveGenerator\MoveGenerate.cpp.obj CMakeFiles\omniscrabbler.dir\GADDAG\GADDAG.cpp.obj CMakeFiles\omniscrabbler.dir\GADDAG\Node.cpp.obj CMakeFiles\omniscrabbler.dir\GADDAG\trial.cpp.obj CMakeFiles\omniscrabbler.dir\Models\Bag.cpp.obj CMakeFiles\omniscrabbler.dir\Models\Board.cpp.obj CMakeFiles\omniscrabbler.dir\Models\Move.cpp.obj CMakeFiles\omniscrabbler.dir\Models\Play.cpp.obj CMakeFiles\omniscrabbler.dir\Models\Rack.cpp.obj CMakeFiles\omniscrabbler.dir\Models\Tile.cpp.obj CMakeFiles\omniscrabbler.dir\source.cpp.obj
+build omniscrabbler.exe: CXX_EXECUTABLE_LINKER__omniscrabbler CMakeFiles\omniscrabbler.dir\main.cpp.obj
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
   LINK_FLAGS = /machine:X86 /debug /INCREMENTAL /subsystem:console
   LINK_LIBRARIES = kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib
