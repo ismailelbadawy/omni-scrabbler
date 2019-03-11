@@ -13,6 +13,8 @@ class MoveGenerate{
    
     GADDAG *dag;
     string rack_;
+    vector<Play> plays_;
+
    
     public:
     MoveGenerate();

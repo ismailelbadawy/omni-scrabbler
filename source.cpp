@@ -44,4 +44,6 @@ int main(){
 	movGen.set_Rack(rack);
 
 	movGen.send_Row(BOARD);
+
+	movGen.send_Col(BOARD);
 }

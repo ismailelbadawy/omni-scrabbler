@@ -241,7 +241,12 @@ void MoveGenerate::send_Row(Board &board)
 				delete []hook;
 
 				//Here we are testing the words we received from the GAD-DAG
-				check_words(board,possibleWords,i,-1,true);
+				vector<Play> possiblePlays = check_words(board,possibleWords,i,-1,true);
+				for(int i = 0; i < possiblePlays.size(); i++)
+				{
+					plays_.push_back(possiblePlays.at(i));
+				}
+				
 				patternSize=0;
 			}
 		}

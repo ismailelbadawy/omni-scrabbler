@@ -27,7 +27,7 @@ void GADDAG::add(string NewWord) {
 		int j = 0;
 		for (int i = 0;i<(int)AddWord.length();i++) {
 			//long words can be joined back together after the break point, cutting the tree size in half.
-			if (BreakFound && PrevNode.size() > j) {
+			if (BreakFound && (int)PrevNode.size() > j) {
 				CurrentNode->AddChild(AddWord[i], PrevNode[j]);
 				break;
 			}
@@ -85,7 +85,7 @@ void GADDAG::ContainsHookWithRackRecursive(Node* CurrentNode, set<string> &SetOf
 			letters += CurrentNode->get_Letter();
 
 		vector<char> vectorOfChildrenOfCurrentNode = CurrentNode->Keys();
-		for (int i = 0; i < vectorOfChildrenOfCurrentNode.size(); i++) {
+		for (int i = 0; i < (int)vectorOfChildrenOfCurrentNode.size(); i++) {
 			char Key = vectorOfChildrenOfCurrentNode[i];
 
 			std::size_t FoundInRack = rack.find(Key);
@@ -116,7 +116,7 @@ void GADDAG::ContainsHookWithRackRecursiveAtPos(Node* CurrentNode, vector<pair<s
 		if ((CurrentNode!=NULL && CurrentNode->get_Letter() != Node::Break && CurrentNode->get_Letter()!= Node::EOW) || CurrentNode==NULL) {
 			int MaxLength = 15 - CurrPosOnBoard + CurrentCount; // ----er- if currposonboard= 12 (enters)
 																//currcount= 3 then maxlength= 15- 12 +3= 6 
-			if (letters.length() - 1 > MaxLength)
+			if ((int)letters.length() - 1 > MaxLength)
 				return;
 		}
 	}
@@ -148,7 +148,7 @@ void GADDAG::ContainsHookWithRackRecursiveAtPos(Node* CurrentNode, vector<pair<s
 			letters += CurrentNode->get_Letter();
 
 		vector<char> vectorOfChildrenOfCurrentNode = CurrentNode->Keys();
-		for (int i = 0; i < vectorOfChildrenOfCurrentNode.size(); i++) {
+		for (int i = 0; i < (int)vectorOfChildrenOfCurrentNode.size(); i++) {
 			NewFound = found;
 			NewCount = CurrentCount;
 			string NewHook = hook;
@@ -175,7 +175,7 @@ void GADDAG::ContainsHookWithRackRecursiveAtPos(Node* CurrentNode, vector<pair<s
 		}
 		
 		vector<char> vectorOfChildrenOfCurrentNode = CurrentNode->Keys();
-		for (int i = 0; i < vectorOfChildrenOfCurrentNode.size(); i++) {
+		for (int i = 0; i <(int) vectorOfChildrenOfCurrentNode.size(); i++) {
 			NewFound = found;
 			char Key = vectorOfChildrenOfCurrentNode[i];
 
@@ -197,7 +197,7 @@ void GADDAG::ContainsHookWithRackRecursiveAtPos(Node* CurrentNode, vector<pair<s
 		int NewCount= CurrentCount;
 
 		vector<char> vectorOfChildrenOfCurrentNode = CurrentNode->Keys();
-		for (int i = 0; i < vectorOfChildrenOfCurrentNode.size(); i++) {
+		for (int i = 0; i < (int)vectorOfChildrenOfCurrentNode.size(); i++) {
 			NewCount = CurrentCount;
 			char Key = vectorOfChildrenOfCurrentNode[i];
 
@@ -221,7 +221,7 @@ string GADDAG::GetWord(string str) {
 	for (int i = IndexofBreak - 1; i >= 0; i--)
 		Word += str[i];
 
-	for (int i = IndexofBreak + 1; i < str.length(); i++)
+	for (int i = IndexofBreak + 1; i < (int)str.length(); i++)
 		Word += str[i];
 
 	return Word;
