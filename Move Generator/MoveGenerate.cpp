@@ -1,10 +1,19 @@
 #include"MoveGenerate.h"
 
-
 MoveGenerate::MoveGenerate(){
-
-
 }
+
+MoveGenerate::MoveGenerate(string gaddagpath){
+	dag=new GADDAG(gaddagpath);
+}
+void MoveGenerate::set_Rack(Rack gameRack)
+{
+	for (int i=0;i<7;i++)
+	{
+		rack_[i]=gameRack.GetLetter(i);
+	}
+}
+
 bool MoveGenerate::check_other_dimension(Board board,string word,int row,int col,bool horizontal) //True when called from send_Row
 {
 	Tile boardTiles[15][15];
@@ -51,11 +60,9 @@ bool MoveGenerate::check_other_dimension(Board board,string word,int row,int col
 			string toTest(arr);
 			
 			delete [] arr;
-					
-			
-
-			//if (!test_string_GADDAG(toTest));
-			//	return false;
+				
+			if (!dag->CheckWordInDict(toTest));
+				return false;
 		}
 		return true;
 	}
@@ -104,9 +111,9 @@ bool MoveGenerate::check_other_dimension(Board board,string word,int row,int col
 			string toTest(arr);
 
 			delete [] arr;
-					
-			//if (!test_string_GADDAG(toTest));
-			//	return false;
+							
+			if (!dag->CheckWordInDict(toTest));
+				return false;
 		}
 
 		return true;
@@ -190,12 +197,14 @@ void MoveGenerate::send_Row(Board &board)
 				{
 					//We are sending the entire row. Therefore, the hook will be the entire row...
 					//possibleWords=send_to_GADDAG(hook,rack_,1,1) 					
+					possibleWords=dag->ContainsHookWithRackAtPos(hook,rack_,1,1);
 				}
 				
 				//A previous pattern --->    _ _ a r r _ _ b a _ _ _ _ _ _ -->here we reach the 'r' at pos 4...
 				else if (boardTiles[i][reverseIter].GetLetter()!='0')    
 				{
 					//possibleWords=send_to_GADDAG(hook,rack_,hookIndex-(reverseIter+2),hookIndex)
+					possibleWords=dag->ContainsHookWithRackAtPos(hook,rack_,hookIndex-(reverseIter+2),hookIndex);
 				}
 				
 				//Here is the general case, we are moving backingwards without hitting a previous pattern yet or reaching start of row
@@ -211,10 +220,12 @@ void MoveGenerate::send_Row(Board &board)
 					{
 						//We are sending the entire row. Therefore, the hook will be the entire row...
 						//possibleWords=send_to_GADDAG(hook,rack_,hookIndex-1,hookIndex)   			
+						possibleWords=dag->ContainsHookWithRackAtPos(hook,rack_,hookIndex-1,hookIndex);
 					}
 					else										//Reached a previous pattern 
 					{
 						//possibleWords=send_to_GADDAG(hook,rack_,hookIndex-(reverseIter+2),hookIndex)
+						possibleWords=dag->ContainsHookWithRackAtPos(hook,rack_,hookIndex-(reverseIter+2),hookIndex);
 					}
 
 				}
@@ -270,16 +281,16 @@ void MoveGenerate::send_Col(Board &board)
 				{
 					//We are sending the entire row. Therefore, the hook will be the entire row...
 					//possibleWords=send_to_GADDAG(hook,rack_,1,1) 
-					int possibleWordsCount=possibleWords.size();
-					int iter=0;
+					possibleWords=dag->ContainsHookWithRackAtPos(hook,rack_,1,1);
 					delete []hook;
 					
 				}
-				
+			
 				//A previous pattern --->    _ _ a r r _ _ b a _ _ _ _ _ _ -->here we reach the 'r' at pos 4...
 				else if (boardTiles[reverseIter][i].GetLetter()!='0')    
 				{
 					//possibleWords=send_to_GADDAG(hook,rack_,hookIndex-(reverseIter+2),hookIndex)
+					possibleWords=dag->ContainsHookWithRackAtPos(hook,rack_,hookIndex-(reverseIter+2),hookIndex);
 					delete []hook;
 				
 				}
@@ -297,10 +308,12 @@ void MoveGenerate::send_Col(Board &board)
 					{
 						//We are sending the entire row. Therefore, the hook will be the entire row...
 						//possibleWords=send_to_GADDAG(hook,rack_,hookIndex-1,hookIndex)   			
+						possibleWords=dag->ContainsHookWithRackAtPos(hook,rack_,hookIndex-1,hookIndex);
 					}
 					else										//Reached a previous pattern 
 					{
 						//possibleWords=send_to_GADDAG(hook,rack_,hookIndex-(reverseIter+2),hookIndex)
+						possibleWords=dag->ContainsHookWithRackAtPos(hook,rack_,hookIndex-(reverseIter+2),hookIndex);
 					}
 
 					//Here we are testing the words we received from the GAD-DAG
