@@ -31,11 +31,6 @@ int Bag::GetOccurences(char letter)
     tile.SetParams(letter,0,0,0,0);
 
 return bag_.at(tile);
-<<<<<<< HEAD
-=======
-
-
->>>>>>> f3cd685a8e549516d7171a69f1463fb0fd393c0e
 }
 int Bag::GetOccurences(Tile tile){
 return bag_.at(tile);

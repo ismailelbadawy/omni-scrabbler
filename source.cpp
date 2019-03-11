@@ -20,9 +20,6 @@ Rack  	RACK;
 GADDAG	DAG(GADDAG_PATH);
 
 
-<<<<<<< HEAD
-void main(){
-=======
 	// for (int i = 0; i < possible.size(); i++) {
 	// 	cout << possible[i] << endl;
 	// }
@@ -50,7 +47,6 @@ void main(){
 	MoveGenerate movGen(InputPath);		//A move generator insatance
 	board.Probe('e',7,4);		//Inserting letters 'e' and 't' to the empty board
 	board.Probe('t',7,11);		//_ _ _ _ e _ _ _ _ _ _ t _ _ _---->Row 7
->>>>>>> f3cd685a8e549516d7171a69f1463fb0fd393c0e
 
 	Tile RackTiles[7];          //A simple array to carry the rack's letters
 
