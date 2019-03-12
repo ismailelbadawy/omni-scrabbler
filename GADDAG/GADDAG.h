@@ -25,7 +25,7 @@ private:
 	string GetWord(string str);
 
 	//Load dag with dictionary hard coded
-	void LoadDagHardCoded() {}
+	void LoadDagHardCoded();
 
 	//Function to read the dictionary represented as an input file 
 	//in the assets folder, it takes the inputPath and loads the GADDAG

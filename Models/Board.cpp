@@ -11,7 +11,8 @@ Board::Board()  //Default constructor
 			//This should compute somehow the bonus of each tile and place it while contructing the board
 			tiles_[i][j].SetLetter('0'); 				//Initialize all tiles first with zeroes
 		}
-	}	
+	}
+	this->count_ = 0;
 }
 
 Board::Board(char tiles[15][15])
@@ -48,13 +49,18 @@ void Board::UpdateBoard(string word, int row, int column, bool horizontal)
 		else 
 			tiles_[row++][column].SetParams(word[i], row, column, 1, 1);
 	}
+	this->count_+= (int)word.length();
 }
 
 void Board::Probe(char c,int row,int col) //For testing purposes only
 {
 	tiles_[row][col].SetParams(c,row,col,1,1);
+	this->count_++;
 }
 
+int Board::GetCount(){
+	return this->count_;
+}
 
 Board::~Board()
 {

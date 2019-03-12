@@ -13,7 +13,7 @@
 using namespace std;
 string 	GADDAG_PATH = "assets/Dict.txt";
 string 	BAG_PATH = "assets/letters.txt";
-Board 	BOARD;
+Board 	board;
 Bag   	BAG(BAG_PATH);
 Rack  	RACK;
 //GADDAG	DAG(GADDAG_PATH);
@@ -25,8 +25,8 @@ int main(){
 
 	/////////////////////////////////////Khaled's Testing Part//////////////////////////////////////////////////////////////
 	MoveGenerate movGen(GADDAG_PATH);		//A move generator insatance
-	BOARD.Probe('e',7,4);		//Inserting letters 'e' and 't' to the empty board
-	BOARD.Probe('t',7,11);		//_ _ _ _ e _ _ _ _ _ _ t _ _ _---->Row 7
+	//BOARD.Probe('e',7,4);		//Inserting letters 'e' and 't' to the empty board
+	//BOARD.Probe('t',7,11);		//_ _ _ _ e _ _ _ _ _ _ t _ _ _---->Row 7
 
 	Tile RackTiles[7];          //A simple array to carry the rack's letters
 
@@ -40,10 +40,9 @@ int main(){
 	RackTiles[6].SetLetter('a');
 	
 	Rack rack(RackTiles);
+	while(true){
+		vector<Play> moves = movGen.Generate(&rack, board);
+	}
 
-	movGen.set_Rack(rack);
-
-	movGen.send_Row(BOARD);
-
-	movGen.send_Col(BOARD);
+	cout<<"hi";
 }

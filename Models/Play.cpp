@@ -8,13 +8,15 @@ Play::Play()
 Play::Play(string word,int row, int col,bool horizontal)
 {
 	size_=(int)word.size();
-	tile_=new Tile[size_];
+	
 	//tile_ = Tile(letter.GetLetter(), row, column, letter.GetScore(), letter.GetBonus());
 	if (horizontal)
 	{
 		for (int i=0;i<size_;i++)
 		{
-			tile_[i].SetParams(word[i],row,col+i);
+			Tile t;
+			t.SetParams(word[i],row,col+i);
+			tiles_.push_back(t);
 		}
 	}
 	
@@ -22,7 +24,9 @@ Play::Play(string word,int row, int col,bool horizontal)
 	{
 		for (int i=0;i<size_;i++)
 		{
-			tile_[i].SetParams(word[i],row+i,col);
+			Tile t;
+			t.SetParams(word[i],row+i,col);
+			tiles_.push_back(t);
 		}
 	}
 }
@@ -42,14 +46,14 @@ int Play::GetColumn()
 	return column_;
 }
 
-char* Play::GetLetters()
+string Play::GetLetters()
 {
-	char *returnedArr=new char[size_];
+	string returnedStr="";
 	for (int i=0;i<size_;i++)
 	{
-		returnedArr[i]=tile_[i].GetLetter();
+	returnedStr+=tiles_.at(i).GetLetter();
 	}
-	return returnedArr;
+	return returnedStr;
 }
 
 int Play::GetScore()

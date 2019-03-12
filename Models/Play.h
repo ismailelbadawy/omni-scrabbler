@@ -1,11 +1,14 @@
 #pragma once
+
 #include<iostream>
+#include<vector>
 #include"Tile.h"
+
 using namespace std;
 
 class Play
 {
-	Tile* tile_;
+	vector<Tile> tiles_;
 	int size_;
 	int row_;
 	int column_;
@@ -19,7 +22,7 @@ public:
 //	Play(char letter, int row, int column);
 	int GetRow();
 	int GetColumn();
-	char* GetLetters();
+	string GetLetters();
 	int GetScore();
 	void CalculateScore();
 	~Play();
