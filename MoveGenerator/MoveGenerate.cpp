@@ -16,7 +16,7 @@ void MoveGenerate::set_Rack(Rack gameRack){
 	}
 }
 
-bool MoveGenerate::check_other_dimension(Board board,string word,int row,int col,bool horizontal) //True when called from send_Row
+bool MoveGenerate::check_other_dimension(Board board,string word,int row,int col,bool horizontal) //True when called from generateWordsAtRows
 {
 	Tile boardTiles[15][15];
 	board.GetTiles(boardTiles);
@@ -24,12 +24,13 @@ bool MoveGenerate::check_other_dimension(Board board,string word,int row,int col
 	{
 																//_ _ _ _ _ _|c|_ _ _ _ _ _ _ _			-->>Here we want to insert "ay" after
 																//_ _ _ a r r|_|_ _ _ _ _ _ _ _  		"arr", but at col 6 we have to check
-		for (int i=0;i<(int)word.size();i++)							//_ _ _ _ _ _|t|_ _ _ _ _ _ _ _ 		if inserting "a" is ok. "cat" is ok!!
+		for (int i=0;i<(int)word.size();i++)					//_ _ _ _ _ _|t|_ _ _ _ _ _ _ _ 		if inserting "a" is ok. "cat" is ok!!
 		{	
-			int startIndex=0;
-			int endIndex=0;										//Index that will get us the word to test using the GAD-dag_
+			int otherWordStart=0;
+			int otherWordEnd=0;										//Index that will get us the word to test using the GAD-dag_
 			int rowIterUp=0,rowIterDown=0;						//To up or down;
 			
+
 			if (row!=0 && row!=14 && boardTiles[row-rowIterUp][col+i].GetLetter()=='0' &&
 			boardTiles[row+rowIterDown][col+i].GetLetter()=='0'){
 				return true;
@@ -57,21 +58,21 @@ bool MoveGenerate::check_other_dimension(Board board,string word,int row,int col
 				return true;
 			}
 			
-			startIndex=row-rowIterUp;
-			endIndex=row+rowIterDown;
+			otherWordStart=row-rowIterUp;
+			otherWordEnd=row+rowIterDown;
 			
-			char * arr= new char[endIndex-startIndex+1];
+			char * arr= new char[otherWordEnd-otherWordStart+1];
 			
-			for (int iter=0;iter<endIndex-startIndex+1;iter++)
+			for (int iter=0;iter<otherWordEnd-otherWordStart+1;iter++)
 			{
-				arr[iter]=boardTiles[startIndex+iter][col+i].GetLetter();
+				arr[iter]=boardTiles[otherWordStart+iter][col+i].GetLetter();
 			}	
 			
-			string toTest(arr);
+			string wordToTest(arr);
 			
 			delete [] arr;
 				
-			if (!dag_->CheckWordInDict(toTest))
+			if (!dag_->CheckWordInDict(wordToTest))
 				return false;
 		}
 		return true;
@@ -84,8 +85,8 @@ bool MoveGenerate::check_other_dimension(Board board,string word,int row,int col
 		for (int i=0;i<(int)word.size();i++)							//_ _ _ _ _ _ t _ _ _ _ _ _ _ _ 		check if inserting "a" is ok.
 																										//"attack" is ok!!
 		{			
-			int startIndex=0;
-			int endIndex=0;										//Index that will get us the word to test using the GAD-dag_
+			int otherWordStart=0;
+			int otherWordEnd=0;										//Index that will get us the word to test using the GAD-dag_
 			int colIterLeft=0,colIterRight=0;					//To up or down;
 			
 			if (col!=0 && col!=14 &&boardTiles[row+i][col-colIterLeft].GetLetter()=='0'
@@ -118,21 +119,21 @@ bool MoveGenerate::check_other_dimension(Board board,string word,int row,int col
 			&&boardTiles[row+i][col+colIterRight].GetLetter()=='0'){
 				return true;
 			}
-			startIndex=col-colIterLeft;
-			endIndex=col+colIterRight;
+			otherWordStart=col-colIterLeft;
+			otherWordEnd=col+colIterRight;
 			
-			char * arr= new char[endIndex-startIndex+1];
+			char * arr= new char[otherWordEnd-otherWordStart+1];
 			
-			for (int iter=0;iter<endIndex-startIndex+1;iter++)
+			for (int iter=0;iter<otherWordEnd-otherWordStart+1;iter++)
 			{
-				arr[iter]=boardTiles[col+i][startIndex+iter].GetLetter();
+				arr[iter]=boardTiles[col+i][otherWordStart+iter].GetLetter();
 			}	
 			
-			string toTest(arr);
+			string wordToTest(arr);
 
 			delete [] arr;
 							
-			if (!dag_->CheckWordInDict(toTest))
+			if (!dag_->CheckWordInDict(wordToTest))
 				return false;
 		}
 
@@ -178,49 +179,49 @@ return possiblePlays;
 }
 
 
-void MoveGenerate::send_Row(Board &board)
+void MoveGenerate::generateWordsAtRows(Board &board)
 {
 	Tile boardTiles[15][15];
 	board.GetTiles(boardTiles);
 
-	for (int i=0;i<15; i++)
+	for (int rowIter=0;rowIter<15; rowIter++)
 	{
 		//First will send entire row, then entire row - first pattern, then entire row - (first+second) patterns.. and so on till end of row..
-		int patternSize=0;
+		int stringToDagSize=0;
 		
 		vector< pair <string,vector<int> > > possibleWords; //Vector that will carry possible combinations after we have it returned from GADDAG
 
-		for (int j=0;j<15;j++)
+		for (int colIter=0;colIter<15;colIter++)
 		{
-			while (boardTiles[i][j].GetLetter()!='0')
+			while (boardTiles[rowIter][colIter].GetLetter()!='0')
 			{
-				patternSize++;
-				j++;
-				if (j==15)
+				stringToDagSize++;
+				colIter++;
+				if (colIter==15)
 					break;	
 			}
 
-			if (patternSize!=0)								//Will be zero if row is empty
+			if (stringToDagSize!=0)								//Will be zero if row is empty
 			{
-				int hookIndex=j-patternSize;				//Begin index of current hook
-				int reverseIter=hookIndex-2;				//An iterator to go back till we reach a previous pattern or begin of row
-				int hookSize=15-hookIndex;					//Calculating the size of our hook
+				int hookBeginIndex=colIter-stringToDagSize;				//Begin index of current hook
+				int reverseIterator=hookBeginIndex-2;				//An iterator to go back till we reach a previous pattern or begin of row
+				int hookSize=15-hookBeginIndex;					//Calculating the size of our hook
 	   			//The hook to be send in each iteration
 				string hookString="";
 				//Now we fill out the hook to be sent		//
 				for (int k=0;k<hookSize;k++)
 				{
-					if (boardTiles[i][k+hookIndex].GetLetter()=='0')
+					if (boardTiles[rowIter][k+hookBeginIndex].GetLetter()=='0')
 					{	
 						
 						hookString+='.';
 					}
 					else {	
-						hookString+=boardTiles[i][k+hookIndex].GetLetter();
+						hookString+=boardTiles[rowIter][k+hookBeginIndex].GetLetter();
 				}
 				}
 				
-				if (reverseIter==-1) //We have reached the beginning of the row (First pattern special case)
+				if (reverseIterator==-1) //We have reached the beginning of the row (First pattern special case)
 				{
 					//We are sending the entire row. Therefore, the hook will be the entire row...
 					//possibleWords=send_to_GADDAG(hook,rack_,1,1) 					
@@ -228,31 +229,31 @@ void MoveGenerate::send_Row(Board &board)
 				}
 				
 				//A previous pattern --->    _ _ a r r _ _ b a _ _ _ _ _ _ -->here we reach the 'r' at pos 4...
-				else if (boardTiles[i][reverseIter].GetLetter()!='0')    
+				else if (boardTiles[rowIter][reverseIterator].GetLetter()!='0')    
 				{
-					//possibleWords=send_to_GADDAG(hook,rack_,hookIndex-(reverseIter+2),hookIndex)
-					possibleWords=dag_->ContainsHookWithRackAtPos(hookString,rack_,hookIndex-(reverseIter+2),hookIndex);
+					//possibleWords=send_to_GADDAG(hook,rack_,hookBeginIndex-(reverseIterator+2),hookBeginIndex)
+					possibleWords=dag_->ContainsHookWithRackAtPos(hookString,rack_,hookBeginIndex-(reverseIterator+2),hookBeginIndex);
 				}
 				
 				//Here is the general case, we are moving backingwards without hitting a previous pattern yet or reaching start of row
-				else if (boardTiles[i][reverseIter].GetLetter()=='0')
+				else if (boardTiles[rowIter][reverseIterator].GetLetter()=='0')
 				{
 					
-					while (boardTiles[i][reverseIter].GetLetter()=='0'&&reverseIter>0)
+					while (boardTiles[rowIter][reverseIterator].GetLetter()=='0'&&reverseIterator>0)
 					{
-						reverseIter--;
+						reverseIterator--;
 					}
 
-					if (reverseIter==0)							//Reached the begining of the row
+					if (reverseIterator==0)							//Reached the begining of the row
 					{
 						//We are sending the entire row. Therefore, the hook will be the entire row...
-						//possibleWords=send_to_GADDAG(hook,rack_,hookIndex-1,hookIndex)   			
-						possibleWords=dag_->ContainsHookWithRackAtPos(hookString,rack_,hookIndex-1,hookIndex);
+						//possibleWords=send_to_GADDAG(hook,rack_,hookBeginIndex-1,hookBeginIndex)   			
+						possibleWords=dag_->ContainsHookWithRackAtPos(hookString,rack_,hookBeginIndex-1,hookBeginIndex);
 					}
 					else										//Reached a previous pattern 
 					{
-						//possibleWords=send_to_GADDAG(hook,rack_,hookIndex-(reverseIter+2),hookIndex)
-						possibleWords=dag_->ContainsHookWithRackAtPos(hookString,rack_,hookIndex-(reverseIter+2),hookIndex);
+						//possibleWords=send_to_GADDAG(hook,rack_,hookBeginIndex-(reverseIterator+2),hookBeginIndex)
+						possibleWords=dag_->ContainsHookWithRackAtPos(hookString,rack_,hookBeginIndex-(reverseIterator+2),hookBeginIndex);
 					}
 
 				}
@@ -260,46 +261,46 @@ void MoveGenerate::send_Row(Board &board)
 		
 
 				//Here we are testing the words we received from the GAD-dag_
-				vector<Play> possiblePlays = check_words(board,possibleWords,i,j,true);
+				vector<Play> possiblePlays = check_words(board,possibleWords,rowIter,colIter,true);
 				for(int i = 0; i < (int)possiblePlays.size(); i++)
 				{
 					plays_.push_back(possiblePlays.at(i));
 				}
 				
-				patternSize=0;
+				stringToDagSize=0;
 			}
 		}
 	}
 }
 
 
-void MoveGenerate::send_Col(Board &board)
+void MoveGenerate::generateWordsAtCols(Board &board)
 {
 	Tile boardTiles[15][15];
 	board.GetTiles(boardTiles);
 
-	for (int i=0;i<15; i++)
+	for (int colIter=0;colIter<15; colIter++)
 	{
 		//First will send entire col, then entire col - first pattern, then entire col - (first+second) patterns.. and so on till end of col..
-		int patternSize=0;
+		int stringToDagSize=0;
 		
 		vector< pair <string,vector<int> > > possibleWords; //Vector that will carry possible combinations after we have it returned from GADDAG
 
-		for (int j=0;j<15;j++)
+		for (int rowIter=0;rowIter<15;rowIter++)
 		{
-			while (boardTiles[j][i].GetLetter()!='0')
+			while (boardTiles[rowIter][colIter].GetLetter()!='0')
 			{
-				patternSize++;
-				j++;	
-				if (j==15)
+				stringToDagSize++;
+				rowIter++;	
+				if (rowIter==15)
 					break;
 			}
 
-			if (patternSize!=0)
+			if (stringToDagSize!=0)
 			{
-				int hookIndex=i-patternSize;				//Begin index of our hook
-				int reverseIter=hookIndex-2;				//The iterator to go back till we reach a previous pattern or coloumn begin
-				int hookSize=15-hookIndex;					//Calculating the hook size
+				int hookBeginIndex=colIter-stringToDagSize;			//Begin index of our hook
+				int reverseIterator=hookBeginIndex-2;				//The iterator to go back till we reach a previous pattern or coloumn begin
+				int hookSize=15-hookBeginIndex;					//Calculating the hook size
 				
 				string hookString="";
 				  			//Hook to be sent
@@ -307,10 +308,10 @@ void MoveGenerate::send_Col(Board &board)
 				//Now we fill out the hook to be sent
 				for (int k=0;k<hookSize;k++)
 				{
-					hookString+=boardTiles[k+hookIndex][i].GetLetter();
+					hookString+=boardTiles[k+hookBeginIndex][colIter].GetLetter();
 				}
 				
-				if (reverseIter==-1) //We have reached the beginning of the row (First pattern special case)
+				if (reverseIterator==-1) //We have reached the beginning of the row (First pattern special case)
 				{
 					//We are sending the entire row. Therefore, the hook will be the entire row...
 					//possibleWords=send_to_GADDAG(hook,rack_,1,1) 
@@ -318,39 +319,48 @@ void MoveGenerate::send_Col(Board &board)
 				}
 			
 				//A previous pattern --->    _ _ a r r _ _ b a _ _ _ _ _ _ -->here we reach the 'r' at pos 4...
-				else if (boardTiles[reverseIter][i].GetLetter()!='0')    
+				else if (boardTiles[reverseIterator][colIter].GetLetter()!='0')    
 				{
-					//possibleWords=send_to_GADDAG(hook,rack_,hookIndex-(reverseIter+2),hookIndex)
-					possibleWords=dag_->ContainsHookWithRackAtPos(hookString,rack_,hookIndex-(reverseIter+2),hookIndex);
+					//possibleWords=send_to_GADDAG(hook,rack_,hookBeginIndex-(reverseIterator+2),hookBeginIndex)
+					possibleWords=dag_->ContainsHookWithRackAtPos(hookString,rack_,hookBeginIndex-(reverseIterator+2),hookBeginIndex);
 				
 				}
 				
 				//Here is the general case, we are moving backingwards without hitting a previous pattern yet or reaching start of row
-				else if (boardTiles[reverseIter][i].GetLetter()=='0')
+				else if (boardTiles[reverseIterator][colIter].GetLetter()=='0')
 				{
 					
-					while (boardTiles[reverseIter][i].GetLetter()=='0'&&reverseIter>0)
+					while (boardTiles[reverseIterator][colIter].GetLetter()=='0'&&reverseIterator>0)
 					{
-						reverseIter--;
+						reverseIterator--;
 					}
 
-					if (reverseIter==0)							//Reached the begining of the row
+					if (reverseIterator==0)							//Reached the begining of the row
 					{
 						//We are sending the entire row. Therefore, the hook will be the entire row...
-						//possibleWords=send_to_GADDAG(hook,rack_,hookIndex-1,hookIndex)   			
-						possibleWords=dag_->ContainsHookWithRackAtPos(hookString,rack_,hookIndex-1,hookIndex);
+						//possibleWords=send_to_GADDAG(hook,rack_,hookBeginIndex-1,hookBeginIndex)   			
+						possibleWords=dag_->ContainsHookWithRackAtPos(hookString,rack_,hookBeginIndex-1,hookBeginIndex);
 					}
 					else										//Reached a previous pattern 
 					{
-						//possibleWords=send_to_GADDAG(hook,rack_,hookIndex-(reverseIter+2),hookIndex)
-						possibleWords=dag_->ContainsHookWithRackAtPos(hookString,rack_,hookIndex-(reverseIter+2),hookIndex);
+						//possibleWords=send_to_GADDAG(hook,rack_,hookBeginIndex-(reverseIterator+2),hookBeginIndex)
+						possibleWords=dag_->ContainsHookWithRackAtPos(hookString,rack_,hookBeginIndex-(reverseIterator+2),hookBeginIndex);
 					}
 
 					//Here we are testing the words we received from the GAD-dag_
-					check_words(board,possibleWords,-1,i,true);
+					check_words(board,possibleWords,-1,colIter,true);
 				}
 				
-				patternSize=0;
+
+				//Here we are testing the words we received from the GAD-dag_
+				vector<Play> possiblePlays = check_words(board,possibleWords,rowIter,colIter,true);
+				for(int i = 0; i < (int)possiblePlays.size(); i++)
+				{
+					plays_.push_back(possiblePlays.at(i));
+				}
+				
+
+				stringToDagSize=0;
 			}
 		}
 	}
@@ -361,8 +371,11 @@ vector<Play> MoveGenerate::Generate(const Rack * rack, Board & board){
 	if(board.GetCount() == 0){
 		// Start from the middle try all possibilities.
 	}
-	this->send_Col(board);
-	this->send_Row(board);
+
+	plays_.clear();
+	
+	this->generateWordsAtCols(board);
+	this->generateWordsAtRows(board);
 	return plays_;
 }
 

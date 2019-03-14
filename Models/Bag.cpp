@@ -20,7 +20,7 @@ Bag::Bag(string InputPath){
             int score=stoi(Line);
             Tile t;
             t.SetParams(letter,-1,-1,score,1);
-             bag_.insert(pair<Tile,int>(t,occurence));
+            bag_.insert(pair<Tile,int>(t,occurence));
         }
     
     }
