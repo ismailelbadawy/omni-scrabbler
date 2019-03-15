@@ -2,7 +2,7 @@
 #include<iostream>
 #include<vector>
 #include"../Models/Board.h"
-#include"../Models/Move.h"
+#include"../Models/Play.h"
 #include"../Models/Rack.h"
 #include"../GADDAG/GADDAG.h"
 

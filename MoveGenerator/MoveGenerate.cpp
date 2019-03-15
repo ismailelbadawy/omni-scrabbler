@@ -10,6 +10,7 @@ MoveGenerate::MoveGenerate(string gaddagpath){
 }
 
 void MoveGenerate::set_Rack(Rack gameRack){
+	rack_="";
 	for (int i=0;i<7;i++)
 	{
 		rack_+=gameRack.GetLetter(i);
@@ -367,6 +368,7 @@ void MoveGenerate::generateWordsAtCols(Board &board)
 }
 
 vector<Play> MoveGenerate::Generate(const Rack * rack, Board & board){
+
 	this->set_Rack(*rack);
 	if(board.GetCount() == 0){
 		// Start from the middle try all possibilities.
