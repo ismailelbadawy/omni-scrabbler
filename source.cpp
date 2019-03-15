@@ -26,7 +26,7 @@ int main(){
 	/////////////////////////////////////Khaled's Testing Part//////////////////////////////////////////////////////////////
 	MoveGenerate movGen(GADDAG_PATH);		//A move generator insatance
 	//BOARD.Probe('e',7,4);		//Inserting letters 'e' and 't' to the empty board
-	//BOARD.Probe('t',7,11);		//_ _ _ _ e _ _ _ _ _ _ t _ _ _---->Row 7
+	board.Probe('t',7,11);		//_ _ _ _ e _ _ _ _ _ _ t _ _ _---->Row 7
 
 	Tile RackTiles[7];          //A simple array to carry the rack's letters
 

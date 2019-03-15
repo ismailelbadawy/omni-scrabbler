@@ -1,5 +1,5 @@
 #include"GADDAG.h"
-#include "dictionary.cpp";
+#include "dictionary.h"
 
 GADDAG:: GADDAG() {
 	RootNode = new Node(Node::Root);
@@ -257,6 +257,7 @@ bool GADDAG::CheckWordInDict(string Word)
 			return false;
 		}
 	}
+	return true;
 }
 
 void GADDAG::LoadDagHardCoded() { 
