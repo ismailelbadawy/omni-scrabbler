@@ -354,7 +354,7 @@ void MoveGenerate::generateWordsAtCols(Board &board)
 				
 
 				//Here we are testing the words we received from the GAD-dag_
-				vector<Play> possiblePlays = check_words(board,possibleWords,rowIter,colIter,true);
+				vector<Play> possiblePlays = check_words(board,possibleWords,rowIter,colIter,false);
 				for(int i = 0; i < (int)possiblePlays.size(); i++)
 				{
 					plays_.push_back(possiblePlays.at(i));
@@ -371,7 +371,19 @@ vector<Play> MoveGenerate::Generate(const Rack * rack, Board & board){
 
 	this->set_Rack(*rack);
 	if(board.GetCount() == 0){
-		// Start from the middle try all possibilities.
+		vector<string> firstWords;
+		firstWords = dag_->ContainsHookWithRack("",rack_);
+		for(int i = 0; i < (int)firstWords.size(); i++)
+		{
+			Play pHorizontal(firstWords[i],7,7,true);
+			Play pVertical(firstWords[i],7,7,false);
+			plays_.push_back(pHorizontal);
+			plays_.push_back(pVertical);
+	
+		}
+		return plays_;
+		 
+
 	}
 
 	plays_.clear();

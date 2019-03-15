@@ -8,6 +8,8 @@ Play::Play()
 Play::Play(string word,int row, int col,bool horizontal)
 {
 	size_=(int)word.size();
+	this->row_ = row;
+	this->column_ = col;
 	
 	//tile_ = Tile(letter.GetLetter(), row, column, letter.GetScore(), letter.GetBonus());
 	if (horizontal)
