@@ -161,9 +161,14 @@ void GADDAG::ContainsHookWithRackRecursiveAtPos(Node* CurrentNode, vector<pair<s
 			if (NewFound && Key != hook[0] && hook[0]!='.') continue;
 
 			std::size_t FoundInRack = rack.find(Key);
-			if (Key == Node::EOW || Key == Node::Break || FoundInRack != std::string::npos) {
+			std::size_t BlankFoundInRack = rack.find('*');
+			if (Key == Node::EOW || Key == Node::Break || FoundInRack != std::string::npos || BlankFoundInRack != std::string::npos) {
 				string NewRack = rack;
-				NewRack = (Key != Node::EOW && Key != Node::Break) ? NewRack.erase(FoundInRack, 1) : NewRack;
+				if (Key != Node::EOW && Key != Node::Break && FoundInRack != std::string::npos)
+					NewRack = NewRack.erase(FoundInRack, 1);
+				else if (Key != Node::EOW && Key != Node::Break && BlankFoundInRack != std::string::npos)
+					NewRack = NewRack.erase(BlankFoundInRack, 1);
+				//NewRack = (Key != Node::EOW && Key != Node::Break) ? NewRack.erase(FoundInRack, 1) : NewRack;
 				if (Key != Node::Break && Key != Node::EOW && NewFound) NewHook.erase(0, 1);
 				ContainsHookWithRackRecursiveAtPos(CurrentNode->AT(Key), VectorOfPossibleWords, letters, NewRack, NewHook, MaxPos, NewCount, NewFound, CurrPosOnBoard);
 			}
@@ -206,9 +211,14 @@ void GADDAG::ContainsHookWithRackRecursiveAtPos(Node* CurrentNode, vector<pair<s
 			if (!NewFound) NewCount++;
 
 			std::size_t FoundInRack = rack.find(Key);
-			if (Key == Node::EOW || Key == Node::Break || FoundInRack != std::string::npos) {
+			std::size_t BlankFoundInRack = rack.find('*');
+			if (Key == Node::EOW || Key == Node::Break || FoundInRack != std::string::npos || BlankFoundInRack != std::string::npos) {
 				string NewRack = rack;
-				NewRack = (Key != Node::EOW && Key != Node::Break) ? NewRack.erase(FoundInRack, 1) : NewRack;
+				if (Key != Node::EOW && Key != Node::Break && FoundInRack != std::string::npos)
+					NewRack = NewRack.erase(FoundInRack, 1);
+				else if (Key != Node::EOW && Key != Node::Break && BlankFoundInRack != std::string::npos)
+					NewRack = NewRack.erase(BlankFoundInRack, 1);
+				//NewRack = (Key != Node::EOW && Key != Node::Break) ? NewRack.erase(FoundInRack, 1) : NewRack;
 				ContainsHookWithRackRecursiveAtPos(CurrentNode->AT(Key), VectorOfPossibleWords, letters, NewRack, hook, MaxPos, NewCount, NewFound, CurrPosOnBoard);
 			}
 		}

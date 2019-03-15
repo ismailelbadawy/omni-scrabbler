@@ -97,3 +97,4 @@ build/CPackConfig.cmake
 build/CPackSourceConfig.cmake
 build/compile_commands.json
 build/rules.ninja
+build/TARGET_COMPILE_PDB.pdb
