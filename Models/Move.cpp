@@ -20,7 +20,7 @@ Move::Move()
 void Move::UpdateRack(string newRack)
 {
 	for (int i = 0; i < (int)newRack.size(); i++) {
-		this->rack_[i] = newRack[i];
+		this->rack_.SetTile(newRack[i],i);
 	}
 }
 
@@ -28,27 +28,9 @@ void Move::InitializeRack(char rack[7])
 {
 	for (int j = 0; j < 7; j++)
 	{
-		this->rack_[j] = rack[j];
+		this->rack_.SetTile(rack[j],j);
 	}
 }
-
-void Move::SetPlays(vector<Tile> letters, bool horizontal)
-{
-	ishorizontal_ = horizontal;
-	
-			
-		Tile t = letters.at(0);
-		int row;
-		int column;
-		t.GetIndex(row, column);
-		char*words=new char[letters.size()];
-		for (int i=0;i<(int)letters.size();i++){
-			words[i]=letters.at(i).GetLetter();
-		}
-	
-	string word (words);
-	Play p(word,row,column,horizontal);
-	}
 
 vector<Play> Move::GetPlays()
 {
@@ -59,7 +41,7 @@ void Move::GetRack(char rack [7])
 {
 	for (int j = 0; j < 7; j++)
 	{
-		rack[j] = this->rack_[j];
+		rack[j] = rack_.GetLetter(j);
 	}
 }
 

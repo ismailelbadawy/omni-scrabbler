@@ -1,15 +1,15 @@
-#include"MoveGenerate.h"
+#include"MoveGenerator.h"
 
-MoveGenerate::MoveGenerate(){
+MoveGenerator::MoveGenerator(){
 
 }
 
-MoveGenerate::MoveGenerate(string gaddagpath){
+MoveGenerator::MoveGenerator(string gaddagpath){
 	dag_ = new GADDAG();
 	rack_="";
 }
 
-void MoveGenerate::set_Rack(Rack gameRack){
+void MoveGenerator::set_Rack(Rack gameRack){
 	rack_="";
 	for (int i=0;i<7;i++)
 	{
@@ -17,7 +17,7 @@ void MoveGenerate::set_Rack(Rack gameRack){
 	}
 }
 
-bool MoveGenerate::check_other_dimension(Board board,string word,int row,int col,bool horizontal) //True when called from generateWordsAtRows
+bool MoveGenerator::check_other_dimension(Board board,string word,int row,int col,bool horizontal) //True when called from generateWordsAtRows
 {
 	Tile boardTiles[15][15];
 	board.GetTiles(boardTiles);
@@ -144,7 +144,7 @@ bool MoveGenerate::check_other_dimension(Board board,string word,int row,int col
 }
 //This function will add the possible moves to the play vector and discard the rest
 //Row & Col will give the index of the hook
-vector<Play> MoveGenerate::check_words(Board&board,vector<pair<string,vector<int> > > returnedWords,int row,int col,bool horizontal)	//returnedWords--> words from GAD-dag_
+vector<Play> MoveGenerator::check_words(Board&board,vector<pair<string,vector<int> > > returnedWords,int row,int col,bool horizontal)	//returnedWords--> words from GAD-dag_
 {
 vector<Play> possiblePlays;
 //Loops all over the possible words
@@ -180,7 +180,7 @@ return possiblePlays;
 }
 
 
-void MoveGenerate::generateWordsAtRows(Board &board)
+void MoveGenerator::generateWordsAtRows(Board &board)
 {
 	Tile boardTiles[15][15];
 	board.GetTiles(boardTiles);
@@ -226,14 +226,14 @@ void MoveGenerate::generateWordsAtRows(Board &board)
 				{
 					//We are sending the entire row. Therefore, the hook will be the entire row...
 					//possibleWords=send_to_GADDAG(hook,rack_,1,1) 					
-					possibleWords=dag_->ContainsHookWithRackAtPos(hookString,rack_,1,1);
+					possibleWords=ContainsHookWithRackAtPos(hookString,rack_,1,1);
 				}
 				
 				//A previous pattern --->    _ _ a r r _ _ b a _ _ _ _ _ _ -->here we reach the 'r' at pos 4...
 				else if (boardTiles[rowIter][reverseIterator].GetLetter()!='0')    
 				{
 					//possibleWords=send_to_GADDAG(hook,rack_,hookBeginIndex-(reverseIterator+2),hookBeginIndex)
-					possibleWords=dag_->ContainsHookWithRackAtPos(hookString,rack_,hookBeginIndex-(reverseIterator+2),hookBeginIndex);
+					possibleWords=ContainsHookWithRackAtPos(hookString,rack_,hookBeginIndex-(reverseIterator+2),hookBeginIndex);
 				}
 				
 				//Here is the general case, we are moving backingwards without hitting a previous pattern yet or reaching start of row
@@ -249,12 +249,12 @@ void MoveGenerate::generateWordsAtRows(Board &board)
 					{
 						//We are sending the entire row. Therefore, the hook will be the entire row...
 						//possibleWords=send_to_GADDAG(hook,rack_,hookBeginIndex-1,hookBeginIndex)   			
-						possibleWords=dag_->ContainsHookWithRackAtPos(hookString,rack_,hookBeginIndex-1,hookBeginIndex);
+						possibleWords=ContainsHookWithRackAtPos(hookString,rack_,hookBeginIndex-1,hookBeginIndex);
 					}
 					else										//Reached a previous pattern 
 					{
 						//possibleWords=send_to_GADDAG(hook,rack_,hookBeginIndex-(reverseIterator+2),hookBeginIndex)
-						possibleWords=dag_->ContainsHookWithRackAtPos(hookString,rack_,hookBeginIndex-(reverseIterator+2),hookBeginIndex);
+						possibleWords=ContainsHookWithRackAtPos(hookString,rack_,hookBeginIndex-(reverseIterator+2),hookBeginIndex);
 					}
 
 				}
@@ -275,7 +275,7 @@ void MoveGenerate::generateWordsAtRows(Board &board)
 }
 
 
-void MoveGenerate::generateWordsAtCols(Board &board)
+void MoveGenerator::generateWordsAtCols(Board &board)
 {
 	Tile boardTiles[15][15];
 	board.GetTiles(boardTiles);
@@ -316,14 +316,14 @@ void MoveGenerate::generateWordsAtCols(Board &board)
 				{
 					//We are sending the entire row. Therefore, the hook will be the entire row...
 					//possibleWords=send_to_GADDAG(hook,rack_,1,1) 
-					possibleWords=dag_->ContainsHookWithRackAtPos(hookString,rack_,1,1);
+					possibleWords=ContainsHookWithRackAtPos(hookString,rack_,1,1);
 				}
 			
 				//A previous pattern --->    _ _ a r r _ _ b a _ _ _ _ _ _ -->here we reach the 'r' at pos 4...
 				else if (boardTiles[reverseIterator][colIter].GetLetter()!='0')    
 				{
 					//possibleWords=send_to_GADDAG(hook,rack_,hookBeginIndex-(reverseIterator+2),hookBeginIndex)
-					possibleWords=dag_->ContainsHookWithRackAtPos(hookString,rack_,hookBeginIndex-(reverseIterator+2),hookBeginIndex);
+					possibleWords = ContainsHookWithRackAtPos(hookString,rack_,hookBeginIndex-(reverseIterator+2),hookBeginIndex);
 				
 				}
 				
@@ -340,12 +340,12 @@ void MoveGenerate::generateWordsAtCols(Board &board)
 					{
 						//We are sending the entire row. Therefore, the hook will be the entire row...
 						//possibleWords=send_to_GADDAG(hook,rack_,hookBeginIndex-1,hookBeginIndex)   			
-						possibleWords=dag_->ContainsHookWithRackAtPos(hookString,rack_,hookBeginIndex-1,hookBeginIndex);
+						possibleWords=ContainsHookWithRackAtPos(hookString,rack_,hookBeginIndex-1,hookBeginIndex);
 					}
 					else										//Reached a previous pattern 
 					{
 						//possibleWords=send_to_GADDAG(hook,rack_,hookBeginIndex-(reverseIterator+2),hookBeginIndex)
-						possibleWords=dag_->ContainsHookWithRackAtPos(hookString,rack_,hookBeginIndex-(reverseIterator+2),hookBeginIndex);
+						possibleWords=ContainsHookWithRackAtPos(hookString,rack_,hookBeginIndex-(reverseIterator+2),hookBeginIndex);
 					}
 
 					//Here we are testing the words we received from the GAD-dag_
@@ -367,12 +367,12 @@ void MoveGenerate::generateWordsAtCols(Board &board)
 	}
 }
 
-vector<Play> MoveGenerate::Generate(const Rack * rack, Board & board){
+vector<Play> MoveGenerator::Generate(const Rack * rack, Board & board){
 
 	this->set_Rack(*rack);
 	if(board.GetCount() == 0){
 		vector<string> firstWords;
-		firstWords = dag_->ContainsHookWithRack("",rack_);
+		firstWords = ContainsHookWithRack("",rack_);
 		for(int i = 0; i < (int)firstWords.size(); i++)
 		{
 			Play pHorizontal(firstWords[i],7,7,true);
@@ -392,7 +392,185 @@ vector<Play> MoveGenerate::Generate(const Rack * rack, Board & board){
 	this->generateWordsAtRows(board);
 	return plays_;
 }
+void MoveGenerator::ContainsHookWithRackRecursive(Node* CurrentNode, set<string> &SetOfPossibleWords, string letters, string rack, string hook) {
+	if (CurrentNode == NULL) {
+		string Word = dag_->GetWord(letters);
+		set<string>::iterator it;
+		it = SetOfPossibleWords.find(Word);
+		if (it == SetOfPossibleWords.end()) { //word not found in set
+			SetOfPossibleWords.insert(Word);
+		}
+		return;
+	}
 
-MoveGenerate::~MoveGenerate(){
+	if (hook != "" && hook != " ") {
+		if (CurrentNode->get_Letter() != Node::Root)
+			letters += CurrentNode->get_Letter();
+
+		if (CurrentNode->ContainsKey(hook[0])) {
+			string NewHook = hook;
+			NewHook = NewHook.erase(0, 1);
+			ContainsHookWithRackRecursive(CurrentNode->AT(hook[0]), SetOfPossibleWords, letters, rack, NewHook);
+		}
+	}
+	else {
+		if (CurrentNode->get_Letter() != Node::Root)
+			letters += CurrentNode->get_Letter();
+
+		vector<char> vectorOfChildrenOfCurrentNode = CurrentNode->Keys();
+		for (int i = 0; i < (int)vectorOfChildrenOfCurrentNode.size(); i++) {
+			char Key = vectorOfChildrenOfCurrentNode[i];
+
+			std::size_t FoundInRack = rack.find(Key);
+			if (Key == Node::EOW || Key == Node::Break || FoundInRack != std::string::npos) {
+				string NewRack = rack;
+				NewRack = (Key != Node::EOW && Key != Node::Break) ? NewRack.erase(FoundInRack, 1) : NewRack;
+				ContainsHookWithRackRecursive(CurrentNode->AT(Key), SetOfPossibleWords, letters, NewRack, hook);
+			}
+		}
+	}
+}
+void MoveGenerator::ContainsHookWithRackRecursiveAtPos(Node* CurrentNode, vector<pair<string, vector<int>>> &VectorOfPossibleWords, string letters, string rack, string hook, int MaxPos, int CurrentCount, bool found, int CurrPosOnBoard) {
+	if (found) {
+		if ((CurrentNode!=NULL && CurrentNode->get_Letter() != Node::Break && CurrentNode->get_Letter()!= Node::EOW) || CurrentNode==NULL) {
+			int MaxLength = 15 - CurrPosOnBoard + CurrentCount; // ----er- if currposonboard= 12 (enters)
+																//currcount= 3 then maxlength= 15- 12 +3= 6 
+			if ((int)letters.length() - 1 > MaxLength)
+				return;
+		}
+	}
+	
+	if (CurrentCount > MaxPos) return;
+
+	bool NewFound=found;
+
+	if (CurrentNode == NULL) {
+		string Word = dag_->GetWord(letters);
+		vector<pair<string, vector<int>>>::iterator it;
+		for (it = VectorOfPossibleWords.begin(); it != VectorOfPossibleWords.end(); it++) {
+			if (it->first ==  Word) break;
+		}
+
+		if (it == VectorOfPossibleWords.end()) { //word not found in Vector
+			vector<int> Positions;
+			Positions.push_back(CurrPosOnBoard-CurrentCount);
+			VectorOfPossibleWords.push_back(pair<string, vector<int>>(Word, Positions));
+		}
+		else {
+			it->second.push_back(CurrPosOnBoard - CurrentCount);
+		}
+		return;
+	}
+	if (hook[0] == '.') { //blank space on board
+		int NewCount = CurrentCount;
+		if (CurrentNode->get_Letter() != Node::Root)
+			letters += CurrentNode->get_Letter();
+
+		vector<char> vectorOfChildrenOfCurrentNode = CurrentNode->Keys();
+		for (int i = 0; i < (int)vectorOfChildrenOfCurrentNode.size(); i++) {
+			NewFound = found;
+			NewCount = CurrentCount;
+			string NewHook = hook;
+			char Key = vectorOfChildrenOfCurrentNode[i];
+
+			if (Key == Node::Break) NewFound = true;
+			if (!NewFound) NewCount++;
+
+			if (NewFound && Key != hook[0] && hook[0]!='.') continue;
+
+			std::size_t FoundInRack = rack.find(Key);
+			std::size_t BlankFoundInRack = rack.find('*');
+			if (Key == Node::EOW || Key == Node::Break || FoundInRack != std::string::npos || BlankFoundInRack != std::string::npos) {
+				string NewRack = rack;
+				if (Key != Node::EOW && Key != Node::Break && FoundInRack != std::string::npos)
+					NewRack = NewRack.erase(FoundInRack, 1);
+				else if (Key != Node::EOW && Key != Node::Break && BlankFoundInRack != std::string::npos)
+					NewRack = NewRack.erase(BlankFoundInRack, 1);
+				//NewRack = (Key != Node::EOW && Key != Node::Break) ? NewRack.erase(FoundInRack, 1) : NewRack;
+				if (Key != Node::Break && Key != Node::EOW && NewFound) NewHook.erase(0, 1);
+				ContainsHookWithRackRecursiveAtPos(CurrentNode->AT(Key), VectorOfPossibleWords, letters, NewRack, NewHook, MaxPos, NewCount, NewFound, CurrPosOnBoard);
+			}
+		}
+	}
+	else if (hook!="") {
+		int NewCount = CurrentCount;
+		if (CurrentNode->get_Letter() != Node::Root) {
+			letters += CurrentNode->get_Letter();
+		}
+		
+		vector<char> vectorOfChildrenOfCurrentNode = CurrentNode->Keys();
+		for (int i = 0; i <(int) vectorOfChildrenOfCurrentNode.size(); i++) {
+			NewFound = found;
+			char Key = vectorOfChildrenOfCurrentNode[i];
+
+			if (Key == Node::Break) NewFound = true;
+			else if (Key != hook[0] && NewFound) continue;
+
+			int NewCount = CurrentCount;
+			if (!NewFound && Key != Node::Break && Key != Node::EOW) NewCount++;
+			string NewHook = hook;
+			if (Key == hook[0] && Key != Node::Break && Key!= Node::EOW) NewHook = NewHook.erase(0, 1);
+			
+			ContainsHookWithRackRecursiveAtPos(CurrentNode->AT(Key), VectorOfPossibleWords, letters, rack, NewHook, MaxPos, NewCount, NewFound, CurrPosOnBoard);
+		}
+	}
+	else if (hook == "") {
+		if (CurrentNode->get_Letter() != Node::Root)
+			letters += CurrentNode->get_Letter();
+
+		int NewCount= CurrentCount;
+
+		vector<char> vectorOfChildrenOfCurrentNode = CurrentNode->Keys();
+		for (int i = 0; i < (int)vectorOfChildrenOfCurrentNode.size(); i++) {
+			NewCount = CurrentCount;
+			char Key = vectorOfChildrenOfCurrentNode[i];
+
+			if (Key == Node::Break) NewFound = true;
+			if (!NewFound) NewCount++;
+
+			std::size_t FoundInRack = rack.find(Key);
+			std::size_t BlankFoundInRack = rack.find('*');
+			if (Key == Node::EOW || Key == Node::Break || FoundInRack != std::string::npos || BlankFoundInRack != std::string::npos) {
+				string NewRack = rack;
+				if (Key != Node::EOW && Key != Node::Break && FoundInRack != std::string::npos)
+					NewRack = NewRack.erase(FoundInRack, 1);
+				else if (Key != Node::EOW && Key != Node::Break && BlankFoundInRack != std::string::npos)
+					NewRack = NewRack.erase(BlankFoundInRack, 1);
+				//NewRack = (Key != Node::EOW && Key != Node::Break) ? NewRack.erase(FoundInRack, 1) : NewRack;
+				ContainsHookWithRackRecursiveAtPos(CurrentNode->AT(Key), VectorOfPossibleWords, letters, NewRack, hook, MaxPos, NewCount, NewFound, CurrPosOnBoard);
+			}
+		}
+	}
+}
+
+vector<string> MoveGenerator::ContainsHookWithRack(string hook, string rack) {
+	transform(hook.begin(), hook.end(), hook.begin(), ::tolower);
+	reverse(hook.begin(), hook.end());
+
+	set<string> SetOfPossibleWords;
+	vector<string> vectorOfPossibleWords;
+	ContainsHookWithRackRecursive(dag_->GetRoot(), SetOfPossibleWords, "", rack, hook);
+		
+	set <string>::iterator k;
+	for (k = SetOfPossibleWords.begin(); k != SetOfPossibleWords.end(); k++) {
+		vectorOfPossibleWords.push_back(*k);
+	}
+	return vectorOfPossibleWords;
+}
+
+
+vector<pair<string, vector<int>>> MoveGenerator::ContainsHookWithRackAtPos(string hook, string rack, int pos, int CurrPosOnBoard) {
+	transform(hook.begin(), hook.end(), hook.begin(), ::tolower);
+
+	vector<pair<string, vector<int>>> VectorOfPossibleWords;
+
+	if (dag_->GetRoot()->ContainsKey(hook[0])) {
+		Node* newNode = dag_->GetRoot()->AT(hook[0]);
+		ContainsHookWithRackRecursiveAtPos(newNode, VectorOfPossibleWords, "", rack, hook.erase(0,1), pos, 0, false, CurrPosOnBoard);
+	}
+
+	return VectorOfPossibleWords;
+}
+MoveGenerator::~MoveGenerator(){
 	
 }
