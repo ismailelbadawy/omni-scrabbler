@@ -6,17 +6,6 @@ Move::Move()
 {
 }
 
-
-// Move::Move(Board &board, bool horizontal)
-// {
-// 	string word;
-// 	ishorizontal_ = horizontal;
-// 	for (int i = 0; i < (int)plays_.size(); i++)
-// 	{
-// 		word[i] = plays_.at(i).GetLetter();
-// 	}
-// 	board.UpdateBoard(word,plays_.at(0).GetRow(),plays_.at(0).GetColumn(),ishorizontal_);
-// }
 void Move::UpdateRack(string newRack)
 {
 	for (int i = 0; i < (int)newRack.size(); i++) {
@@ -24,7 +13,7 @@ void Move::UpdateRack(string newRack)
 	}
 }
 
-void Move::InitializeRack(char rack[7])
+void Move::InitializeRack(string rack)
 {
 	for (int j = 0; j < 7; j++)
 	{
@@ -32,28 +21,30 @@ void Move::InitializeRack(char rack[7])
 	}
 }
 
-vector<Play> Move::GetPlays()
+Play Move::GetPlay()
 {
-	return plays_;
+	return play_;
 }
 
-void Move::GetRack(char rack [7])
+string Move::GetRack()
 {
+	string s ="";
 	for (int j = 0; j < 7; j++)
 	{
-		rack[j] = rack_.GetLetter(j);
+		s+= rack_.GetLetter(j);
 	}
+	return s;
 }
 
 int Move::GetScore()
 {
-	return score_;
+	return heuristicscore_;
 }
 
 
 void Move::SetScore(int score)
 {
-	score_ = score;
+	heuristicscore_ = score;
 }
 
 void Move::CalculateScore()

@@ -168,9 +168,9 @@ vector<Play> possiblePlays;
 		{
 			for (int j=0;j<(int)returnedWords[i].second.size();j++)
 			{
-				if (check_other_dimension(board,returnedWords[i].first,returnedWords[i].second[j],col, horizontal))
+				if (check_other_dimension(board,returnedWords[i].first,returnedWords[i].second[j],col, !horizontal))
 				{
-					Play P(returnedWords[i].first,returnedWords[i].second[j],col,horizontal);
+					Play P(returnedWords[i].first,returnedWords[i].second[j],col,!horizontal);
 					possiblePlays.push_back(P);
 				}
 			}
@@ -349,7 +349,7 @@ void MoveGenerator::generateWordsAtCols(Board &board)
 					}
 
 					//Here we are testing the words we received from the GAD-dag_
-					check_words(board,possibleWords,-1,colIter,true);
+					check_words(board,possibleWords,-1,colIter,false);
 				}
 				
 

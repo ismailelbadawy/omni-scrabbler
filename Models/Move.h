@@ -7,19 +7,20 @@
 using namespace std;
 class Move
 {
-	vector<Play> plays_;
+	Play play_;
 	Rack rack_;
-	int score_;
+	int heuristicscore_;
 	int remainingtiles_;
 	bool ishorizontal_;
 
 public:
 	
 	Move();
+	
 	void UpdateRack(string newRack);
-	void InitializeRack(char rack[7]);
-	vector<Play> GetPlays();
-	void GetRack(char rack[7]);
+	void InitializeRack(string rack);
+	Play GetPlay();
+	string GetRack();
 	int  GetScore();
 	void SetScore(int score);
 	void CalculateScore();

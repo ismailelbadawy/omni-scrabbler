@@ -19,7 +19,6 @@ class Play
 public:
 	Play();
 	Play(string word,int row, int column,bool horizontal);
-//	Play(char letter, int row, int column);
 	int GetRow();
 	int GetColumn();
 	string GetLetters();
