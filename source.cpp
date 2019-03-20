@@ -41,9 +41,9 @@ int main(){
 	RackTiles[0].SetLetter('s');
 	RackTiles[1].SetLetter('r');
 	RackTiles[2].SetLetter('y');
-	RackTiles[3].SetLetter('y');
+	RackTiles[3].SetLetter('m');
 	RackTiles[4].SetLetter('y');
-	RackTiles[5].SetLetter('y');
+	RackTiles[5].SetLetter('i');
 	RackTiles[6].SetLetter('y');
 	
 	Rack rack(RackTiles);

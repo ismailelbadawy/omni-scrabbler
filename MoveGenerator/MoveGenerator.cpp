@@ -55,7 +55,7 @@ bool MoveGenerator::check_other_dimension(Board board,string word,int row,int co
 						break;
 				}
 			}
-			if (boardTiles[row+rowIterDown][col+i].GetLetter()!='0' &&boardTiles[row-rowIterUp][col+i].GetLetter()!='0' ){
+			if (boardTiles[row+rowIterDown][col+i].GetLetter()=='0' &&boardTiles[row-rowIterUp][col+i].GetLetter()=='0' ){
 				return true;
 			}
 			
@@ -168,9 +168,9 @@ vector<Play> possiblePlays;
 		{
 			for (int j=0;j<(int)returnedWords[i].second.size();j++)
 			{
-				if (check_other_dimension(board,returnedWords[i].first,returnedWords[i].second[j],col, !horizontal))
+				if (check_other_dimension(board,returnedWords[i].first,returnedWords[i].second[j],col, horizontal))
 				{
-					Play P(returnedWords[i].first,returnedWords[i].second[j],col,!horizontal);
+					Play P(returnedWords[i].first,returnedWords[i].second[j],col,horizontal);
 					possiblePlays.push_back(P);
 				}
 			}
@@ -299,7 +299,7 @@ void MoveGenerator::generateWordsAtCols(Board &board)
 
 			if (stringToDagSize!=0)
 			{
-				int hookBeginIndex=colIter-stringToDagSize;			//Begin index of our hook
+				int hookBeginIndex=rowIter-stringToDagSize;			//Begin index of our hook
 				int reverseIterator=hookBeginIndex-2;				//The iterator to go back till we reach a previous pattern or coloumn begin
 				int hookSize=15-hookBeginIndex;					//Calculating the hook size
 				
@@ -309,8 +309,17 @@ void MoveGenerator::generateWordsAtCols(Board &board)
 				//Now we fill out the hook to be sent
 				for (int k=0;k<hookSize;k++)
 				{
-					hookString+=boardTiles[k+hookBeginIndex][colIter].GetLetter();
-				}
+					if (boardTiles[k+hookBeginIndex][colIter].GetLetter()=='0')
+					{	
+						
+						hookString+='.';
+					}else
+					{
+						hookString+=boardTiles[k+hookBeginIndex][colIter].GetLetter();
+			
+					}
+					
+					}
 				
 				if (reverseIterator==-1) //We have reached the beginning of the row (First pattern special case)
 				{
@@ -349,7 +358,7 @@ void MoveGenerator::generateWordsAtCols(Board &board)
 					}
 
 					//Here we are testing the words we received from the GAD-dag_
-					check_words(board,possibleWords,-1,colIter,false);
+					//check_words(board,possibleWords,-1,colIter,false);
 				}
 				
 

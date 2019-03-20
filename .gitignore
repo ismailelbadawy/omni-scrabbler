@@ -99,3 +99,4 @@ build/compile_commands.json
 build/rules.ninja
 build/TARGET_COMPILE_PDB.pdb
 build/CMakeFiles/omniscrabbler.dir/MoveGenerator/MoveGenerator.cpp.obj
+build/CMakeFiles/omniscrabbler.dir/MoveGenerator/MoveGenerator.cpp.obj

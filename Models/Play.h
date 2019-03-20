@@ -13,7 +13,7 @@ class Play
 	int row_;
 	int column_;
 	int score_;
-	bool isHorizontal;
+	bool isHorizontal_;
 
 
 public:

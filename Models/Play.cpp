@@ -31,6 +31,7 @@ Play::Play(string word,int row, int col,bool horizontal)
 			tiles_.push_back(t);
 		}
 	}
+	isHorizontal_=horizontal;
 }
 
 //Play::Play(char letter, int row, int column)
