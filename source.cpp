@@ -49,12 +49,12 @@ int main(){
 	RackTiles[6].SetLetter('y');
 	
 	Rack rack(RackTiles);
-
+	vector<Move> moves;
 
 
 	while(true){
 		 start = chrono::high_resolution_clock::now();
-		 movGen.Generate(&rack, board);
+		 moves = movGen.Generate(&rack, board);
 		 end = chrono::high_resolution_clock::now();
 	}
 

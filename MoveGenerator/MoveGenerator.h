@@ -16,7 +16,6 @@ class MoveGenerator{
 
     GADDAG *dag_;
     string rack_;
-    vector<Play> plays_;
 	vector<Move> moves_;
 public:    
     MoveGenerator();
