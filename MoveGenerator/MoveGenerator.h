@@ -4,7 +4,9 @@
 #include"../Models/Board.h"
 #include"../Models/Play.h"
 #include"../Models/Rack.h"
+#include"../Models/Move.h"
 #include"../GADDAG/GADDAG.h"
+#include"../Models/WordPossibility.h"
 
 
 using namespace std;
@@ -15,33 +17,34 @@ class MoveGenerator{
     GADDAG *dag_;
     string rack_;
     vector<Play> plays_;
+	vector<Move> moves_;
 public:    
     MoveGenerator();
     MoveGenerator(string gaddagpath);
     ~MoveGenerator();
-    vector<Play> Generate(const Rack *, Board &);
+    vector<Move> Generate(const Rack *, Board &);
 
 private:
     void generateWordsAtCols(Board &board);
     void generateWordsAtRows(Board &board);
     void set_Rack(Rack gameRack);
     bool check_other_dimension(Board board,string word,int row,int col,bool horizontal);
-    vector<Play> check_words(Board&board,vector<pair<string,vector<int> > > returnedWords,int row,int col,bool horizontal);
+    void check_words(Board&board, vector<WordPossibility> returnedWords,int row,int col,bool horizontal);
 
 	//Function to be called to return a vector of all possible words 
 	//it has parameters: hook (word on board to add letters to it) and rack (available letters)
 	//if hook= ay and rack= persl --> vector={play, player, plays} 
 	//hook can be sent as "" or " " to get all combinations based on the rack only (for the first move in the game)
-	vector<string> ContainsHookWithRack(string hook, string rack);
+	vector<WordPossibility> ContainsHookWithRack(string hook, string rack);
 
 
     //recursive function to get all possible combinations
-	void ContainsHookWithRackRecursive(Node* CurrentNode, set<string> &SetOfPossibleWords, string letters, string rack, string hook);
+	void ContainsHookWithRackRecursive(Node* CurrentNode, vector<WordPossibility> &VectorOfPossibleWords, string letters, string rack, string hook);
     
     //recursive function to get all possible combinations such that the first letter of the hook exists at [0..MaxPos] only
 	//the function handles the spaces between letters represented by a dot '.'
 	//it handles maxLength of the possible words too
-	void ContainsHookWithRackRecursiveAtPos(Node* CurrentNode, vector<pair<string, vector<int>>> &VectorOfPossibleWords, string letters, string rack, string hook, int MaxPos, int CurrentCount, bool found, int CurrPosOnBoard);
+	void ContainsHookWithRackRecursiveAtPos(Node* CurrentNode, vector<WordPossibility> &VectorOfPossibleWords, string letters, string rack, string hook, int MaxPos, int CurrentCount, bool found, int CurrPosOnBoard);
 
     	//function to get all possible combinations such that the first letter of the hook exists at [0..MaxIndex] only
 	//the function handles the spaces between letters represented by a dot '.'
@@ -58,6 +61,6 @@ private:
 	//function will return enter, { 4 } which means that enter can be placed at position 4 only
 	//but elephant, { 2,4 }
 	//as the e on board can be the first letter or the third letter in the word elephant, then pos on board will be 4 or 2 respectively
-	vector<pair<string, vector<int>>> ContainsHookWithRackAtPos(string hook, string rack, int MaxIndex, int CurrPosOnBoard);
+	vector<WordPossibility> ContainsHookWithRackAtPos(string hook, string rack, int MaxIndex, int CurrPosOnBoard);
 
 };
