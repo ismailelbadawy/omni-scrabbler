@@ -441,17 +441,29 @@ void MoveGenerator::LoopBoard(Board &board){
 							break;
 						}
 					}
-					if (!completeWord)
+					if (!completeWord){
+						row++;
 						continue;
-					
+					}
 					if (WordIsTouching(board,rackpossibilities_[i].GetWord(),row,column,true)){
 						vector<WordPossibility> returnedWords;
 						rackpossibilities_[i].SetPosition(column);
 						returnedWords.push_back(rackpossibilities_[i]);
 						CheckWords(board,returnedWords,row,column,true);
 					}
-					
-					 completeWord = true;
+				
+				}
+
+				
+		}
+	}
+	for (int i=0;i<(int)rackpossibilities_.size();i++){
+		for (int column=0;column<15;column++){
+			for(int row = 0;row<15;row++){
+				if (boardTiles[row][column].GetLetter()!='0'){
+
+				}
+				bool completeWord = true;
 					for (int wordLetter = 0;wordLetter<(int)rackpossibilities_[i].GetWord().size();wordLetter++)
 					{
 						if (row+wordLetter>=15){
@@ -464,21 +476,20 @@ void MoveGenerator::LoopBoard(Board &board){
 							break;
 						}
 					}
-					if (!completeWord)
+					if (!completeWord){
+						column++;
 						continue;
-					
+					}
 					if (WordIsTouching(board,rackpossibilities_[i].GetWord(),row,column,false)){
 						vector<WordPossibility> returnedWords;
 						rackpossibilities_[i].SetPosition(row);
 						returnedWords.push_back(rackpossibilities_[i]);
 						CheckWords(board,returnedWords,row,column,false);
 					}
-				
-				}
-
-				
+			}
 		}
 	}
+
 }
 
 bool MoveGenerator::WordIsTouching(Board &board, string word, int row, int column, bool horizontal){
@@ -495,7 +506,7 @@ bool MoveGenerator::WordIsTouching(Board &board, string word, int row, int colum
 		{
 	
 			if (column > 0 && boardTiles[row][column-1].GetLetter()!='0' || 
-			column+word.size()<14 && boardTiles[row][column+word.size()+1].GetLetter()!='0'){
+			column+word.size()<15 && boardTiles[row][column+word.size()].GetLetter()!='0'){
 				return false;
 		}
 			for (int i = 0;i<(int)word.size();i++)
@@ -540,7 +551,7 @@ bool MoveGenerator::WordIsTouching(Board &board, string word, int row, int colum
 		if (column>0 && column <14)
 		{
 			if (row>0&&boardTiles[row-1][column].GetLetter()!='0'||
-			row+word.size()<14 && boardTiles[row+word.size()+1][column].GetLetter()!='0'){
+			row+word.size()<15 && boardTiles[row+word.size()][column].GetLetter()!='0'){
 				return false;
 		}
 			for (int i = 0;i<word.size();i++)

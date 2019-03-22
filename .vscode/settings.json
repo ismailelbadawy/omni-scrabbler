@@ -4,7 +4,8 @@
         "xstring": "cpp",
         "iostream": "cpp",
         "string": "cpp",
-        "chrono": "cpp"
+        "chrono": "cpp",
+        "xlocale": "cpp"
     },
     "C_Cpp.intelliSenseEngineFallback": "Disabled"
 }

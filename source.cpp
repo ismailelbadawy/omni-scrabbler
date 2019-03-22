@@ -59,6 +59,12 @@ int main(){
 		 start = chrono::high_resolution_clock::now();
 		 moves = movGen.Generate(&rack, board);
 		 end = chrono::high_resolution_clock::now();
+		 for(int i = 0; i < moves.size(); i++)
+		 {
+			 /* code */
+			 cout<<moves[i].GetPlay()->GetLetters()<<endl;
+		 }
+		 
 		 moves.clear();
 	}
 
