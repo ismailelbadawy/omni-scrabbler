@@ -33,7 +33,7 @@ void Board::GetTiles(Tile tiles[15][15])
 	{
 		for (int j = 0; j < 15; j++)
 		{
-			tiles[i][j] = Tile(tiles_[i][j]);
+			tiles[i][j] = tiles_[i][j];
 		}
 	}
 }

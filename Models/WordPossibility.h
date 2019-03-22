@@ -13,6 +13,7 @@ class WordPossibility{
 public:
 WordPossibility();
 WordPossibility(string word);
+void SetPosition(int position);
 void SetWord(string word);
 void AddRacks(string possibleRack);
 void AddPositions(int position);

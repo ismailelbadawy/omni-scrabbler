@@ -12,6 +12,7 @@ public:
 	Rack();
 	Rack(Tile tiles[7]);
 	Rack(string rack);
+	int GetLength();
 	~Rack();
 	void SetTile(char c, int loc);
 	char GetLetter(int loc);

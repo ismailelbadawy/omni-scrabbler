@@ -17,6 +17,7 @@ class MoveGenerator{
     GADDAG *dag_;
     string rack_;
 	vector<Move> moves_;
+	vector<WordPossibility> rackpossibilities_;
 public:    
     MoveGenerator();
     MoveGenerator(string gaddagpath);
@@ -24,12 +25,14 @@ public:
     vector<Move> Generate(const Rack *, Board &);
 
 private:
-    void generateWordsAtCols(Board &board);
-    void generateWordsAtRows(Board &board);
-    void set_Rack(Rack gameRack);
-    bool check_other_dimension(Board board,string word,int row,int col,bool horizontal);
-    void check_words(Board&board, vector<WordPossibility> returnedWords,int row,int col,bool horizontal);
-
+    void GenerateWordsAtCols(Board &board);
+    void GenerateWordsAtRows(Board &board);
+	void GenerateRackWords(bool boardEmpty);
+    void SetRack(Rack gameRack);
+    bool CheckOtherDimension(Board board,string word,int row,int col,bool horizontal);
+    void CheckWords(Board&board, vector<WordPossibility> returnedWords,int row,int col,bool horizontal);
+	void LoopBoard(Board &board);
+	bool WordIsTouching(Board &board, string word, int row, int column, bool horizontal);
 	//Function to be called to return a vector of all possible words 
 	//it has parameters: hook (word on board to add letters to it) and rack (available letters)
 	//if hook= ay and rack= persl --> vector={play, player, plays} 

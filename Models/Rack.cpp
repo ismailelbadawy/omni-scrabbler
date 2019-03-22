@@ -35,3 +35,7 @@ char Rack::GetLetter(int loc)
 {
     return (tiles_[loc].GetLetter());
 }
+
+int Rack::GetLength(){
+    return tiles_.size();
+}
