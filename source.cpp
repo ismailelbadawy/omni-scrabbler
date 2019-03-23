@@ -31,10 +31,10 @@ int main(){
 	MoveGenerator movGen(GADDAG_PATH);		//A move generator insatance
 	auto end = chrono::high_resolution_clock::now();
 	board.Probe('c',7,7);		//Inserting letters 'e' and 't' to the empty board
-	board.Probe('e',8,7);
-	board.Probe('a',9,7);
-	board.Probe('s',10,7);
-	board.Probe('e',11,7);
+	board.Probe('a',8,7);
+	board.Probe('t',9,7);
+	board.Probe('u',7,8);
+	board.Probe('t',7,9);
 	//double readingDictionaryTime = (end-start).count();
 	Tile RackTiles[7];          //A simple array to carry the rack's letters
 
@@ -50,6 +50,9 @@ int main(){
 	Rack rack(RackTiles);
 	vector<Move> moves;
 
+	ofstream OutputFile;
+
+    OutputFile.open("results.txt");
 
 	while(true){
 		 start = chrono::high_resolution_clock::now();
@@ -58,7 +61,8 @@ int main(){
 		 for(int i = 0; i < (int)moves.size(); i++)
 		 {
 			 /* code */
-			 cout<<moves[i].GetPlay()->GetLetters()<<endl;
+			 OutputFile<< moves[i].GetPlay()->GetLetters()<< " " << moves[i].GetPlay()->GetRow() << " " << moves[i].GetPlay
+			 ()->GetColumn() <<  " " << moves[i].GetPlay()->GetIsHorizontal() << endl;
 		 }
 		 
 		 moves.clear();

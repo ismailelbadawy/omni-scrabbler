@@ -49,6 +49,10 @@ int Play::GetColumn()
 	return column_;
 }
 
+bool Play::GetIsHorizontal(){
+	return isHorizontal_;
+}
+
 string Play::GetLetters()
 {
 	string returnedStr="";

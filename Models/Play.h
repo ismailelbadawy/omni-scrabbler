@@ -23,6 +23,7 @@ public:
 	int GetColumn();
 	string GetLetters();
 	int GetScore();
+	bool GetIsHorizontal();
 	void CalculateScore();
 	~Play();
 };
