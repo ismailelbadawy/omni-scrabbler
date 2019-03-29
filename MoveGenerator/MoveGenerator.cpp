@@ -519,7 +519,7 @@ bool MoveGenerator::WordIsTouching(Board &board, string word, int row, int colum
 		}
 		}
 		else if (row==14){
-			for (int i = 0;i<word.size();i++)
+			for (int i = 0;i<(int)word.size();i++)
 			{
 			if (boardTiles[row-1][column+i].GetLetter()=='0'){
 				continue;
@@ -543,7 +543,7 @@ bool MoveGenerator::WordIsTouching(Board &board, string word, int row, int colum
 			row+word.size()<14 && boardTiles[row+word.size()+1][column].GetLetter()!='0'){
 				return false;
 		}
-			for (int i = 0;i<word.size();i++)
+			for (int i = 0;i<(int)word.size();i++)
 		{	
 			if (boardTiles[row+i][column+1].GetLetter()=='0' && boardTiles[row+i][column-1].GetLetter()=='0'){
 				continue;
@@ -553,7 +553,7 @@ bool MoveGenerator::WordIsTouching(Board &board, string word, int row, int colum
 		}
 		}
 		else if (row ==0){
-			for (int i = 0;i<word.size();i++)
+			for (int i = 0;i<(int)word.size();i++)
 			{
 			if (boardTiles[row+i][column+1].GetLetter()=='0'){
 				continue;
@@ -563,7 +563,7 @@ bool MoveGenerator::WordIsTouching(Board &board, string word, int row, int colum
 			}	
 		}
 		else if (row==14){
-			for (int i = 0;i<word.size();i++)
+			for (int i = 0;i<(int)word.size();i++)
 		{	
 			if (boardTiles[row+i][column-1].GetLetter()=='0'){
 				continue;
