@@ -20,6 +20,11 @@ void WordPossibility::AddPositions(int position){
     this->positions_.push_back(position);
 }
 
+void WordPossibility::SetPosition(int position){
+    this->positions_.clear();
+    this->positions_.push_back(position);
+}
+
 int WordPossibility::GetPosition(int i){
     return this->positions_.at(i);
 }
