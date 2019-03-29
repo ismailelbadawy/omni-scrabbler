@@ -126,3 +126,6 @@ build/CMakeFiles/omniscrabbler.dir/MoveGenerator/MoveGenerator.cpp.obj
 MoveGenerator/MoveGenerator.cpp
 build/CMakeFiles/omniscrabbler.dir/Models/WordPossibility.cpp.obj
 build/CMakeFiles/omniscrabbler.dir/MoveGenerator/MoveGenerator.cpp.obj
+.vscode/settings.json
+.vscode/launch.json
+.vscode/c_cpp_properties.json
