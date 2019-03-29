@@ -7,19 +7,19 @@
 using namespace std;
 class Move
 {
-	Play *play_;
+	Play play_;
 	Rack rack_;
 	int heuristicscore_;
-
+	int remainingtiles_;
+	bool ishorizontal_;
 
 public:
 	
 	Move();
-	void SetPlay(Play *p);
-
-	void SetRack(string newRack);
-	void SetRack(Rack rack);
-	Play* GetPlay();
+	
+	void UpdateRack(string newRack);
+	void InitializeRack(string rack);
+	Play GetPlay();
 	string GetRack();
 	int  GetScore();
 	void SetScore(int score);

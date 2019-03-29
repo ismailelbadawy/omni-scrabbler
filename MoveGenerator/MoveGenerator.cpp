@@ -57,48 +57,46 @@ bool MoveGenerator::CheckOtherDimension(Board board,string word,int row,int col,
 			int rowIterUp=0,rowIterDown=0;						//To up or down;
 			
 
-			if (row!=0 && row!=14 && boardTiles[row-1][col+i].GetLetter()=='0' &&
-			boardTiles[row+1][col+i].GetLetter()=='0'){
-				continue;
+			if (row!=0 && row!=14 && boardTiles[row-rowIterUp][col+i].GetLetter()=='0' &&
+			boardTiles[row+rowIterDown][col+i].GetLetter()=='0'){
+				return true;
 			}
 
 			if(row!=0)											//We are at the top row...
 			{
-				while (boardTiles[row-rowIterUp-1][col+i].GetLetter()!='0')
+				while (boardTiles[row-rowIterUp][col+i].GetLetter()!='0')
 				{
-					
+					rowIterUp++;
 					if (row-rowIterUp==0)						//We must check so that we will not access an out of bound memory
 						break;
-					rowIterUp++;
 				}
 			}
 			if (row!=14)										//We are at the bottow row...
 			{
-				while (boardTiles[row+rowIterDown+1][col+i].GetLetter()!='0')
+				while (boardTiles[row+rowIterDown][col+i].GetLetter()!='0')
 				{
-					
+					rowIterDown++;
 					if (row+rowIterDown==14)					//We must check so that we will not access an out of bound memory
 						break;
-					rowIterDown++;
 				}
 			}
-			
+			if (boardTiles[row+rowIterDown][col+i].GetLetter()=='0' &&boardTiles[row-rowIterUp][col+i].GetLetter()=='0' ){
+				return true;
+			}
 			
 			otherWordStart=row-rowIterUp;
 			otherWordEnd=row+rowIterDown;
 			
-			string wordToTest="";
+			char * arr= new char[otherWordEnd-otherWordStart+1];
 			
-			for (int iter=otherWordStart;iter<=otherWordEnd;iter++)
+			for (int iter=0;iter<otherWordEnd-otherWordStart+1;iter++)
 			{
-				if (boardTiles[iter][col+i].GetLetter()=='0'){
-					wordToTest+=word[i];
-				}
-				else{
-				wordToTest+=boardTiles[iter][col+i].GetLetter();
+				arr[iter]=boardTiles[otherWordStart+iter][col+i].GetLetter();
 			}	
-			}
 			
+			string wordToTest(arr);
+			
+			delete [] arr;
 				
 			if (!dag_->CheckWordInDict(wordToTest))
 				return false;
@@ -117,51 +115,49 @@ bool MoveGenerator::CheckOtherDimension(Board board,string word,int row,int col,
 			int otherWordEnd=0;										//Index that will get us the word to test using the GAD-dag_
 			int colIterLeft=0,colIterRight=0;					//To up or down;
 			
-			if (col!=0 && col!=14 &&boardTiles[row+i][col-1].GetLetter()=='0'
-			&&boardTiles[row+i][col+1].GetLetter()=='0')
+			if (col!=0 && col!=14 &&boardTiles[row+i][col-colIterLeft].GetLetter()=='0'
+			&&boardTiles[row+i][col+colIterRight].GetLetter()=='0')
 				{
-					continue;
+					return true;
 				}
 
 
 			if(col!=0)											//We are at the top row...
 			{
-				while (boardTiles[row+i][col-colIterLeft-1].GetLetter()!='0')
+				while (boardTiles[row+i][col-colIterLeft].GetLetter()!='0')
 				{
+					colIterLeft++;
 					if (col-colIterLeft==0)						//We must check so that we will not access an out of bound memory
 						break;
-					colIterLeft++;
 				}
 			}
 
 			if (col!=14)										//We are at the bottow row...
 			{
-				while (boardTiles[row+i][col+colIterRight+1].GetLetter()!='0')
+				while (boardTiles[row+i][col+colIterRight].GetLetter()!='0')
 				{
-					
+					colIterRight++;
 					if (col+colIterRight==14)					//We must check so that we will not access an out of bound memory
 						break;
-					colIterRight++;
-				
 				}
 			}
-			
+			if(boardTiles[row+i][col-colIterLeft].GetLetter()=='0'
+			&&boardTiles[row+i][col+colIterRight].GetLetter()=='0'){
+				return true;
+			}
 			otherWordStart=col-colIterLeft;
 			otherWordEnd=col+colIterRight;
 			
-			string wordToTest = "";
+			char * arr= new char[otherWordEnd-otherWordStart+1];
 			
-			for (int iter=otherWordStart;iter<=otherWordEnd;iter++)
+			for (int iter=0;iter<otherWordEnd-otherWordStart+1;iter++)
 			{
-				if (boardTiles[row+i][iter].GetLetter() =='0'){
-					wordToTest+=word[i];
-				}
-				else{
-				wordToTest+=boardTiles[row+i][iter].GetLetter();
-				
-				}	
-			}
+				arr[iter]=boardTiles[col+i][otherWordStart+iter].GetLetter();
+			}	
 			
+			string wordToTest(arr);
+
+			delete [] arr;
 							
 			if (!dag_->CheckWordInDict(wordToTest))
 				return false;
@@ -173,44 +169,47 @@ bool MoveGenerator::CheckOtherDimension(Board board,string word,int row,int col,
 }
 //This function will add the possible moves to the play vector and discard the rest
 //Row & Col will give the index of the hook
+<<<<<<< HEAD
 void MoveGenerator::CheckWords(Board&board,vector<WordPossibility> returnedWords,int row,int col,bool horizontal)	//returnedWords--> words from GAD-dag_
+=======
+vector<Play> MoveGenerator::check_words(Board&board,vector<pair<string,vector<int> > > returnedWords,int row,int col,bool horizontal)	//returnedWords--> words from GAD-dag_
+>>>>>>> parent of b52599b... Move Generator is working correctly.
 {
-
+vector<Play> possiblePlays;
 //Loops all over the possible words
 	for (int i=0;i<(int)returnedWords.size();i++)
 	{
 
 		if (horizontal)
 		{
-			for (int j=0;j<(int)returnedWords[i].GetPositions().size();j++)
+			for (int j=0;j<(int)returnedWords[i].second.size();j++)
 			{
 			
+<<<<<<< HEAD
 				if (CheckOtherDimension(board,returnedWords[i].GetWord(),row,returnedWords[i].GetPositions().at(j), horizontal))
+=======
+				if (check_other_dimension(board,returnedWords[i].first,row,returnedWords[i].second[j], horizontal))
+>>>>>>> parent of b52599b... Move Generator is working correctly.
 				{
-					Play *P = new Play(returnedWords[i].GetWord(),row,returnedWords[i].GetPositions().at(j),horizontal);
-					Move move;
-					move.SetPlay(P);
-					move.SetRack(returnedWords[i].GetRemainingRacks()[j]);
-					moves_.push_back(move);
+				Play P(returnedWords[i].first,row,returnedWords[i].second[j],horizontal);
+				possiblePlays.push_back(P);
 				}
 						
 			}
 		}	
 		else
 		{
-			for (int j=0;j<(int)returnedWords[i].GetPositions().size();j++)
+			for (int j=0;j<(int)returnedWords[i].second.size();j++)
 			{
-				if (CheckOtherDimension(board,returnedWords[i].GetWord(),returnedWords[i].GetPositions().at(j),col, horizontal))
+				if (check_other_dimension(board,returnedWords[i].first,returnedWords[i].second[j],col, horizontal))
 				{
-					Play *P = new Play(returnedWords[i].GetWord(),returnedWords[i].GetPositions().at(j),col,horizontal);
-					Move move;
-					move.SetPlay(P);
-					move.SetRack(returnedWords[i].GetRemainingRacks()[j]);
-					moves_.push_back(move);
+					Play P(returnedWords[i].first,returnedWords[i].second[j],col,horizontal);
+					possiblePlays.push_back(P);
 				}
 			}
 		}
 	}
+return possiblePlays;
 }
 
 
@@ -227,7 +226,7 @@ void MoveGenerator::GenerateWordsAtRows(Board &board)
 		//First will send entire row, then entire row - first pattern, then entire row - (first+second) patterns.. and so on till end of row..
 		int stringToDagSize=0;
 		
-		vector<WordPossibility> possibleWords; //Vector that will carry possible combinations after we have it returned from GADDAG
+		vector< pair <string,vector<int> > > possibleWords; //Vector that will carry possible combinations after we have it returned from GADDAG
 
 		for (int colIter=0;colIter<15;colIter++)
 		{
@@ -299,7 +298,15 @@ void MoveGenerator::GenerateWordsAtRows(Board &board)
 		
 
 				//Here we are testing the words we received from the GAD-dag_
+<<<<<<< HEAD
 				CheckWords(board,possibleWords,rowIter,colIter,true);
+=======
+				vector<Play> possiblePlays = check_words(board,possibleWords,rowIter,colIter,true);
+				for(int i = 0; i < (int)possiblePlays.size(); i++)
+				{
+					plays_.push_back(possiblePlays.at(i));
+				}
+>>>>>>> parent of b52599b... Move Generator is working correctly.
 				
 				stringToDagSize=0;
 			}
@@ -322,7 +329,7 @@ void MoveGenerator::GenerateWordsAtCols(Board &board)
 		//First will send entire col, then entire col - first pattern, then entire col - (first+second) patterns.. and so on till end of col..
 		int stringToDagSize=0;
 		
-		vector<WordPossibility> possibleWords; //Vector that will carry possible combinations after we have it returned from GADDAG
+		vector< pair <string,vector<int> > > possibleWords; //Vector that will carry possible combinations after we have it returned from GADDAG
 
 		for (int rowIter=0;rowIter<15;rowIter++)
 		{
@@ -400,8 +407,16 @@ void MoveGenerator::GenerateWordsAtCols(Board &board)
 				
 
 				//Here we are testing the words we received from the GAD-dag_
+<<<<<<< HEAD
 				CheckWords(board,possibleWords,rowIter,colIter,false);
 				
+=======
+				vector<Play> possiblePlays = check_words(board,possibleWords,rowIter,colIter,false);
+				for(int i = 0; i < (int)possiblePlays.size(); i++)
+				{
+					plays_.push_back(possiblePlays.at(i));
+				}
+>>>>>>> parent of b52599b... Move Generator is working correctly.
 				
 
 				stringToDagSize=0;
@@ -410,6 +425,7 @@ void MoveGenerator::GenerateWordsAtCols(Board &board)
 	}
 }
 
+<<<<<<< HEAD
 void MoveGenerator::LoopBoard(Board &board){
 	Tile boardTiles[15][15];
 	board.GetTiles(boardTiles);
@@ -534,8 +550,26 @@ bool MoveGenerator::WordIsTouching(Board &board, string word, int row, int colum
 		
 		if (row +word.size()>=15){
 			return false;
-		}
+=======
+vector<Play> MoveGenerator::Generate(const Rack * rack, Board & board){
 
+	this->set_Rack(*rack);
+	if(board.GetCount() == 0){
+		vector<string> firstWords;
+		firstWords = ContainsHookWithRack("",rack_);
+		for(int i = 0; i < (int)firstWords.size(); i++)
+		{
+			Play pHorizontal(firstWords[i],7,7,true);
+			Play pVertical(firstWords[i],7,7,false);
+			plays_.push_back(pHorizontal);
+			plays_.push_back(pVertical);
+	
+>>>>>>> parent of b52599b... Move Generator is working correctly.
+		}
+		return plays_;
+		 
+
+<<<<<<< HEAD
 		
 		if (column>0 && column <14)
 		{
@@ -589,20 +623,24 @@ vector<Move> MoveGenerator::Generate(const Rack * rack, Board & board)
 void MoveGenerator::ContainsHookWithRackRecursive(Node* CurrentNode, vector<WordPossibility> &VectorOfPossibleWords, string letters, string rack, string hook) 
 {
 		if (CurrentNode == NULL) {
-		string Word = dag_->GetWord(letters);
-		vector<WordPossibility>::iterator it;
-		for (it = VectorOfPossibleWords.begin(); it != VectorOfPossibleWords.end(); it++) {
-			if (it->GetWord() == Word) break;
-		}
+=======
+	}
 
-		if (it == VectorOfPossibleWords.end()) { //word not found in Vector
-			WordPossibility newWord(Word);
-			newWord.SetWord(Word);
-			newWord.AddPositions(7);
-			newWord.AddRacks(rack);
-			VectorOfPossibleWords.push_back(newWord);
+	plays_.clear();
+	
+	this->generateWordsAtCols(board);
+	this->generateWordsAtRows(board);
+	return plays_;
+}
+void MoveGenerator::ContainsHookWithRackRecursive(Node* CurrentNode, set<string> &SetOfPossibleWords, string letters, string rack, string hook) {
+	if (CurrentNode == NULL) {
+>>>>>>> parent of b52599b... Move Generator is working correctly.
+		string Word = dag_->GetWord(letters);
+		set<string>::iterator it;
+		it = SetOfPossibleWords.find(Word);
+		if (it == SetOfPossibleWords.end()) { //word not found in set
+			SetOfPossibleWords.insert(Word);
 		}
-		
 		return;
 	}
 
@@ -615,7 +653,7 @@ void MoveGenerator::ContainsHookWithRackRecursive(Node* CurrentNode, vector<Word
 		{
 			string NewHook = hook;
 			NewHook = NewHook.erase(0, 1);
-			ContainsHookWithRackRecursive(CurrentNode->AT(hook[0]), VectorOfPossibleWords, letters, rack, NewHook);
+			ContainsHookWithRackRecursive(CurrentNode->AT(hook[0]), SetOfPossibleWords, letters, rack, NewHook);
 		}
 	}
 	else {
@@ -630,12 +668,12 @@ void MoveGenerator::ContainsHookWithRackRecursive(Node* CurrentNode, vector<Word
 			if (Key == Node::EOW || Key == Node::Break || FoundInRack != std::string::npos) {
 				string NewRack = rack;
 				NewRack = (Key != Node::EOW && Key != Node::Break) ? NewRack.erase(FoundInRack, 1) : NewRack;
-				ContainsHookWithRackRecursive(CurrentNode->AT(Key), VectorOfPossibleWords, letters, NewRack, hook);
+				ContainsHookWithRackRecursive(CurrentNode->AT(Key), SetOfPossibleWords, letters, NewRack, hook);
 			}
 		}
 	}
 }
-void MoveGenerator::ContainsHookWithRackRecursiveAtPos(Node* CurrentNode, vector<WordPossibility> &VectorOfPossibleWords, string letters, string rack, string hook, int MaxPos, int CurrentCount, bool found, int CurrPosOnBoard) {
+void MoveGenerator::ContainsHookWithRackRecursiveAtPos(Node* CurrentNode, vector<pair<string, vector<int>>> &VectorOfPossibleWords, string letters, string rack, string hook, int MaxPos, int CurrentCount, bool found, int CurrPosOnBoard) {
 	if (found) {
 		if ((CurrentNode != NULL && CurrentNode->get_Letter() != Node::Break && CurrentNode->get_Letter() != Node::EOW) || CurrentNode == NULL) {
 			int MaxLength = 15 - CurrPosOnBoard + CurrentCount; // ----er- if currposonboard= 12 (enters)
@@ -651,21 +689,18 @@ void MoveGenerator::ContainsHookWithRackRecursiveAtPos(Node* CurrentNode, vector
 
 	if (CurrentNode == NULL) {
 		string Word = dag_->GetWord(letters);
-		vector<WordPossibility>::iterator it;
+		vector<pair<string, vector<int>>>::iterator it;
 		for (it = VectorOfPossibleWords.begin(); it != VectorOfPossibleWords.end(); it++) {
-			if (it->GetWord() == Word) break;
+			if (it->first == Word) break;
 		}
 
 		if (it == VectorOfPossibleWords.end()) { //word not found in Vector
-			WordPossibility newWord(Word);
-			newWord.SetWord(Word);
-			newWord.AddPositions(CurrPosOnBoard - CurrentCount);
-			newWord.AddRacks(rack);
-			VectorOfPossibleWords.push_back(newWord);
+			vector<int> Positions;
+			Positions.push_back(CurrPosOnBoard - CurrentCount);
+			VectorOfPossibleWords.push_back(pair<string, vector<int>>(Word, Positions));
 		}
 		else {
-			it->AddPositions(CurrPosOnBoard - CurrentCount);
-			it->AddRacks(rack);
+			it->second.push_back(CurrPosOnBoard - CurrentCount);
 		}
 		return;
 	}
@@ -767,20 +802,26 @@ void MoveGenerator::ContainsHookWithRackRecursiveAtPos(Node* CurrentNode, vector
 }
 
 
-vector<WordPossibility> MoveGenerator::ContainsHookWithRack(string hook, string rack) {
+vector<string> MoveGenerator::ContainsHookWithRack(string hook, string rack) {
 	transform(hook.begin(), hook.end(), hook.begin(), ::tolower);
 	reverse(hook.begin(), hook.end());
 
-	vector<WordPossibility> VectorOfPossibleWords;
-	ContainsHookWithRackRecursive(dag_->GetRoot(), VectorOfPossibleWords, "", rack, hook);
-	return VectorOfPossibleWords;
+	set<string> SetOfPossibleWords;
+	vector<string> vectorOfPossibleWords;
+	ContainsHookWithRackRecursive(dag_->GetRoot(), SetOfPossibleWords, "", rack, hook);
+		
+	set <string>::iterator k;
+	for (k = SetOfPossibleWords.begin(); k != SetOfPossibleWords.end(); k++) {
+		vectorOfPossibleWords.push_back(*k);
+	}
+	return vectorOfPossibleWords;
 }
 
 
-vector<WordPossibility> MoveGenerator::ContainsHookWithRackAtPos(string hook, string rack, int pos, int CurrPosOnBoard) {
+vector<pair<string, vector<int>>> MoveGenerator::ContainsHookWithRackAtPos(string hook, string rack, int pos, int CurrPosOnBoard) {
 	transform(hook.begin(), hook.end(), hook.begin(), ::tolower);
 
-	vector<WordPossibility> VectorOfPossibleWords;
+	vector<pair<string, vector<int>>> VectorOfPossibleWords;
 
 	if (dag_->GetRoot()->ContainsKey(hook[0])) {
 		Node* newNode = dag_->GetRoot()->AT(hook[0]);
