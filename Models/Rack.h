@@ -7,6 +7,10 @@ class Rack
 public:
 	Rack();
 	Rack(Tile tiles[7]);
+<<<<<<< HEAD
+=======
+	Rack(string rack);
+>>>>>>> parent of 2b553b7... movegenerator still fails in some cases.
 	~Rack();
 	void SetTile(char c, int loc);
 	char GetLetter(int loc);

@@ -30,9 +30,17 @@ int main(){
 	auto start = chrono::high_resolution_clock::now();
 	MoveGenerator movGen(GADDAG_PATH);		//A move generator insatance
 	auto end = chrono::high_resolution_clock::now();
+<<<<<<< HEAD
 	board.Probe('c',7,4);		//Inserting letters 'e' and 't' to the empty board
 	board.Probe('a',7,5);		//_ _ _ _ e _ _ _ _ _ _ t _ _ _---->Row 7
     board.Probe('r',7,6);
+=======
+	board.Probe('c',4,7);		//Inserting letters 'e' and 't' to the empty board
+	board.Probe('a',5,7);		//_ _ _ _ e _ _ _ _ _ _ t _ _ _---->Row 7
+    board.Probe('r',6,7);
+	board.Probe('a',4,8);
+	board.Probe('t',4,9);
+>>>>>>> parent of 2b553b7... movegenerator still fails in some cases.
 	
 	double readingDictionaryTime = (end-start).count();
 	Tile RackTiles[7];          //A simple array to carry the rack's letters
@@ -54,7 +62,6 @@ int main(){
 		 start = chrono::high_resolution_clock::now();
 		vector<Play> moves = movGen.Generate(&rack, board);
 		 end = chrono::high_resolution_clock::now();
-		 moves.clear();
 	}
 
 	cout<<"hi";

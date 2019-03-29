@@ -6,43 +6,18 @@ MoveGenerator::MoveGenerator(){
 
 MoveGenerator::MoveGenerator(string gaddagpath){
 	dag_ = new GADDAG();
+	rack_="";
 }
 
-void MoveGenerator::SetRack(Rack gameRack){
+void MoveGenerator::set_Rack(Rack gameRack){
 	rack_="";
-	for (int i=0;i<gameRack.GetLength();i++)
+	for (int i=0;i<7;i++)
 	{
 		rack_+=gameRack.GetLetter(i);
 	}
 }
 
-void MoveGenerator::GenerateRackWords(bool boardEmpty){
-	
-		rackpossibilities_ = ContainsHookWithRack("",rack_);
-		if (boardEmpty)
-		{
-			for(int i = 0; i < (int)rackpossibilities_.size(); i++)
-			{
-				
-				Play* pHorizontal = new Play(rackpossibilities_[i].GetWord(),7,7,true);
-				Play* pVertical = new Play(rackpossibilities_[i].GetWord(),7,7,false);
-				Move moveH;
-				Move moveV;
-				moveH.SetPlay(pHorizontal);
-				moveH.SetRack(rackpossibilities_[i].GetRemainingRacks()[0]);
-				moveV.SetPlay(pVertical);
-				moveV.SetRack(rackpossibilities_[i].GetRemainingRacks()[0]);
-				moves_.push_back(moveH);
-				moves_.push_back(moveV);
-
-			
-			}
-		}
-
-}
-
-
-bool MoveGenerator::CheckOtherDimension(Board board,string word,int row,int col,bool horizontal) //True when called from generateWordsAtRows
+bool MoveGenerator::check_other_dimension(Board board,string word,int row,int col,bool horizontal) //True when called from generateWordsAtRows
 {
 	Tile boardTiles[15][15];
 	board.GetTiles(boardTiles);
@@ -170,10 +145,14 @@ bool MoveGenerator::CheckOtherDimension(Board board,string word,int row,int col,
 //This function will add the possible moves to the play vector and discard the rest
 //Row & Col will give the index of the hook
 <<<<<<< HEAD
+<<<<<<< HEAD
 void MoveGenerator::CheckWords(Board&board,vector<WordPossibility> returnedWords,int row,int col,bool horizontal)	//returnedWords--> words from GAD-dag_
 =======
 vector<Play> MoveGenerator::check_words(Board&board,vector<pair<string,vector<int> > > returnedWords,int row,int col,bool horizontal)	//returnedWords--> words from GAD-dag_
 >>>>>>> parent of b52599b... Move Generator is working correctly.
+=======
+void MoveGenerator::check_words(Board&board,vector<WordPossibility> returnedWords,int row,int col,bool horizontal)	//returnedWords--> words from GAD-dag_
+>>>>>>> parent of 2b553b7... movegenerator still fails in some cases.
 {
 vector<Play> possiblePlays;
 //Loops all over the possible words
@@ -186,10 +165,14 @@ vector<Play> possiblePlays;
 			{
 			
 <<<<<<< HEAD
+<<<<<<< HEAD
 				if (CheckOtherDimension(board,returnedWords[i].GetWord(),row,returnedWords[i].GetPositions().at(j), horizontal))
 =======
 				if (check_other_dimension(board,returnedWords[i].first,row,returnedWords[i].second[j], horizontal))
 >>>>>>> parent of b52599b... Move Generator is working correctly.
+=======
+				if (check_other_dimension(board,returnedWords[i].GetWord(),row,returnedWords[i].GetPositions().at(j), horizontal))
+>>>>>>> parent of 2b553b7... movegenerator still fails in some cases.
 				{
 				Play P(returnedWords[i].first,row,returnedWords[i].second[j],horizontal);
 				possiblePlays.push_back(P);
@@ -201,7 +184,11 @@ vector<Play> possiblePlays;
 		{
 			for (int j=0;j<(int)returnedWords[i].second.size();j++)
 			{
+<<<<<<< HEAD
 				if (check_other_dimension(board,returnedWords[i].first,returnedWords[i].second[j],col, horizontal))
+=======
+				if (check_other_dimension(board,returnedWords[i].GetWord(),returnedWords[i].GetPositions().at(j),col, horizontal))
+>>>>>>> parent of 2b553b7... movegenerator still fails in some cases.
 				{
 					Play P(returnedWords[i].first,returnedWords[i].second[j],col,horizontal);
 					possiblePlays.push_back(P);
@@ -213,11 +200,8 @@ return possiblePlays;
 }
 
 
-void MoveGenerator::GenerateWordsAtRows(Board &board)
+void MoveGenerator::generateWordsAtRows(Board &board)
 {
-	if (board.GetCount()==0){
-		return;
-	}
 	Tile boardTiles[15][15];
 	board.GetTiles(boardTiles);
 
@@ -299,6 +283,7 @@ void MoveGenerator::GenerateWordsAtRows(Board &board)
 
 				//Here we are testing the words we received from the GAD-dag_
 <<<<<<< HEAD
+<<<<<<< HEAD
 				CheckWords(board,possibleWords,rowIter,colIter,true);
 =======
 				vector<Play> possiblePlays = check_words(board,possibleWords,rowIter,colIter,true);
@@ -307,6 +292,9 @@ void MoveGenerator::GenerateWordsAtRows(Board &board)
 					plays_.push_back(possiblePlays.at(i));
 				}
 >>>>>>> parent of b52599b... Move Generator is working correctly.
+=======
+				check_words(board,possibleWords,rowIter,colIter,true);
+>>>>>>> parent of 2b553b7... movegenerator still fails in some cases.
 				
 				stringToDagSize=0;
 			}
@@ -315,12 +303,8 @@ void MoveGenerator::GenerateWordsAtRows(Board &board)
 }
 
 
-void MoveGenerator::GenerateWordsAtCols(Board &board)
-
+void MoveGenerator::generateWordsAtCols(Board &board)
 {
-	if (board.GetCount()==0){
-		return;
-	}
 	Tile boardTiles[15][15];
 	board.GetTiles(boardTiles);
 
@@ -402,13 +386,17 @@ void MoveGenerator::GenerateWordsAtCols(Board &board)
 					}
 
 					//Here we are testing the words we received from the GAD-dag_
-					//CheckWords(board,possibleWords,-1,colIter,false);
+					//check_words(board,possibleWords,-1,colIter,false);
 				}
 				
 
 				//Here we are testing the words we received from the GAD-dag_
 <<<<<<< HEAD
+<<<<<<< HEAD
 				CheckWords(board,possibleWords,rowIter,colIter,false);
+=======
+				check_words(board,possibleWords,rowIter,colIter,false);
+>>>>>>> parent of 2b553b7... movegenerator still fails in some cases.
 				
 =======
 				vector<Play> possiblePlays = check_words(board,possibleWords,rowIter,colIter,false);
@@ -425,6 +413,7 @@ void MoveGenerator::GenerateWordsAtCols(Board &board)
 	}
 }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 void MoveGenerator::LoopBoard(Board &board){
 	Tile boardTiles[15][15];
@@ -508,45 +497,28 @@ bool MoveGenerator::WordIsTouching(Board &board, string word, int row, int colum
 		}
 		
 		if (row>0 && row <14)
+=======
+vector<Move> MoveGenerator::Generate(const Rack * rack, Board & board){
+	moves_.clear();
+	this->set_Rack(*rack);
+	if(board.GetCount() == 0){
+		vector<WordPossibility> firstWords;
+		firstWords = ContainsHookWithRack("",rack_);
+		for(int i = 0; i < (int)firstWords.size(); i++)
+>>>>>>> parent of 2b553b7... movegenerator still fails in some cases.
 		{
-	
-			if (column > 0 && boardTiles[row][column-1].GetLetter()!='0' || 
-			column+word.size()<14 && boardTiles[row][column+word.size()+1].GetLetter()!='0'){
-				return false;
-		}
-			for (int i = 0;i<(int)word.size();i++)
-			{
-			if (boardTiles[row+1][column+i].GetLetter()=='0' && boardTiles[row-1][column+i].GetLetter()=='0')
-			{
-				continue;
-			}
-			else 
-				flag=true;
-		}
-		}
-		else if (row ==0){
-			for (int i = 0;i<(int)word.size();i++)
-			{
-			if (boardTiles[row+1][column+i].GetLetter()=='0'){
-				continue;
-			}
-			else 
-				flag=true;
-		}
-		}
-		else if (row==14){
-			for (int i = 0;i<word.size();i++)
-			{
-			if (boardTiles[row-1][column+i].GetLetter()=='0'){
-				continue;
-			}
-			else 
-				flag=true;
-		}
-		}
-	}
-	else{
+			Play* pHorizontal = new Play(firstWords[i].GetWord(),7,7,true);
+			Play* pVertical = new Play(firstWords[i].GetWord(),7,7,false);
+			Move moveH;
+			Move moveV;
+			moveH.SetPlay(pHorizontal);
+			moveH.SetRack(firstWords[i].GetRemainingRacks()[0]);
+			moveV.SetPlay(pVertical);
+			moveV.SetRack(firstWords[i].GetRemainingRacks()[0]);
+			moves_.push_back(moveH);
+			moves_.push_back(moveV);
 
+<<<<<<< HEAD
 		
 		if (row +word.size()>=15){
 			return false;
@@ -565,10 +537,13 @@ vector<Play> MoveGenerator::Generate(const Rack * rack, Board & board){
 			plays_.push_back(pVertical);
 	
 >>>>>>> parent of b52599b... Move Generator is working correctly.
+=======
+>>>>>>> parent of 2b553b7... movegenerator still fails in some cases.
 		}
 		return plays_;
 		 
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 		
 		if (column>0 && column <14)
@@ -605,26 +580,31 @@ vector<Play> MoveGenerator::Generate(const Rack * rack, Board & board){
 			else 
 				flag=true;
 		}}
+=======
+		return moves_;	 
+>>>>>>> parent of 2b553b7... movegenerator still fails in some cases.
 	}
-return flag;
-}
-
-vector<Move> MoveGenerator::Generate(const Rack * rack, Board & board)
-{
-	moves_.clear();
-	this->SetRack(*rack);
-	GenerateRackWords(board.GetCount() == 0); 
-	this->LoopBoard(board);
-	this->GenerateWordsAtCols(board);
-	this->GenerateWordsAtRows(board);
+	
+	this->generateWordsAtCols(board);
+	this->generateWordsAtRows(board);
 	
 	return moves_;
 }
+<<<<<<< HEAD
 void MoveGenerator::ContainsHookWithRackRecursive(Node* CurrentNode, vector<WordPossibility> &VectorOfPossibleWords, string letters, string rack, string hook) 
 {
 		if (CurrentNode == NULL) {
 =======
 	}
+=======
+void MoveGenerator::ContainsHookWithRackRecursive(Node* CurrentNode, vector<WordPossibility> &VectorOfPossibleWords, string letters, string rack, string hook) {
+	if (CurrentNode == NULL) {
+		string Word = dag_->GetWord(letters);
+		vector<WordPossibility>::iterator it;
+		for (it = VectorOfPossibleWords.begin(); it != VectorOfPossibleWords.end(); it++) {
+			if (it->GetWord() == Word) break;
+		}
+>>>>>>> parent of 2b553b7... movegenerator still fails in some cases.
 
 	plays_.clear();
 	
@@ -644,13 +624,11 @@ void MoveGenerator::ContainsHookWithRackRecursive(Node* CurrentNode, set<string>
 		return;
 	}
 
-	if (hook != "" && hook != " ") 
-	{
+	if (hook != "" && hook != " ") {
 		if (CurrentNode->get_Letter() != Node::Root)
 			letters += CurrentNode->get_Letter();
 
-		if (CurrentNode->ContainsKey(hook[0])) 
-		{
+		if (CurrentNode->ContainsKey(hook[0])) {
 			string NewHook = hook;
 			NewHook = NewHook.erase(0, 1);
 			ContainsHookWithRackRecursive(CurrentNode->AT(hook[0]), SetOfPossibleWords, letters, rack, NewHook);
@@ -830,7 +808,6 @@ vector<pair<string, vector<int>>> MoveGenerator::ContainsHookWithRackAtPos(strin
 
 	return VectorOfPossibleWords;
 }
-
 MoveGenerator::~MoveGenerator(){
 	
 }

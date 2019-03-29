@@ -16,10 +16,13 @@ class MoveGenerator{
     string rack_;
 <<<<<<< HEAD
 	vector<Move> moves_;
+<<<<<<< HEAD
 	vector<WordPossibility> rackpossibilities_;
 =======
     vector<Play> plays_;
 >>>>>>> parent of b52599b... Move Generator is working correctly.
+=======
+>>>>>>> parent of 2b553b7... movegenerator still fails in some cases.
 public:    
     MoveGenerator();
     MoveGenerator(string gaddagpath);
@@ -27,6 +30,7 @@ public:
     vector<Play> Generate(const Rack *, Board &);
 
 private:
+<<<<<<< HEAD
 <<<<<<< HEAD
     void GenerateWordsAtCols(Board &board);
     void GenerateWordsAtRows(Board &board);
@@ -37,13 +41,20 @@ private:
 	void LoopBoard(Board &board);
 	bool WordIsTouching(Board &board, string word, int row, int column, bool horizontal);
 =======
+=======
+>>>>>>> parent of 2b553b7... movegenerator still fails in some cases.
     void generateWordsAtCols(Board &board);
     void generateWordsAtRows(Board &board);
     void set_Rack(Rack gameRack);
     bool check_other_dimension(Board board,string word,int row,int col,bool horizontal);
+<<<<<<< HEAD
     vector<Play> check_words(Board&board,vector<pair<string,vector<int> > > returnedWords,int row,int col,bool horizontal);
 
 >>>>>>> parent of b52599b... Move Generator is working correctly.
+=======
+    void check_words(Board&board, vector<WordPossibility> returnedWords,int row,int col,bool horizontal);
+
+>>>>>>> parent of 2b553b7... movegenerator still fails in some cases.
 	//Function to be called to return a vector of all possible words 
 	//it has parameters: hook (word on board to add letters to it) and rack (available letters)
 	//if hook= ay and rack= persl --> vector={play, player, plays} 
