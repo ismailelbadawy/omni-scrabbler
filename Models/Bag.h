@@ -11,7 +11,6 @@ using namespace std;
 class Bag{
     map<Tile,int> bag_;
     int remainingTiles_;
-    
     public:
     Bag();
     Bag(string InputPath);
@@ -22,7 +21,4 @@ class Bag{
     void TakeLetters(vector<Tile> tiles);
     void GiveTiles(vector<Tile> tiles);
     ~Bag();
-    
-
-
 };
