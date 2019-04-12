@@ -93,7 +93,7 @@ bool GADDAG::CheckWordInDict(string Word)
 }
 
 void GADDAG::LoadDagHardCoded() { 
-	for(int i = 0; i < 178691; i ++){
+	for(int i = 0; i < 267753; i ++){
 		this->add(DICTIONARY[i]);
 	}
 }

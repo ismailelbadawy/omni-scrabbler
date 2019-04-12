@@ -31,21 +31,18 @@ int main(){
 	MoveGenerator movGen(GADDAG_PATH);		//A move generator insatance
 	auto end = chrono::high_resolution_clock::now();
 	board.Probe('c',7,7);		//Inserting letters 'e' and 't' to the empty board
-	board.Probe('a',8,7);
-	board.Probe('t',9,7);
-	board.Probe('u',7,8);
-	board.Probe('t',7,9);
+	
 	//double readingDictionaryTime = (end-start).count();
 	Tile RackTiles[7];          //A simple array to carry the rack's letters
 
 
-	RackTiles[0].SetLetter('g');
-	RackTiles[1].SetLetter('f');
-	RackTiles[2].SetLetter('e');
-	RackTiles[3].SetLetter('d');
-	RackTiles[4].SetLetter('c');
-	RackTiles[5].SetLetter('b');
-	RackTiles[6].SetLetter('a');
+	RackTiles[0].SetLetter('o');
+	RackTiles[1].SetLetter('t');
+	RackTiles[2].SetLetter('f');
+	RackTiles[3].SetLetter('p');
+	RackTiles[4].SetLetter('w');
+	RackTiles[5].SetLetter('q');
+	RackTiles[6].SetLetter('z');
 	
 	Rack rack(RackTiles);
 	vector<Move> moves;
