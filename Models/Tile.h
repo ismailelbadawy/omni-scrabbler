@@ -15,6 +15,7 @@ public:
 	void SetParams(char letter,int row,int col,int score=1,int bonus=1);
 	int GetBonus();
 	void CalculateTotalScore();
+	void SetScore(int score);
 	bool operator< (const Tile& tile) const{
 		 
         return  tile.letter_ > letter_;

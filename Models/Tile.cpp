@@ -22,10 +22,15 @@ char Tile::GetLetter()
 void Tile::SetLetter(char c)
 {
 	this->letter_=c;
+	
 }
 int Tile::GetBonus()
 {
 	return bonus_;
+}
+void Tile::SetScore(int score)
+{
+	score_=score;
 }
 
 void Tile::SetParams(char letter,int row,int col,int score,int bonus)

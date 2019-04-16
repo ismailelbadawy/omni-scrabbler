@@ -25,6 +25,8 @@ public:
 	int GetScore();
 	bool GetIsHorizontal();
 	void CalculateScore();
+	Tile GetTile(int index);
+	void UpdateTile(int index, int score);
 	~Play();
 };
 

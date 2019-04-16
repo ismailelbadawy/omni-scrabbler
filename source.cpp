@@ -28,7 +28,7 @@ int main(){
 
 	/////////////////////////////////////Khaled's Testing Part//////////////////////////////////////////////////////////////
 	auto start = chrono::high_resolution_clock::now();
-	MoveGenerator movGen(GADDAG_PATH);		//A move generator insatance
+	MoveGenerator movGen(board);		//A move generator insatance
 	auto end = chrono::high_resolution_clock::now();
 	board.Probe('c',7,7);		//Inserting letters 'e' and 't' to the empty board
 	

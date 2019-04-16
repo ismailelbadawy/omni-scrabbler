@@ -3,6 +3,7 @@
 #include<vector>
 #include"../Models/Board.h"
 #include"../Models/Play.h"
+#include"../Models/Bag.h"
 #include"../Models/Rack.h"
 #include"../Models/Move.h"
 #include"../GADDAG/GADDAG.h"
@@ -13,14 +14,15 @@ using namespace std;
 
 class MoveGenerator{
 
-
+	Tile* boardTiles_ [15][15];
     GADDAG *dag_;
+	Bag bag_;
     string rack_;
 	vector<Move> moves_;
 	vector<WordPossibility> rackpossibilities_;
 public:    
     MoveGenerator();
-    MoveGenerator(string gaddagpath);
+    MoveGenerator(Board &board, Bag &bag);
     ~MoveGenerator();
     vector<Move> Generate(const Rack *, Board &);
 
@@ -64,5 +66,9 @@ private:
 	//but elephant, { 2,4 }
 	//as the e on board can be the first letter or the third letter in the word elephant, then pos on board will be 4 or 2 respectively
 	vector<WordPossibility> ContainsHookWithRackAtPos(string hook, string rack, int MaxIndex, int CurrPosOnBoard);
+
+	// A function that calculates the single play's score depending on the newly added letters and their bonuses
+
+	void CalculatePlayScore(Play *p);
 
 };

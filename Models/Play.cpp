@@ -71,8 +71,21 @@ int Play::GetScore()
 void Play::CalculateScore()
 {
 	// To be implemented later
+	score_ = 0;
+	for(Tile var : tiles_)
+	{
+		score_+=var.GetBonus()*var.GetScore();	
+	}
+
 }
 
+void Play::UpdateTile(int index,int score){
+	tiles_[index].SetScore(score);
+}
+
+Tile Play::GetTile(int index){
+	return tiles_[index];
+}
 
 Play::~Play()
 {

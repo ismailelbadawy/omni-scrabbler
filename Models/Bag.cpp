@@ -50,7 +50,9 @@ for (int i =0;i<(int)tiles.size();i++){
 }
 
 }
-
+map<Tile,int> Bag::GetBag(){
+    return this->bag_;
+}
 
 void Bag::GiveTiles(vector<Tile> tiles){
 for (int i =0;i<(int)tiles.size();i++){

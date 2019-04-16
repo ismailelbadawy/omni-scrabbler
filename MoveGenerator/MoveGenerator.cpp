@@ -4,8 +4,10 @@ MoveGenerator::MoveGenerator(){
 
 }
 
-MoveGenerator::MoveGenerator(string gaddagpath){
+MoveGenerator::MoveGenerator(Board& board, Bag&bag){
 	dag_ = new GADDAG();
+	board.GetTiles(this->boardTiles_);
+	bag_ = bag;
 }
 
 void MoveGenerator::SetRack(Rack gameRack){
@@ -44,8 +46,7 @@ void MoveGenerator::GenerateRackWords(bool boardEmpty){
 
 bool MoveGenerator::CheckOtherDimension(Board board,string word,int row,int col,bool horizontal) //True when called from generateWordsAtRows
 {
-	Tile boardTiles[15][15];
-	board.GetTiles(boardTiles);
+
 	if (horizontal)  //word is horizontal, we need to check the columns of the letters
 	{
 																//_ _ _ _ _ _|c|_ _ _ _ _ _ _ _			-->>Here we want to insert "ay" after
@@ -57,14 +58,14 @@ bool MoveGenerator::CheckOtherDimension(Board board,string word,int row,int col,
 			int rowIterUp=0,rowIterDown=0;						//To up or down;
 			
 
-			if (row!=0 && row!=14 && boardTiles[row-1][col+i].GetLetter()=='0' &&
-			boardTiles[row+1][col+i].GetLetter()=='0'){
+			if (row!=0 && row!=14 && boardTiles_[row-1][col+i]->GetLetter()=='0' &&
+			boardTiles_[row+1][col+i]->GetLetter()=='0'){
 				continue;
 			}
 
 			if(row!=0)											//We are at the top row...
 			{
-				while (boardTiles[row-rowIterUp-1][col+i].GetLetter()!='0')
+				while (boardTiles_[row-rowIterUp-1][col+i]->GetLetter()!='0')
 				{
 					
 					if (row-rowIterUp==0)						//We must check so that we will not access an out of bound memory
@@ -74,7 +75,7 @@ bool MoveGenerator::CheckOtherDimension(Board board,string word,int row,int col,
 			}
 			if (row!=14)										//We are at the bottow row...
 			{
-				while (boardTiles[row+rowIterDown+1][col+i].GetLetter()!='0')
+				while (boardTiles_[row+rowIterDown+1][col+i]->GetLetter()!='0')
 				{
 					
 					if (row+rowIterDown==14)					//We must check so that we will not access an out of bound memory
@@ -91,11 +92,11 @@ bool MoveGenerator::CheckOtherDimension(Board board,string word,int row,int col,
 			
 			for (int iter=otherWordStart;iter<=otherWordEnd;iter++)
 			{
-				if (boardTiles[iter][col+i].GetLetter()=='0'){
+				if (boardTiles_[iter][col+i]->GetLetter()=='0'){
 					wordToTest+=word[i];
 				}
 				else{
-				wordToTest+=boardTiles[iter][col+i].GetLetter();
+				wordToTest+=boardTiles_[iter][col+i]->GetLetter();
 			}	
 			}
 			
@@ -117,8 +118,8 @@ bool MoveGenerator::CheckOtherDimension(Board board,string word,int row,int col,
 			int otherWordEnd=0;										//Index that will get us the word to test using the GAD-dag_
 			int colIterLeft=0,colIterRight=0;					//To up or down;
 			
-			if (col!=0 && col!=14 &&boardTiles[row+i][col-1].GetLetter()=='0'
-			&&boardTiles[row+i][col+1].GetLetter()=='0')
+			if (col!=0 && col!=14 &&boardTiles_[row+i][col-1]->GetLetter()=='0'
+			&&boardTiles_[row+i][col+1]->GetLetter()=='0')
 				{
 					continue;
 				}
@@ -126,7 +127,7 @@ bool MoveGenerator::CheckOtherDimension(Board board,string word,int row,int col,
 
 			if(col!=0)											//We are at the top row...
 			{
-				while (boardTiles[row+i][col-colIterLeft-1].GetLetter()!='0')
+				while (boardTiles_[row+i][col-colIterLeft-1]->GetLetter()!='0')
 				{
 					if (col-colIterLeft==0)						//We must check so that we will not access an out of bound memory
 						break;
@@ -136,7 +137,7 @@ bool MoveGenerator::CheckOtherDimension(Board board,string word,int row,int col,
 
 			if (col!=14)										//We are at the bottow row...
 			{
-				while (boardTiles[row+i][col+colIterRight+1].GetLetter()!='0')
+				while (boardTiles_[row+i][col+colIterRight+1]->GetLetter()!='0')
 				{
 					
 					if (col+colIterRight==14)					//We must check so that we will not access an out of bound memory
@@ -153,11 +154,11 @@ bool MoveGenerator::CheckOtherDimension(Board board,string word,int row,int col,
 			
 			for (int iter=otherWordStart;iter<=otherWordEnd;iter++)
 			{
-				if (boardTiles[row+i][iter].GetLetter() =='0'){
+				if (boardTiles_[row+i][iter]->GetLetter() =='0'){
 					wordToTest+=word[i];
 				}
 				else{
-				wordToTest+=boardTiles[row+i][iter].GetLetter();
+				wordToTest+=boardTiles_[row+i][iter]->GetLetter();
 				
 				}	
 			}
@@ -219,8 +220,6 @@ void MoveGenerator::GenerateWordsAtRows(Board &board)
 	if (board.GetCount()==0){
 		return;
 	}
-	Tile boardTiles[15][15];
-	board.GetTiles(boardTiles);
 
 	for (int rowIter=0;rowIter<15; rowIter++)
 	{
@@ -230,8 +229,8 @@ void MoveGenerator::GenerateWordsAtRows(Board &board)
 		vector<WordPossibility> possibleWords; //Vector that will carry possible combinations after we have it returned from GADDAG
 
 		for (int colIter=0;colIter<15;colIter++)
-		{
-			while (boardTiles[rowIter][colIter].GetLetter()!='0')
+		{		
+			while (this->boardTiles_[rowIter][colIter]->GetLetter()!='0')
 			{
 				stringToDagSize++;
 				colIter++;
@@ -249,13 +248,13 @@ void MoveGenerator::GenerateWordsAtRows(Board &board)
 				//Now we fill out the hook to be sent		//
 				for (int k=0;k<hookSize;k++)
 				{
-					if (boardTiles[rowIter][k+hookBeginIndex].GetLetter()=='0')
+					if (this->boardTiles_[rowIter][k+hookBeginIndex]->GetLetter()=='0')
 					{	
 						
 						hookString+='.';
 					}
 					else {	
-						hookString+=boardTiles[rowIter][k+hookBeginIndex].GetLetter();
+						hookString+=this->boardTiles_[rowIter][k+hookBeginIndex]->GetLetter();
 				}
 				}
 				
@@ -267,17 +266,17 @@ void MoveGenerator::GenerateWordsAtRows(Board &board)
 				}
 				
 				//A previous pattern --->    _ _ a r r _ _ b a _ _ _ _ _ _ -->here we reach the 'r' at pos 4...
-				else if (boardTiles[rowIter][reverseIterator].GetLetter()!='0')    
+				else if (this->boardTiles_[rowIter][reverseIterator]->GetLetter()!='0')    
 				{
 					//possibleWords=send_to_GADDAG(hook,rack_,hookBeginIndex-(reverseIterator+2),hookBeginIndex)
 					possibleWords=ContainsHookWithRackAtPos(hookString,rack_,hookBeginIndex-(reverseIterator+2),hookBeginIndex);
 				}
 				
 				//Here is the general case, we are moving backingwards without hitting a previous pattern yet or reaching start of row
-				else if (boardTiles[rowIter][reverseIterator].GetLetter()=='0')
+				else if (this->boardTiles_[rowIter][reverseIterator]->GetLetter()=='0')
 				{
 					
-					while (boardTiles[rowIter][reverseIterator].GetLetter()=='0'&&reverseIterator>0)
+					while (this->boardTiles_[rowIter][reverseIterator]->GetLetter()=='0'&&reverseIterator>0)
 					{
 						reverseIterator--;
 					}
@@ -314,8 +313,7 @@ void MoveGenerator::GenerateWordsAtCols(Board &board)
 	if (board.GetCount()==0){
 		return;
 	}
-	Tile boardTiles[15][15];
-	board.GetTiles(boardTiles);
+	
 
 	for (int colIter=0;colIter<15; colIter++)
 	{
@@ -326,7 +324,7 @@ void MoveGenerator::GenerateWordsAtCols(Board &board)
 
 		for (int rowIter=0;rowIter<15;rowIter++)
 		{
-			while (boardTiles[rowIter][colIter].GetLetter()!='0')
+			while (this->boardTiles_[rowIter][colIter]->GetLetter()!='0')
 			{
 				stringToDagSize++;
 				rowIter++;	
@@ -346,13 +344,13 @@ void MoveGenerator::GenerateWordsAtCols(Board &board)
 				//Now we fill out the hook to be sent
 				for (int k=0;k<hookSize;k++)
 				{
-					if (boardTiles[k+hookBeginIndex][colIter].GetLetter()=='0')
+					if (this->boardTiles_[k+hookBeginIndex][colIter]->GetLetter()=='0')
 					{	
 						
 						hookString+='.';
 					}else
 					{
-						hookString+=boardTiles[k+hookBeginIndex][colIter].GetLetter();
+						hookString+=this->boardTiles_[k+hookBeginIndex][colIter]->GetLetter();
 			
 					}
 					
@@ -366,7 +364,7 @@ void MoveGenerator::GenerateWordsAtCols(Board &board)
 				}
 			
 				//A previous pattern --->    _ _ a r r _ _ b a _ _ _ _ _ _ -->here we reach the 'r' at pos 4...
-				else if (boardTiles[reverseIterator][colIter].GetLetter()!='0')    
+				else if (this->boardTiles_[reverseIterator][colIter]->GetLetter()!='0')    
 				{
 					//possibleWords=send_to_GADDAG(hook,rack_,hookBeginIndex-(reverseIterator+2),hookBeginIndex)
 					possibleWords = ContainsHookWithRackAtPos(hookString,rack_,hookBeginIndex-(reverseIterator+2),hookBeginIndex);
@@ -374,10 +372,10 @@ void MoveGenerator::GenerateWordsAtCols(Board &board)
 				}
 				
 				//Here is the general case, we are moving backingwards without hitting a previous pattern yet or reaching start of row
-				else if (boardTiles[reverseIterator][colIter].GetLetter()=='0')
+				else if (this->boardTiles_[reverseIterator][colIter]->GetLetter()=='0')
 				{
 					
-					while (boardTiles[reverseIterator][colIter].GetLetter()=='0'&&reverseIterator>0)
+					while (this->boardTiles_[reverseIterator][colIter]->GetLetter()=='0'&&reverseIterator>0)
 					{
 						reverseIterator--;
 					}
@@ -411,8 +409,6 @@ void MoveGenerator::GenerateWordsAtCols(Board &board)
 }
 
 void MoveGenerator::LoopBoard(Board &board){
-	Tile boardTiles[15][15];
-	board.GetTiles(boardTiles);
 	
 	//Loop on all rack permutations
 	for (int i=0;i<(int)rackpossibilities_.size();i++)
@@ -425,7 +421,7 @@ void MoveGenerator::LoopBoard(Board &board){
 			{
 				for(int column = 0; column < 15; column++)
 				{
-					if (boardTiles[row][column].GetLetter()!='0'){
+					if (this->boardTiles_[row][column]->GetLetter()!='0'){
 						continue;
 					}
 					bool completeWord = true;
@@ -435,7 +431,7 @@ void MoveGenerator::LoopBoard(Board &board){
 							completeWord=false;
 							break;
 						}
-						if (boardTiles[row][column+wordLetter].GetLetter()!='0')
+						if (this->boardTiles_[row][column+wordLetter]->GetLetter()!='0')
 						{
 							completeWord = false;
 							break;
@@ -460,7 +456,7 @@ void MoveGenerator::LoopBoard(Board &board){
 	for (int i=0;i<(int)rackpossibilities_.size();i++){
 		for (int column=0;column<15;column++){
 			for(int row = 0;row<15;row++){
-				if (boardTiles[row][column].GetLetter()!='0'){
+				if (this->boardTiles_[row][column]->GetLetter()!='0'){
 					continue;
 				}
 				bool completeWord = true;
@@ -470,7 +466,7 @@ void MoveGenerator::LoopBoard(Board &board){
 							completeWord=false;
 							break;
 						}
-						if (boardTiles[row+wordLetter][column].GetLetter()!='0')
+						if (this->boardTiles_[row+wordLetter][column]->GetLetter()!='0')
 						{
 							completeWord = false;
 							break;
@@ -493,8 +489,6 @@ void MoveGenerator::LoopBoard(Board &board){
 }
 
 bool MoveGenerator::WordIsTouching(Board &board, string word, int row, int column, bool horizontal){
-	Tile boardTiles[15][15];
-	board.GetTiles(boardTiles);
 	bool flag=false;
 	if  (horizontal){
 		
@@ -502,8 +496,8 @@ bool MoveGenerator::WordIsTouching(Board &board, string word, int row, int colum
 			return false;
 		}
 
-		if ((column > 0 && boardTiles[row][column-1].GetLetter()!='0') || 
-			(column+word.size()<15 && boardTiles[row][column+word.size()].GetLetter()!='0')){
+		if ((column > 0 && this->boardTiles_[row][column-1]->GetLetter()!='0') || 
+			(column+word.size()<15 && this->boardTiles_[row][column+word.size()]->GetLetter()!='0')){
 				return false;
 		}
 		
@@ -511,7 +505,7 @@ bool MoveGenerator::WordIsTouching(Board &board, string word, int row, int colum
 		{	
 			for (int i = 0;i<(int)word.size();i++)
 			{
-			if (boardTiles[row+1][column+i].GetLetter()=='0' && boardTiles[row-1][column+i].GetLetter()=='0')
+			if (this->boardTiles_[row+1][column+i]->GetLetter()=='0' && this->boardTiles_[row-1][column+i]->GetLetter()=='0')
 			{
 				continue;
 			}
@@ -522,7 +516,7 @@ bool MoveGenerator::WordIsTouching(Board &board, string word, int row, int colum
 		else if (row ==0){
 			for (int i = 0;i<(int)word.size();i++)
 			{
-			if (boardTiles[row+1][column+i].GetLetter()=='0'){
+			if (this->boardTiles_[row+1][column+i]->GetLetter()=='0'){
 				continue;
 			}
 			else 
@@ -532,7 +526,7 @@ bool MoveGenerator::WordIsTouching(Board &board, string word, int row, int colum
 		else if (row==14){
 			for (int i = 0;i<(int)word.size();i++)
 			{
-			if (boardTiles[row-1][column+i].GetLetter()=='0'){
+			if (this->boardTiles_[row-1][column+i]->GetLetter()=='0'){
 				continue;
 			}
 			else 
@@ -547,8 +541,8 @@ bool MoveGenerator::WordIsTouching(Board &board, string word, int row, int colum
 			return false;
 		}
 
-		if (row>0&&boardTiles[row-1][column].GetLetter()!='0'||
-			row+word.size()<15 && boardTiles[row+word.size()][column].GetLetter()!='0'){
+		if (row>0&&this->boardTiles_[row-1][column]->GetLetter()!='0'||
+			row+word.size()<15 && boardTiles_[row+word.size()][column]->GetLetter()!='0'){
 				return false;
 		}
 		
@@ -557,7 +551,7 @@ bool MoveGenerator::WordIsTouching(Board &board, string word, int row, int colum
 			
 			for (int i = 0;i<(int)word.size();i++)
 		{	
-			if (boardTiles[row+i][column+1].GetLetter()=='0' && boardTiles[row+i][column-1].GetLetter()=='0'){
+			if (boardTiles_[row+i][column+1]->GetLetter()=='0' && boardTiles_[row+i][column-1]->GetLetter()=='0'){
 				continue;
 		}
 			else 
@@ -567,7 +561,7 @@ bool MoveGenerator::WordIsTouching(Board &board, string word, int row, int colum
 		else if (column == 0){
 			for (int i = 0;i<(int)word.size();i++)
 			{
-			if (boardTiles[row+i][column+1].GetLetter()=='0'){
+			if (boardTiles_[row+i][column+1]->GetLetter()=='0'){
 				continue;
 			}
 			else 
@@ -577,7 +571,7 @@ bool MoveGenerator::WordIsTouching(Board &board, string word, int row, int colum
 		else if (column==14){
 			for (int i = 0;i<(int)word.size();i++)
 		{	
-			if (boardTiles[row+i][column-1].GetLetter() =='0'){
+			if (boardTiles_[row+i][column-1]->GetLetter() =='0'){
 				continue;
 			}
 			else 
@@ -801,6 +795,8 @@ vector<WordPossibility> MoveGenerator::ContainsHookWithRackAtPos(string hook, st
 
 	return VectorOfPossibleWords;
 }
+
+
 
 MoveGenerator::~MoveGenerator(){
 	

@@ -21,19 +21,50 @@ Board::Board(char tiles[15][15])
 	{
 		for (int j= 0; j<15;j++)
 		{
-			//This should compute somehow the bonus of each tile and place it while contructing the board
-			tiles_[i][j].SetParams(tiles[i][j],i,j,1,1);
-		}
+			// Triple word
+			if ((i==7&&(j == 0 || j == 14))|| 
+			 ((i == 0 || i == 14)&&(j==0 || j==7 || j==14)))
+			{
+				tiles_[i][j].SetParams(tiles[i][j],i,j,1,5);
+			}
+			// Double Word
+			else if (((i == j)&&(i<5 || i>9)&&(i!=14 && i!=0))||
+			((14-i==j)&&(j<5||j>9)&&(j!=14 && j!=0))){
+				tiles_[i][j].SetParams(tiles[i][j],i,j,1,4);
+			}
+			// Triple Letter 
+			else if (((i==1||i==13)&&(j==5 || j==9))||
+					(((i==5 ||i ==9) &&( j==1 || j == 13 ||j==5 || j==9))))
+			{
+				tiles_[i][j].SetParams(tiles[i][j],i,j,1,3);
+			}
+			// Double Letter
+			else if 
+				(((i == 0 || i == 14)&&(j == 3 || j ==11))||
+				((i==2 || i == 12)&&(j==6 || j == 8))||
+				((i==3 || i == 11)&&(j==0 || j==7 || j==14))||
+				((i==3 || i == 11)&&(j==0 || j==7 || j==14))||
+				((i==6 || i == 8)&&(j==2 ||j==6 || j==8 || j==12))||
+				((i == 7)&&(j == 3 || j==11)))
+			{
+				tiles_[i][j].SetParams(tiles[i][j],i,j,1,2);
+			}
+			else
+			{
+				tiles_[i][j].SetParams(tiles[i][j],i,j,1,1);
+			}
+				
+		}	
 	}
 }
 
-void Board::GetTiles(Tile tiles[15][15])
+void Board::GetTiles(Tile* tiles[15][15])
 {
 	for (int i = 0; i < 15; i++)
 	{
 		for (int j = 0; j < 15; j++)
 		{
-			tiles[i][j] = tiles_[i][j];
+			tiles[i][j] = &tiles_[i][j];
 		}
 	}
 }
