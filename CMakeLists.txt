@@ -12,6 +12,8 @@ ${PROJECT_SOURCE_DIR}/GADDAG/*.h
 ${PROJECT_SOURCE_DIR}/GADDAG/*.cpp
 ${PROJECT_SOURCE_DIR}/Models/*.h
 ${PROJECT_SOURCE_DIR}/Models/*.cpp
+${PROJECT_SOURCE_DIR}/TileScoreCalculator/*.h
+${PROJECT_SOURCE_DIR}/TileScoreCalculator/*.cpp
 ${PROJECT_SOURCE_DIR}/source.cpp)
 add_executable(
     omniscrabbler
