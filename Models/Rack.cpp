@@ -6,7 +6,7 @@ Rack::Rack()
 {
 }
 
-Rack::Rack(Tile tiles[7])
+Rack::Rack(vector<Tile> tiles)
 {
     for (int i=0;i<7;i++)
         tiles_.push_back(tiles[i]);       

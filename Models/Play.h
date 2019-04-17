@@ -1,5 +1,4 @@
 #pragma once
-
 #include<iostream>
 #include<vector>
 #include"Tile.h"
@@ -27,6 +26,7 @@ public:
 	void CalculateScore();
 	Tile GetTile(int index);
 	void UpdateTile(int index, int score);
+	void SetTileBonus(int index,int bonus);
 	~Play();
 };
 

@@ -10,7 +10,7 @@ class Rack
 	vector<Tile> tiles_;
 public:
 	Rack();
-	Rack(Tile tiles[7]);
+	Rack(vector<Tile> tiles);
 	Rack(string rack);
 	int GetLength();
 	~Rack();

@@ -4,10 +4,9 @@ MoveGenerator::MoveGenerator(){
 
 }
 
-MoveGenerator::MoveGenerator(Board& board, Bag&bag){
+MoveGenerator::MoveGenerator(Board& board){
 	dag_ = new GADDAG();
 	board.GetTiles(this->boardTiles_);
-	bag_ = bag;
 }
 
 void MoveGenerator::SetRack(Rack gameRack){
@@ -189,6 +188,7 @@ void MoveGenerator::CheckWords(Board&board,vector<WordPossibility> returnedWords
 				if (CheckOtherDimension(board,returnedWords[i].GetWord(),row,returnedWords[i].GetPositions().at(j), horizontal))
 				{
 					Play *P = new Play(returnedWords[i].GetWord(),row,returnedWords[i].GetPositions().at(j),horizontal);
+					P->CalculateScore();
 					Move move;
 					move.SetPlay(P);
 					move.SetRack(returnedWords[i].GetRemainingRacks()[j]);
@@ -795,7 +795,6 @@ vector<WordPossibility> MoveGenerator::ContainsHookWithRackAtPos(string hook, st
 
 	return VectorOfPossibleWords;
 }
-
 
 
 MoveGenerator::~MoveGenerator(){

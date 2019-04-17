@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include<map>
 #include<vector>
@@ -8,7 +9,8 @@
 
 using namespace std;
 
-class Bag{
+class Bag
+{
     map<Tile,int> bag_;
     int remainingTiles_;
 
@@ -19,8 +21,7 @@ class Bag{
     int GetOccurences(char letter);
     int GetOccurences(Tile tile);
     int GetRemainingTiles();
-    void TakeLetters(vector<Tile> tiles);
+    void TakeLetter(Tile* tile);
     void GiveTiles(vector<Tile> tiles);
-    map<Tile,int> GetBag();
     ~Bag();
 };

@@ -42,6 +42,10 @@ void Tile::SetParams(char letter,int row,int col,int score,int bonus)
 	bonus_=bonus;
 }
 
+void Tile::SetBonus(int  bonus){
+	bonus_=bonus;
+}
+
 void Tile::CalculateTotalScore()
 {
 	this->score_ = this->score_ * this->bonus_;

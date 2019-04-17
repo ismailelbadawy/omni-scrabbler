@@ -3,7 +3,6 @@
 #include<vector>
 #include"../Models/Board.h"
 #include"../Models/Play.h"
-#include"../Models/Bag.h"
 #include"../Models/Rack.h"
 #include"../Models/Move.h"
 #include"../GADDAG/GADDAG.h"
@@ -16,13 +15,12 @@ class MoveGenerator{
 
 	Tile* boardTiles_ [15][15];
     GADDAG *dag_;
-	Bag bag_;
     string rack_;
 	vector<Move> moves_;
 	vector<WordPossibility> rackpossibilities_;
 public:    
     MoveGenerator();
-    MoveGenerator(Board &board, Bag &bag);
+    MoveGenerator(Board &board);
     ~MoveGenerator();
     vector<Move> Generate(const Rack *, Board &);
 

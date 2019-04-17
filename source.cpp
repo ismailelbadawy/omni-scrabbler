@@ -17,26 +17,24 @@ using namespace std;
 string 	GADDAG_PATH = "assets/Dict.txt";
 string 	BAG_PATH = "assets/letters.txt";
 Board 	board;
-Bag   	BAG(BAG_PATH);
+//
 Rack  	RACK;
 //GADDAG	DAG(GADDAG_PATH);
 
 int main(){
-	// for (int i = 0; i < possible.size(); i++) {
-	// 	cout << possible[i] << endl;
-	// }
 
-	/////////////////////////////////////Khaled's Testing Part//////////////////////////////////////////////////////////////
+	Bag bag(BAG_PATH);
+	
 	auto start = chrono::high_resolution_clock::now();
-	MoveGenerator movGen(board);		//A move generator insatance
+			//A move generator insatance
 	auto end = chrono::high_resolution_clock::now();
 	board.Probe('c',7,7);		//Inserting letters 'e' and 't' to the empty board
 	
 	//double readingDictionaryTime = (end-start).count();
 	Tile RackTiles[7];          //A simple array to carry the rack's letters
 
-
 	RackTiles[0].SetLetter('o');
+
 	RackTiles[1].SetLetter('t');
 	RackTiles[2].SetLetter('f');
 	RackTiles[3].SetLetter('p');
@@ -44,9 +42,10 @@ int main(){
 	RackTiles[5].SetLetter('q');
 	RackTiles[6].SetLetter('z');
 	
-	Rack rack(RackTiles);
+	vector<Tile> rackTiles(RackTiles, RackTiles + sizeof RackTiles / sizeof RackTiles[0]);
+	Rack rack(rackTiles);
 	vector<Move> moves;
-
+	MoveGenerator movGen(board);
 	ofstream OutputFile;
 
     OutputFile.open("results.txt");

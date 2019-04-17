@@ -9,8 +9,8 @@ Board::Board()  //Default constructor
 		for (int j= 0; j<15;j++)
 		{
 			//This should compute somehow the bonus of each tile and place it while contructing the board
-			tiles_[i][j].SetLetter('0'); 				//Initialize all tiles first with zeroes
-		}
+				
+		}					//Initialize all tiles first with zeroes
 	}
 	this->count_ = 0;
 }
@@ -21,6 +21,8 @@ Board::Board(char tiles[15][15])
 	{
 		for (int j= 0; j<15;j++)
 		{
+			if (tiles[i][j]=='0')
+			{
 			// Triple word
 			if ((i==7&&(j == 0 || j == 14))|| 
 			 ((i == 0 || i == 14)&&(j==0 || j==7 || j==14)))
@@ -49,11 +51,10 @@ Board::Board(char tiles[15][15])
 			{
 				tiles_[i][j].SetParams(tiles[i][j],i,j,1,2);
 			}
-			else
-			{
-				tiles_[i][j].SetParams(tiles[i][j],i,j,1,1);
 			}
-				
+			else {
+				tiles_[i][j].SetParams(tiles[i][j],i,j,1,1);
+			}	
 		}	
 	}
 }

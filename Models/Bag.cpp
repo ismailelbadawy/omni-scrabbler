@@ -41,18 +41,9 @@ int Bag::GetRemainingTiles(){
 return 0;
 }
 
-void Bag::TakeLetters(vector<Tile> tiles){
-for (int i =0;i<(int)tiles.size();i++){
-
-   if(this->bag_[tiles.at(i)]>0){
-       this->bag_[tiles.at(i)]--;
-   }
+void Bag::TakeLetter(Tile* tile){  
 }
 
-}
-map<Tile,int> Bag::GetBag(){
-    return this->bag_;
-}
 
 void Bag::GiveTiles(vector<Tile> tiles){
 for (int i =0;i<(int)tiles.size();i++){

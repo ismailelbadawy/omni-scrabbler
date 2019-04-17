@@ -39,6 +39,10 @@ Play::Play(string word,int row, int col,bool horizontal)
 //	tile_ = Tile(letter, row, column);
 //}
 
+void Play::SetTileBonus(int index, int bonus){
+	this->tiles_[index].SetBonus(bonus);
+}
+	
 int Play::GetRow()
 {
 	return row_;
