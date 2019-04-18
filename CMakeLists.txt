@@ -4,7 +4,6 @@ project(omni-scrabbler VERSION 0.1.0)
 include(CTest)
 enable_testing()
 
-
 file(GLOB omniscrabbler 
 ${PROJECT_SOURCE_DIR}/MoveGenerator/*.h
 ${PROJECT_SOURCE_DIR}/MoveGenerator/*.cpp
@@ -14,6 +13,7 @@ ${PROJECT_SOURCE_DIR}/Models/*.h
 ${PROJECT_SOURCE_DIR}/Models/*.cpp
 ${PROJECT_SOURCE_DIR}/TileScoreCalculator/*.h
 ${PROJECT_SOURCE_DIR}/TileScoreCalculator/*.cpp
+${PROJECT_SOURCE_DIR}/Evaluators/*.h
 ${PROJECT_SOURCE_DIR}/source.cpp)
 add_executable(
     omniscrabbler
