@@ -7,6 +7,7 @@
 #include"../Models/Move.h"
 #include"../GADDAG/GADDAG.h"
 #include"../Models/WordPossibility.h"
+#include"../TileScoreCalculator/TileScoreCalculator.h"
 
 
 using namespace std;
@@ -22,17 +23,17 @@ public:
     MoveGenerator();
     MoveGenerator(Board &board);
     ~MoveGenerator();
-    vector<Move> Generate(const Rack *, Board &);
+    vector<Move> Generate(const Rack *,bool isEmpty);
 
 private:
-    void GenerateWordsAtCols(Board &board);
-    void GenerateWordsAtRows(Board &board);
+    void GenerateWordsAtCols();
+    void GenerateWordsAtRows();
 	void GenerateRackWords(bool boardEmpty);
     void SetRack(Rack gameRack);
-    bool CheckOtherDimension(Board board,string word,int row,int col,bool horizontal);
-    void CheckWords(Board&board, vector<WordPossibility> returnedWords,int row,int col,bool horizontal);
-	void LoopBoard(Board &board);
-	bool WordIsTouching(Board &board, string word, int row, int column, bool horizontal);
+    bool CheckOtherDimension(string word,int row,int col,bool horizontal, int& additionalScore);
+    void CheckWords(vector<WordPossibility> returnedWords,int row,int col,bool horizontal);
+	void LoopBoard();
+	bool WordIsTouching(string word, int row, int column, bool horizontal);
 	//Function to be called to return a vector of all possible words 
 	//it has parameters: hook (word on board to add letters to it) and rack (available letters)
 	//if hook= ay and rack= persl --> vector={play, player, plays} 
@@ -67,6 +68,6 @@ private:
 
 	// A function that calculates the single play's score depending on the newly added letters and their bonuses
 
-	void CalculatePlayScore(Play *p);
+	void CalculatePlayScore(Play *p, int addedScore);
 
 };

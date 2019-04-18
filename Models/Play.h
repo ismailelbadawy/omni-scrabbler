@@ -23,10 +23,11 @@ public:
 	string GetLetters();
 	int GetScore();
 	bool GetIsHorizontal();
-	void CalculateScore();
+	void SetScore(int score);
 	Tile GetTile(int index);
 	void UpdateTile(int index, int score);
 	void SetTileBonus(int index,int bonus);
+	vector<Tile> GetTiles();
 	~Play();
 };
 

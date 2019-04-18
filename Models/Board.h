@@ -14,7 +14,7 @@ public:
 	void GetTiles(Tile* tiles[15][15]);
 	int GetCount();
 	void UpdateBoard(string word, int row, int column, bool horizontal);
-	void Probe(char c,int row,int col);
+	void Probe(char c,int row,int col, int score);
 	~Board();
 };
 

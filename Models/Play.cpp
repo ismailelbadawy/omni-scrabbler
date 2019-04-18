@@ -42,6 +42,10 @@ Play::Play(string word,int row, int col,bool horizontal)
 void Play::SetTileBonus(int index, int bonus){
 	this->tiles_[index].SetBonus(bonus);
 }
+
+vector<Tile> Play::GetTiles(){
+return this->tiles_;
+}
 	
 int Play::GetRow()
 {
@@ -72,14 +76,11 @@ int Play::GetScore()
 	return score_;
 }
 
-void Play::CalculateScore()
+void Play::SetScore(int score)
 {
 	// To be implemented later
-	score_ = 0;
-	for(Tile var : tiles_)
-	{
-		score_+=var.GetBonus()*var.GetScore();	
-	}
+	this->score_ = score;
+
 
 }
 
