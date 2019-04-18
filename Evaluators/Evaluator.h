@@ -5,5 +5,6 @@
 class Evaluator
 {
     public:
+        /// This function should only take a move and evaluate its score (importance maybe) accordingly.
         virtual double Evaluate(Move * move) = 0;
 };
