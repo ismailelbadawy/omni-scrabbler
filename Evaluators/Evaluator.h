@@ -5,5 +5,5 @@
 class Evaluator
 {
     public:
-    virtual double Evaluate(Move * move);
-}
+        virtual double Evaluate(Move * move) = 0;
+};
