@@ -39,20 +39,20 @@ int main(){
 	board.Probe('c',7,13,3);
 	Tile RackTiles[7];          //A simple array to carry the rack's letters
 
-	RackTiles[0].SetLetter('?');
-	RackTiles[0].SetScore(0);
-	RackTiles[1].SetLetter('?');
-	RackTiles[1].SetScore(0);
+	RackTiles[0].SetLetter('a');
+	RackTiles[0].SetScore(1);
+	RackTiles[1].SetLetter('w');
+	RackTiles[1].SetScore(4);
 	RackTiles[2].SetLetter('c');
 	RackTiles[2].SetScore(3);
 	RackTiles[3].SetLetter('d');
 	RackTiles[3].SetScore(2);
 	RackTiles[4].SetLetter('e');
 	RackTiles[4].SetScore(1);
-	RackTiles[5].SetLetter('f');
+	RackTiles[5].SetLetter('h');
 	RackTiles[5].SetScore(4);
-	RackTiles[6].SetLetter('g');
-	RackTiles[6].SetScore(2);
+	RackTiles[6].SetLetter('p');
+	RackTiles[6].SetScore(3);
 	
 	vector<Tile> rackTiles(RackTiles, RackTiles + sizeof RackTiles / sizeof RackTiles[0]);
 	Rack rack(rackTiles);
