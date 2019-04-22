@@ -5,6 +5,7 @@
 #pragma comment( lib, "ws2_32" )
 #include <WinSock2.h>
 #endif
+#include <thread>
 #include <assert.h>
 #include<vector>
 #include <stdio.h>
@@ -31,6 +32,7 @@ enum MessageTypes {
 
 void RecieveFromServer(const std::vector<uint8_t>& message);
 GameState BufferToGameState(const std::vector<uint8_t>& message);
+void ThinkingThread();
 std::vector<uint8_t> PlayToBuffer(Play Move);
 TimesOnly Time(const std::vector<uint8_t>& message);
 ChallengeReject Reject_Case(const std::vector<uint8_t>& message);
@@ -41,6 +43,7 @@ CountTime CountWithTimes(const std::vector<uint8_t>& message);
 
 std::vector<uint8_t> T;
 std::string CurrentState = "INIT";
+GameState Game;
 
 
 int main()
@@ -56,8 +59,10 @@ int main()
 		return 1;
 	}
 #endif
-	ws = WebSocket::from_url("ws://localhost:8080");
+	ws = WebSocket::from_url("ws://localhost:8081");
 	assert(ws);
+
+	std::thread thread1(ThinkingThread);
 
 	while (true) {
 
@@ -65,15 +70,61 @@ int main()
 
 		ws->dispatchBinary(RecieveFromServer);
 
-		//	ws->sendBinary(T);
-
 	}
+
+
 	delete ws; // alternatively, use unique_ptr<> if you have C++11
 #ifdef _WIN32
 	WSACleanup();
 #endif
 	return 0;
 }
+
+
+
+void ThinkingThread()
+{
+	while (true)
+	{
+		if (CurrentState == "THINKING")
+		{
+			std::vector<uint8_t> buffer;
+			std::string move;
+			std::cout << "what will be your next move?(PLAY/PASS/EXCHANGE)" << std::endl;
+			std::cin >> move;
+
+			if (move == "PLAY")
+			{
+
+				Play mover;
+				std::cout << "enter column" << std::endl;
+				std::cin >> mover.Column;
+				std::cout << "enter row" << std::endl;
+				std::cin >> mover.Row;
+				std::cout << "enter direction" << std::endl;
+				std::cin >> mover.Direction;
+				std::cout << "enter titles" << std::endl;
+				int count = 0;
+				int x;
+				while(count!=7)
+				{
+					std::cout << " Enter  " << count;
+					std::cin >> x;
+					mover.Tiles[count] = static_cast<uint8_t>(x);
+					count++;
+				}
+				std::cin >> mover.Score;
+
+				buffer = PlayToBuffer(mover);
+				ws->sendBinary(buffer);
+				CurrentState = "AWAIT_PLAY_RESPONSE";
+				std::cout << " Current State = " + CurrentState << std::endl;
+			}
+
+		}
+	}
+}
+
 
 void StringToAscii(std::vector<uint8_t>& T, std::string name)
 {
@@ -85,6 +136,7 @@ void StringToAscii(std::vector<uint8_t>& T, std::string name)
 
 void RecieveFromServer(const std::vector<uint8_t>& message)
 {
+	std::cout << CurrentState << std::endl;
 	int MsgType = message[0];
 	T.push_back(0);
 
@@ -96,7 +148,7 @@ void RecieveFromServer(const std::vector<uint8_t>& message)
 
 	if (MsgType == MessageTypes::NAME && CurrentState == "INIT")
 	{
-		std::string name = "farah";
+		std::string name = "ahmed";
 		StringToAscii(T, name);
 		CurrentState = "READY";
 		std::cout << " Current State = " + CurrentState << std::endl;
@@ -106,9 +158,7 @@ void RecieveFromServer(const std::vector<uint8_t>& message)
 	else if (MsgType == MessageTypes::START && CurrentState == "READY")
 	{
 		int Order = message[1];
-
-
-		GameState Game = BufferToGameState(message);
+		 Game = BufferToGameState(message);
 
 		if (Order == 1)
 		{
@@ -121,11 +171,11 @@ void RecieveFromServer(const std::vector<uint8_t>& message)
 		}
 
 		std::cout << " Current State = " + CurrentState << std::endl;
-	//	std::cout << " order = " + Order<< std::endl;
+		//	std::cout << " order = " + Order<< std::endl;
 
 
 	}
-	
+
 	else if (CurrentState == "AWAIT_EXCHANGE_RESPONSE")
 	{
 		if (MsgType == MessageTypes::INVALID)
@@ -146,11 +196,11 @@ void RecieveFromServer(const std::vector<uint8_t>& message)
 		}
 
 	}
-	else if (CurrentState == "AWAIT_PLAY_RESPONSE ")
+	else if (CurrentState == "AWAIT_PLAY_RESPONSE")
 	{
+		std::cout << " AWAITINGGGGGG";
 		if (MsgType == MessageTypes::INVALID)
 		{
-
 			TimesOnly Times = Time(message);
 			CurrentState = "THINKING";
 		}
@@ -179,7 +229,7 @@ void RecieveFromServer(const std::vector<uint8_t>& message)
 	}
 	else if (CurrentState == "IDLE")
 	{
-	std::cout << "SECOND Current State = " + CurrentState << std::endl;
+		std::cout << "SECOND Current State = " + CurrentState << std::endl;
 		if (MsgType == MessageTypes::PASS)
 		{
 
@@ -222,36 +272,11 @@ void RecieveFromServer(const std::vector<uint8_t>& message)
 	}
 	if (CurrentState == "THINKING")
 	{
-	std::vector<uint8_t> buffer;
-	std::string move;
-	std::cout << "what will be your next move?(PLAY/PASS/EXCHANGE)" << std::endl;
-std::cin >> move;
+		std::cout << "what will be your next move?(PLAY/PASS/EXCHANGE)" << std::endl;
 
-	if (move == "PLAY")
-	{
-
-		Play mover;
-		std::cout << "enter column" << std::endl;
-		std::cin >> mover.Column;
-		std::cout << "enter row" << std::endl;
-		std::cin >> mover.Row;
-		std::cout << "enter direction" << std::endl;
-		std::cin >> mover.Direction;
-		std::cout << "enter titles" << std::endl;
-		for (int i = 0; i < 7; i++)
-		{
-			std::cin >> mover.Tiles[i];
-		}
-
-		buffer = PlayToBuffer(mover);
-		ws->sendBinary(buffer);
-		CurrentState = "AWAIT_PLAY_RESPONSE";
-		std::cout << " Current State = " + CurrentState << std::endl;
-	}
 
 	}
 }
-
 
 
 ////////////////////////////// SENDING TO AGENT COMMUNICATION FROM SERVER //////////////////////////
@@ -412,17 +437,19 @@ EndState EndGame(const std::vector<uint8_t>& message)
 
 std::vector<uint8_t> PlayToBuffer(Play Move)
 {
-	std::vector<uint8_t> buffer;
-	buffer.push_back(4);
+	std::vector<uint8_t> buffer(0);
+	buffer.push_back(static_cast<uint8_t>(4));
 	buffer.push_back(Move.Column);
 	buffer.push_back(Move.Row);
 	buffer.push_back(Move.Direction);
 	for (int i = 0; i < 7; i++)
 		buffer.push_back(Move.Tiles[i]);
+
+	for (int i = 0; i < 4; i++)
+		buffer.push_back(static_cast<uint8_t>(0));
 	//check that this function works
 	for (int j = 0; j < 4; j++)
-		buffer[13 - j] = Move.Score >> (j * 8);
-
+		buffer[14 - j] = Move.Score >> (j * 8);
 	return buffer;
 }
 
