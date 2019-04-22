@@ -253,6 +253,7 @@ std::cin >> move;
 }
 
 
+
 ////////////////////////////// SENDING TO AGENT COMMUNICATION FROM SERVER //////////////////////////
 
 GameState BufferToGameState(const std::vector<uint8_t>& message)
