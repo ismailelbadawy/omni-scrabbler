@@ -94,6 +94,10 @@ int Board::GetCount(){
 	return this->count_;
 }
 
+bool Board::IsPositionEmpty(int row, int column){
+	return this->tiles_[row][column].GetLetter()=='0'?true:false;
+}
+
 Board::~Board()
 {
 }

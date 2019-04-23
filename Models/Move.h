@@ -9,7 +9,8 @@ class Move
 {
 	Play *play_;
 	Rack rack_;
-	int heuristicscore_;
+	double heuristicscore_;
+	double penalty_;
 
 
 public:
@@ -21,9 +22,10 @@ public:
 	void SetRack(Rack rack);
 	Play* GetPlay();
 	string GetRack();
-	int  GetScore();
-	void SetScore(int score);
+	double  GetScore();
+	void SetScore(double score);
 	void CalculateScore();
+	void SetPenalty(double penalty);
 	~Move();
 };
 

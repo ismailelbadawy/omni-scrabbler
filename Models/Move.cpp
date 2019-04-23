@@ -39,21 +39,25 @@ string Move::GetRack()
 	return s;
 }
 
-int Move::GetScore()
+double Move::GetScore()
 {
 	return heuristicscore_;
 }
 
 
-void Move::SetScore(int score)
+void Move::SetScore(double score)
 {
 	heuristicscore_ = score;
 }
 
 void Move::CalculateScore()
 {
-	//To be implemented in static evaluation period.
+	this->heuristicscore_ = this->play_->GetScore()-this->penalty_;
 
+}
+
+void Move::SetPenalty(double penalty){
+	this->penalty_ = penalty;
 }
 
 Move::~Move()

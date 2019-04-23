@@ -3,6 +3,7 @@
 #include<vector>
 #include<map>
 #include"MoveGenerator/MoveGenerator.h"
+#include"Evaluators/MidgameEvaluator.h"
 #include"Models/Board.h"
 #include"Models/Play.h"
 #include"Models/Rack.h"
@@ -66,6 +67,7 @@ int main(){
 		auto  start = chrono::high_resolution_clock::now();
 		moves = movGen.Generate(&rack, board.GetCount()==0);
 		auto  end = chrono::high_resolution_clock::now();
+		
 		 for(int i = 0; i < (int)moves.size(); i++)
 		 {
 			 /* code */
