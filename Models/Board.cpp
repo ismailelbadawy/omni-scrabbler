@@ -97,7 +97,27 @@ int Board::GetCount(){
 bool Board::IsPositionEmpty(int row, int column){
 	return this->tiles_[row][column].GetLetter()=='0'?true:false;
 }
+void Board::SimulateMove(Move* move){
+	int rowIterator = move->GetPlay()->GetRow();
+	int columnIterator = move->GetPlay()->GetColumn();
+	int iterator =0;
+	
+	
+	for (int j = 0; j < move->GetPlay()->GetLetters().length() ;j++)
+	{
+		
+			this->tiles_[rowIterator][columnIterator]=move->GetPlay()->GetTiles()[j];
+		if (move->GetPlay()->GetIsHorizontal())
+		{
+			columnIterator++;
+		}
+		else{
+			rowIterator++;
+		}
+	}
 
+	
+}
 Board::~Board()
 {
 }

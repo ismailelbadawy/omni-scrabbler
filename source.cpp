@@ -74,8 +74,9 @@ int main(){
 			 OutputFile<< moves[i].GetPlay()->GetLetters()<< " " << moves[i].GetPlay()->GetRow() << " " << moves[i].GetPlay
 			 ()->GetColumn() <<  " " << moves[i].GetPlay()->GetIsHorizontal() <<" " <<moves[i].GetPlay()->GetScore() <<endl;
 		 }
-		 
-		 moves.clear();
+		 // board.SimulateMove(&moves[0]);
+		//  moves[0].GetPlay()->GetScore();
+		  moves.clear();
 	}
 
 	cout<<"hi";

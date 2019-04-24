@@ -2,6 +2,7 @@
 #include<iostream>
 #include<vector>
 #include"Tile.h"
+#include"Move.h"
 using namespace std;
 
 class Board
@@ -16,6 +17,7 @@ public:
 	bool IsPositionEmpty(int row, int column);
 	void UpdateBoard(string word, int row, int column, bool horizontal);
 	void Probe(char c,int row,int col, int score);
+	void SimulateMove(Move* move);
 	~Board();
 };
 
