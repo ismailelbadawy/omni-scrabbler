@@ -34,6 +34,7 @@ private:
     void CheckWords(vector<WordPossibility> returnedWords,int row,int col,bool horizontal);
 	void LoopBoard();
 	bool WordIsTouching(string word, int row, int column, bool horizontal);
+	bool IsOnBoard(string word, int row, int column, bool isHorizontal);
 	//Function to be called to return a vector of all possible words 
 	//it has parameters: hook (word on board to add letters to it) and rack (available letters)
 	//if hook= ay and rack= persl --> vector={play, player, plays} 

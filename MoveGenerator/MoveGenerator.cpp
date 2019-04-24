@@ -25,10 +25,11 @@ void MoveGenerator::GenerateRackWords(bool boardEmpty){
 		{
 			for(int i = 0; i < (int)rackpossibilities_.size(); i++)
 			{
-				
-				Play* pHorizontal = new Play(rackpossibilities_[i].GetWord(),(7-rackpossibilities_[i].GetWord().length()/2),7,true);
+
+				for (int k = (int)rackpossibilities_[i].GetWord().length(); k>0;k-- ){
+				Play* pHorizontal = new Play(rackpossibilities_[i].GetWord(),7,7-k>0?7-k:0,true);
 				CalculatePlayScore(pHorizontal,0);
-				Play* pVertical = new Play(rackpossibilities_[i].GetWord(),7,(7-rackpossibilities_[i].GetWord().length()/2),false);
+				Play* pVertical = new Play(rackpossibilities_[i].GetWord(),7-k>0?7-k:0,7,false);
 				CalculatePlayScore(pVertical,0);
 				Move moveH;
 				Move moveV;
@@ -38,8 +39,7 @@ void MoveGenerator::GenerateRackWords(bool boardEmpty){
 				moveV.SetRack(rackpossibilities_[i].GetRemainingRacks()[0]);
 				moves_.push_back(moveH);
 				moves_.push_back(moveV);
-
-			
+				}
 			}
 		}
 
@@ -48,6 +48,9 @@ void MoveGenerator::GenerateRackWords(bool boardEmpty){
 
 bool MoveGenerator::CheckOtherDimension(string word,int row,int col,bool horizontal, int& additionalScore) //True when called from generateWordsAtRows
 {
+	if (IsOnBoard(word,row,col,horizontal)){
+		return false;
+	}
 
 	if (horizontal)  //word is horizontal, we need to check the columns of the letters
 	{
@@ -240,7 +243,23 @@ void MoveGenerator::CheckWords(vector<WordPossibility> returnedWords,int row,int
 	}
 }
 
-
+bool MoveGenerator::IsOnBoard(string word, int row, int column, bool isHorizontal){
+	
+	for (int i = 0; i < (int)word.length(); i++)
+	{
+		if (this->boardTiles_[row][column]->GetLetter()=='0'){
+			return false;
+		}
+		if (isHorizontal){
+			column++;
+		}
+		else{
+			row++;
+		}
+	}
+	return true;
+	
+}
 void MoveGenerator::GenerateWordsAtRows()
 {
 

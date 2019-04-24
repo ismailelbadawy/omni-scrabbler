@@ -103,7 +103,7 @@ void Board::SimulateMove(Move* move){
 	int iterator =0;
 	
 	
-	for (int j = 0; j < move->GetPlay()->GetLetters().length() ;j++)
+	for (int j = 0; j < (int)move->GetPlay()->GetLetters().length() ;j++)
 	{
 		
 			this->tiles_[rowIterator][columnIterator]=move->GetPlay()->GetTiles()[j];
@@ -118,6 +118,10 @@ void Board::SimulateMove(Move* move){
 
 	
 }
+
+
+
+
 Board::~Board()
 {
 }
