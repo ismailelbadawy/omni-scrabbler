@@ -3,7 +3,7 @@
 #include<vector>
 #include"Tile.h"
 #include"Move.h"
-using namespace std;
+//using namespace std;
 
 class Board
 {
