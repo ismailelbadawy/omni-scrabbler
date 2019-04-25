@@ -11,6 +11,7 @@
 using namespace std;
 
 Comm::Comm(){
+	ws=NULL;
      CurrentState = "INIT"; 
      #ifdef _WIN32
 	 INT rc;
@@ -19,7 +20,6 @@ Comm::Comm(){
 	rc = WSAStartup(MAKEWORD(2, 2), &wsaData);
 	if (rc) {
 		printf("WSAStartup Failed.\n");
-		return 1;
 	}
 #endif
 	ws = WebSocket::from_url("ws://localhost:8081");
@@ -334,7 +334,7 @@ void Comm::RecieveFromServer(const std::vector<uint8_t>& message){
 	{
 		if (MsgType == MessageTypes::NO_CHALLENGE || MsgType == MessageTypes::CHALLENGE_ACCEPTED)
 		{
-			times = Time(message);
+			timesonly = Time(message);
 			CurrentState = "THINKING";
 
 		}
@@ -397,5 +397,4 @@ Comm::~Comm(){
 #ifdef _WIN32
 	WSACleanup();
 #endif
-	return 0;
 }

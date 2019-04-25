@@ -7,7 +7,7 @@ using easywsclient::WebSocket;
 
 
 class Comm{
-enum MessageTypes {
+ enum MessageTypes {
 	NAME = 0,
 	START = 1,
 	PASS = 2,
@@ -30,7 +30,7 @@ PlayState playstate;
 EndState endstate;
 string CurrentState;
 std::vector<uint8_t> T;
-static WebSocket::pointer ws = NULL;
+static WebSocket::pointer ws;
 
 GameState BufferToGameState(const std::vector<uint8_t>& message);
 std::vector<uint8_t> PlayToBuffer(Play Move);
