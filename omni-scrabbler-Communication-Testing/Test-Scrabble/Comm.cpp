@@ -1,0 +1,401 @@
+#include "comm.h"
+#include <assert.h>
+#include<vector>
+#include <stdio.h>
+#include <string>
+#include <algorithm>    // std::copy
+#include<map>
+#include <iostream>
+
+
+using namespace std;
+
+Comm::Comm(){
+     CurrentState = "INIT"; 
+     #ifdef _WIN32
+	 INT rc;
+	 WSADATA wsaData;
+
+	rc = WSAStartup(MAKEWORD(2, 2), &wsaData);
+	if (rc) {
+		printf("WSAStartup Failed.\n");
+		return 1;
+	}
+#endif
+	ws = WebSocket::from_url("ws://localhost:8081");
+	assert(ws);   
+}
+
+TilesStruct Comm::GetRack(){
+	return rack;
+}
+ChallengeReject Comm::GetRejected(){
+	return rejected;
+}
+GameState Comm::GetGame(){
+	return game;
+}
+TimesOnly Comm::GetTimesOnly(){
+	return timesonly;
+}
+CountTime Comm::GetCounter(){
+	return counter;
+}
+PlayState Comm::GetPlayState(){
+	return playstate;
+}
+EndState Comm::GetEndState(){
+   return endstate;
+}
+string Comm::GetCurrentState(){
+	return CurrentState;
+}
+GameState Comm::BufferToGameState(const std::vector<uint8_t>& message){
+	GameState Player;
+
+	Player.Order = message[1];
+
+	std::cout << "Player Tiles : ";
+	for (int i = 0; i < 7; i++)
+	{
+		Player.Tiles[i] = message[2 + i];
+		std::cout << Player.Tiles[i] << " ";
+
+	}
+
+	std::cout << std::endl;
+
+	int count = 9;
+
+	for (int row = 0; row < 15; row++)
+	{
+		for (int column = 0; column < 15; column++)
+		{
+			Player.Board[row][column] = message[count];
+			count++;
+		}
+	}
+	for (int j = 0; j < 4; j++)
+		Player.Score = (Player.Score << 8) + message[234 + j];
+	std::cout << " Your Score " << Player.Score;
+
+	for (int j = 0; j < 4; j++)
+		Player.Opponent_Score = (Player.Opponent_Score << 8) + message[238 + j];
+
+	std::cout << " Your Opponent_Score " << Player.Opponent_Score;
+
+	for (int j = 0; j < 4; j++)
+		Player.Player_Time = (Player.Player_Time << 8) + message[242 + j];
+
+	std::cout << " Your Player_Time " << Player.Player_Time;
+	for (int j = 0; j < 4; j++)
+		Player.Total_Time = (Player.Total_Time << 8) + message[246 + j];
+
+	std::cout << " Your Total_Time " << Player.Total_Time;
+	return Player;
+}
+
+std::vector<uint8_t> Comm::PlayToBuffer(Play Move){
+
+    std::vector<uint8_t> buffer(0);
+	buffer.push_back(static_cast<uint8_t>(4));
+	buffer.push_back(Move.Column);
+	buffer.push_back(Move.Row);
+	buffer.push_back(Move.Direction);
+	for (int i = 0; i < 7; i++)
+		buffer.push_back(Move.Tiles[i]);
+
+	for (int i = 0; i < 4; i++)
+		buffer.push_back(static_cast<uint8_t>(0));
+	//check that this function works
+	for (int j = 0; j < 4; j++)
+		buffer[14 - j] = Move.Score >> (j * 8);
+	return buffer;
+    
+}
+
+TimesOnly Comm::Time(const std::vector<uint8_t>& message){
+	TimesOnly Player;
+	Player.Player_Time = 0;
+	Player.Total_Time = 0;
+
+	/// Change From int32 BE to int
+	for (int j = 0; j < 4; j++)
+		Player.Player_Time = (Player.Player_Time << 8) + message[1 + j];
+
+	for (int j = 0; j < 4; j++)
+		Player.Total_Time = (Player.Total_Time << 8) + message[5 + j];
+
+	return Player;
+}
+
+ChallengeReject Comm::Reject_Case(const std::vector<uint8_t>& message){
+  
+   ChallengeReject Player;
+   for (int i = 0; i < 7; i++)
+	{
+		Player.Tiles[i] = message[1 + i];
+
+	}
+
+	for (int j = 0; j < 4; j++)
+		Player.Player_Time = (Player.Player_Time << 8) + message[9 + j];
+
+	for (int j = 0; j < 4; j++)
+		Player.Total_Time = (Player.Total_Time << 8) + message[13 + j];
+
+	return Player;
+}
+
+PlayState Comm::Play_Agent(const std::vector<uint8_t>& message){
+    	PlayState Player;
+	Player.Column = message[1];
+	Player.Row = message[2];
+	Player.Direction = message[3];
+
+	for (int i = 0; i < 7; i++)
+	{
+		Player.Tiles[i] = message[4 + i];
+
+	}
+
+	for (int j = 0; j < 4; j++)
+		Player.Score = (Player.Score << 8) + message[11 + j];
+
+	for (int j = 0; j < 4; j++)
+		Player.Challenge_Time = (Player.Challenge_Time << 8) + message[15 + j];
+
+	for (int j = 0; j < 4; j++)
+		Player.Player_Time = (Player.Player_Time << 8) + message[19 + j];
+
+	for (int j = 0; j < 4; j++)
+		Player.Total_Time = (Player.Total_Time << 8) + message[23 + j];
+
+
+	return Player;
+}
+
+EndState Comm::EndGame(const std::vector<uint8_t>& message){
+  EndState Player;
+	Player.Reason = message[1];
+
+	Player.Score = 0;
+	Player.Opponent_Score = 0;
+
+	for (int j = 0; j < 4; j++)
+		Player.Score = (Player.Score << 8) + message[2 + j];
+
+	for (int j = 0; j < 4; j++)
+		Player.Opponent_Score = (Player.Opponent_Score << 8) + message[6 + j];
+
+	return Player;
+}
+
+CountTime Comm::CountWithTimes(const std::vector<uint8_t>& message){
+ 	CountTime Player;
+	Player.Count = message[1];
+
+	Player.Player_Time = 0;
+	Player.Total_Time = 0;
+
+	for (int j = 0; j < 4; j++)
+		Player.Player_Time = (Player.Player_Time << 8) + message[2 + j];
+
+	for (int j = 0; j < 4; j++)
+		Player.Total_Time = (Player.Total_Time << 8) + message[6 + j];
+
+	return Player;
+}
+void Comm::StringToAscii(std::vector<uint8_t>& T, std::string name){
+
+	for (int i = 0; i < name.length(); i++) {
+		T.push_back(int(name[i]));
+	}
+
+}
+
+void Comm::RecieveFromServer(const std::vector<uint8_t>& message){
+    std::cout << CurrentState << std::endl;
+	int MsgType = message[0];
+	T.push_back(0);
+
+	if (MsgType == MessageTypes::END)  //End State
+	{
+		endstate = EndGame(message);
+		CurrentState = "READY";
+	}
+
+	if (MsgType == MessageTypes::NAME && CurrentState == "INIT")
+	{
+		std::string name = "ahmed";
+		StringToAscii(T, name);
+		CurrentState = "READY";
+		std::cout << " Current State = " + CurrentState << std::endl;
+		ws->sendBinary(T);
+	}
+
+	else if (MsgType == MessageTypes::START && CurrentState == "READY")
+	{
+		int Order = message[1];
+		 game = BufferToGameState(message);
+
+		if (Order == 1)
+		{
+			CurrentState = "THINKING";
+
+		}
+		else if (Order == 2)
+		{
+			CurrentState = "IDLE";
+		}
+
+		std::cout << " Current State = " + CurrentState << std::endl;
+	}
+
+	else if (CurrentState == "AWAIT_EXCHANGE_RESPONSE")
+	{
+		if (MsgType == MessageTypes::INVALID)
+		{
+			timesonly= Time(message);
+			CurrentState = "THINKING";
+		}
+		else if (MsgType == MessageTypes::EXCHANGE)
+		{
+			for (int i = 0; i < 7; i++)
+			{
+				rack.Tiles[i] = message[1 + i];
+			}
+
+			CurrentState = "IDLE";
+		}
+
+	}
+	else if (CurrentState == "AWAIT_PLAY_RESPONSE")
+	{
+		std::cout << " AWAITINGGGGGG";
+		if (MsgType == MessageTypes::INVALID)
+		{
+			timesonly = Time(message);
+			CurrentState = "THINKING";
+		}
+		else if (MsgType == MessageTypes::CHALLENGE_REJECTED)
+		{
+
+		
+			rejected = Reject_Case(message);
+			CurrentState = "THINKING";
+		}
+		else if (MsgType == MessageTypes::NO_CHALLENGE)
+		{
+
+			for (int i = 0; i < 7; i++)
+			{
+				rack.Tiles[i] = message[1 + i];
+			}
+
+			CurrentState = "IDLE";
+		}
+		else if (MsgType == MessageTypes::CHALLENGE_ACCEPTED)
+		{
+			CurrentState = "IDLE";
+		}
+	}
+	else if (CurrentState == "IDLE")
+	{
+		std::cout << "SECOND Current State = " + CurrentState << std::endl;
+		if (MsgType == MessageTypes::PASS)
+		{
+
+			timesonly = Time(message);
+			CurrentState = "THINKING";
+		}
+		else if (MsgType == MessageTypes::EXCHANGE)
+		{
+			counter = CountWithTimes(message);
+			CurrentState = "THINKING";
+		}
+		else if (MsgType == MessageTypes::PLAY)
+		{
+			playstate = Play_Agent(message);
+
+			CurrentState = "AWAIT_AGENT_CHALLENGE";
+		}
+	}
+	else if (CurrentState == "AWAIT_AGENT_CHALLENGE")
+	{
+		if (MsgType == MessageTypes::NO_CHALLENGE)
+		{
+			timesonly = Time(message);
+			CurrentState = "THINKING";
+		}
+
+	}
+	else if (CurrentState == "AWAIT_CHALLENGE_RESPONSE")
+	{
+		if (MsgType == MessageTypes::NO_CHALLENGE || MsgType == MessageTypes::CHALLENGE_ACCEPTED)
+		{
+			times = Time(message);
+			CurrentState = "THINKING";
+
+		}
+		else if (MsgType == MessageTypes::CHALLENGE_REJECTED)
+		{
+			CurrentState = "IDLE";
+		}
+	}
+	if (CurrentState == "THINKING")
+	{
+		std::cout << "what will be your next move?(PLAY/PASS/EXCHANGE)" << std::endl;
+
+
+	}
+}
+
+void Comm::ThinkingThread(){
+	while (true)
+	{
+		if (CurrentState == "THINKING")
+		{
+			std::vector<uint8_t> buffer;
+			std::string move;
+			std::cout << "what will be your next move?(PLAY/PASS/EXCHANGE)" << std::endl;
+			std::cin >> move;
+            //getmove();
+			if (move == "PLAY")
+			{
+                //get move;
+				Play mover;
+				std::cout << "enter column" << std::endl;
+				std::cin >> mover.Column;
+				std::cout << "enter row" << std::endl;
+				std::cin >> mover.Row;
+				std::cout << "enter direction" << std::endl;
+				std::cin >> mover.Direction;
+				std::cout << "enter titles" << std::endl;
+				int count = 0;
+				int x;
+				while(count!=7)
+				{
+					std::cout << " Enter  " << count;
+					std::cin >> x;
+					mover.Tiles[count] = static_cast<uint8_t>(x);
+					count++;
+				}
+				std::cin >> mover.Score;
+
+				buffer = PlayToBuffer(mover);
+				ws->sendBinary(buffer);
+				CurrentState = "AWAIT_PLAY_RESPONSE";
+				std::cout << " Current State = " + CurrentState << std::endl;
+			}
+
+		}
+	}
+}
+Comm::~Comm(){
+    delete ws; // alternatively, use unique_ptr<> if you have C++11
+#ifdef _WIN32
+	WSACleanup();
+#endif
+	return 0;
+}
