@@ -10,6 +10,7 @@
 #include"Models/Tile.h"
 #include"Models/Bag.h"
 #include"GADDAG/GADDAG.h"
+#include "Evaluators/MidgameEvaluator.h"
 #include <time.h>
 #include <chrono>
 
@@ -58,15 +59,33 @@ int main(){
 	vector<Tile> rackTiles(RackTiles, RackTiles + sizeof RackTiles / sizeof RackTiles[0]);
 	Rack rack(rackTiles);
 	vector<Move> moves;
+	cout << "Loading GADDAG...\n";
+	auto startDag = chrono::high_resolution_clock::now();
 	MoveGenerator movGen(board);
+	auto endDag = chrono::high_resolution_clock::now();
+	auto diff = endDag - startDag;
+	cout << "Time to load GADDAG: " << chrono::duration_cast<chrono::seconds>(diff).count() << " s" << endl;
+
+	MidgameEvaluator* evaluator = NULL;
+
 	ofstream OutputFile;
 
-    OutputFile.open("results.txt");
+  OutputFile.open("results.txt");
 
-	while(true){
+	char c = 'y';
+	while(c == 'y'){
 		auto  start = chrono::high_resolution_clock::now();
 		moves = movGen.Generate(&rack, board.GetCount()==0);
 		auto  end = chrono::high_resolution_clock::now();
+
+		evaluator = new MidgameEvaluator(moves, &board);
+
+		cout << moves.size() << endl;
+		for(int i = 0; i < (int)moves.size(); i++)
+		{
+			Move move = moves[i];
+			cout << "Move (" << i << ") " << "Penalty : " << move.GetPenalty() << " Heuristic : " << move.GetHeuristic() << std::endl;
+		}
 		
 		 for(int i = 0; i < (int)moves.size(); i++)
 		 {
@@ -77,7 +96,7 @@ int main(){
 		 // board.SimulateMove(&moves[0]);
 		//  moves[0].GetPlay()->GetScore();
 		  moves.clear();
+			cout << "More moves?\n";
+			cin >> c;
 	}
-
-	cout<<"hi";
 }
