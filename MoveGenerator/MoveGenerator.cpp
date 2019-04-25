@@ -6,7 +6,7 @@ MoveGenerator::MoveGenerator(){
 }
 
 MoveGenerator::MoveGenerator(Board& board){
-	dag_ = new GADDAG();
+	dag_ = new GADDAG("assets/Dict.txt");
 	board.GetTiles(this->boardTiles_);
 }
 
