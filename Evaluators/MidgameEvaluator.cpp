@@ -12,83 +12,84 @@ MidgameEvaluator::MidgameEvaluator()
 
 double MidgameEvaluator::CalculatePenalty()
 {
- for(Move* move : possibleMoves_)
+    for(int i = 0; i < (int)(possibleMoves_->size()); i++)
     {
-       
-       
+        Move* move = &(*possibleMoves_)[i];
+        
         int rowIterator = move->GetPlay()->GetRow() ;
         int columnIterator = move->GetPlay()->GetColumn();
         // Check if the move is horizontal
         // then calculate the penalty on the vertical columns
         // else calculate the penalty on the horizontal rows
        
-            double twCount = 0;
-            double dwCount=0;
-            double dlCount=0;
-            double tlCount=0;
-            bool isHorizontal = move->GetPlay()->GetIsHorizontal();
-            // loop on each word to check how near or far any bonus is to it
-            for(Tile tile : move->GetPlay()->GetTiles())
+        double twCount = 0;
+        double dwCount=0;
+        double dlCount=0;
+        double tlCount=0;
+        bool isHorizontal = move->GetPlay()->GetIsHorizontal();
+        // loop on each word to check how near or far any bonus is to it
+        for(Tile tile : move->GetPlay()->GetTiles())
+        {
+            int lowerBound = 0;
+            int upperBound = 0;
+            int initialPosition = 0;
+            
+            if (isHorizontal)
             {
-                int lowerBound = 0;
-                int upperBound = 0;
-                int initialPosition = 0;
-              
+                lowerBound = rowIterator-7 >= 0?rowIterator-7:0;
+                upperBound = rowIterator+7 <= 14?rowIterator+7:14;
+                initialPosition = move->GetPlay()->GetRow();
+            }
+            else
+            {
+                lowerBound = columnIterator-7 >= 0?columnIterator-7:0;
+                upperBound = columnIterator+7 <= 14?columnIterator+7:14;
+                initialPosition = move->GetPlay()->GetColumn();
+
+            }
+
+            for (int i = lowerBound; i < upperBound && i != initialPosition; i++)
+            {
+                int bonus=0;
                 if (isHorizontal)
                 {
-                    lowerBound = rowIterator-7 >= 0?rowIterator-7:0;
-                    upperBound = rowIterator+7 <= 14?rowIterator+7:14;
-                    initialPosition = move->GetPlay()->GetRow();
+                    bonus = this->GetBonus(i,columnIterator);
                 }
                 else
                 {
-                    lowerBound = columnIterator-7 >= 0?columnIterator-7:0;
-                    upperBound = columnIterator+7 <= 14?columnIterator+7:14;
-                    initialPosition = move->GetPlay()->GetColumn();
-
+                    bonus = this->GetBonus(rowIterator,i);
                 }
-
-                for (int i = lowerBound; i < upperBound && i != initialPosition; i++)
+                switch (bonus)
                 {
-                    int bonus=0;
-                    if (isHorizontal)
-                    {
-                        bonus = this->GetBonus(i,columnIterator);
-                    }
-                    else
-                    {
-                        bonus = this->GetBonus(rowIterator,i);
-                    }
-                    switch (bonus)
-                    {
-                        case 5:
+                    case 5:
 
-                            twCount += (5.0/abs(initialPosition-i));
-                            break;
-                        case 4: 
-                            dwCount +=(4.0/abs(initialPosition-i));
-                            break;
-                        case 3:
-                            tlCount+=(2.0/abs(initialPosition-i));
-                            break;
-                        case 2:
-                            dlCount+=(1.0/abs(initialPosition-i));
-                            break;
-                        default:
-                            break;
-                    }
+                        twCount += (5.0/abs(initialPosition-i));
+                        break;
+                    case 4: 
+                        dwCount +=(4.0/abs(initialPosition-i));
+                        break;
+                    case 3:
+                        tlCount+=(2.0/abs(initialPosition-i));
+                        break;
+                    case 2:
+                        dlCount+=(1.0/abs(initialPosition-i));
+                        break;
+                    default:
+                        break;
+                }
 
-                }
-                if (isHorizontal)
-                {
-                columnIterator++;
-                }
-                else{
-                rowIterator++;
-                }
-            move->SetPenalty(twCount+tlCount+dwCount+dlCount);
-            move->CalculateScore();
             }
+            if (isHorizontal)
+            {
+            columnIterator++;
+            }
+            else{
+            rowIterator++;
+            }
+        move->SetPenalty(twCount+tlCount+dwCount+dlCount);
+        move->CalculateScore();
+
+        }
     }
     return 0.0;
 }
@@ -127,14 +128,11 @@ int MidgameEvaluator::GetBonus(int rowIterator, int columnIterator){
     return 0;
 }
 
-MidgameEvaluator::MidgameEvaluator(vector<Move> moves, Board *board){
+MidgameEvaluator::MidgameEvaluator(vector<Move>* moves, Board *board){
   
-  this->board_ = board;
-    for (int i = 0; i < (int)moves.size(); i++)
-    {
-        this->possibleMoves_.push_back(new Move(moves[i]));
-    }
-    
+    this->board_ = board;
+    this->possibleMoves_ = moves;
+    cout << possibleMoves_ << endl;
     this->CalculatePenalty();
 }
 
