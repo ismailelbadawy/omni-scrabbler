@@ -78,13 +78,14 @@ int main(){
 		moves = movGen.Generate(&rack, board.GetCount()==0);
 		auto  end = chrono::high_resolution_clock::now();
 
-		evaluator = new MidgameEvaluator(moves, &board);
+		cout << &moves << endl;
+		evaluator = new MidgameEvaluator(&moves, &board);
 
 		cout << moves.size() << endl;
 		for(int i = 0; i < (int)moves.size(); i++)
 		{
-			Move move = moves[i];
-			cout << "Move (" << i << ") " << "Penalty : " << move.GetPenalty() << " Heuristic : " << move.GetHeuristic() << std::endl;
+			Move * move = &moves[i];
+			cout << "Move (" << i << ") " << "\tPenalty : " << move->GetPenalty() << "\tHeuristic : " << move->GetHeuristic() << std::endl;
 		}
 		
 		 for(int i = 0; i < (int)moves.size(); i++)

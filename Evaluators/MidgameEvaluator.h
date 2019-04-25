@@ -9,11 +9,11 @@
 /// 2 - 
 class MidgameEvaluator : public Evaluator
 {
-    vector<Move*> possibleMoves_;
+    vector<Move>* possibleMoves_;
     Board* board_;
     public:    
         MidgameEvaluator();
-        MidgameEvaluator(vector<Move>,Board *board);
+        MidgameEvaluator(vector<Move>*,Board *board);
         ~MidgameEvaluator();
         double Evaluate(Move * move) override;
     private:

@@ -24,8 +24,8 @@ public:
 	void SetScore(double score);
 	void CalculateScore();
 	void SetPenalty(double penalty);
-	double inline GetPenalty() { return penalty_; }
-	double inline GetHeuristic(){ return heuristicscore_; }
+	double inline GetPenalty() { return this->penalty_; }
+	double inline GetHeuristic(){ return this->heuristicscore_; }
 	~Move();
 };
 
