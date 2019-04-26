@@ -1,6 +1,0 @@
-Hagar Rana
-R CREATE P T A R I M O
-M A 7 7
-M R 8 7
-M T 9 7
-R ADD K V L
