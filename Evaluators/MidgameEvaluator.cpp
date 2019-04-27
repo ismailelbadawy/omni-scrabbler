@@ -1,4 +1,5 @@
 #include "MidgameEvaluator.h"
+#include <algorithm>
 
 double MidgameEvaluator::Evaluate(Move * move)
 {
@@ -84,10 +85,23 @@ double MidgameEvaluator::CalculatePenalty()
             columnIterator++;
             }
             else{
-            rowIterator++;
+                rowIterator++;
             }
         move->SetPenalty(twCount+tlCount+dwCount+dlCount);
-        move->CalculateScore();
+        // Let's sort this array
+        string rack = move->GetRack();
+		if (rack.length() == 0)
+		{
+			move->SetRackLeave(0);
+		}else if(rack.length() == 1)
+        {
+			move->SetRackLeave((*singleValued_)[rack[0]]);
+		}
+		else 
+		{
+			move->SetRackLeave(this->CalculateLeave(rack));
+		}
+		move->CalculateScore();
 
         }
     }
@@ -128,12 +142,34 @@ int MidgameEvaluator::GetBonus(int rowIterator, int columnIterator){
     return 0;
 }
 
-MidgameEvaluator::MidgameEvaluator(vector<Move>* moves, Board *board){
+
+double MidgameEvaluator::CalculateLeave(string rack)
+{
+	double rackLeave = 0.0;
+    for(int i = 0; i < rack.length(); i++)
+    {
+        for(int j = i + 1; j < rack.length(); j++)
+        {
+            // Rack
+            if(i != j)
+            {
+				char leaveValue[] = { rack[i] - 32, rack[j] - 32};
+				string leave(leaveValue);
+				leave = leave.substr(0, 2);
+				rackLeave += (*doubleValued_)[leave];
+            }
+        }
+    }
+	return rackLeave;
+}
+
+MidgameEvaluator::MidgameEvaluator(vector<Move>* moves, Board *board, map<string, double> * rackLeave, map<char, double> * charValue){
   
     this->board_ = board;
     this->possibleMoves_ = moves;
-    cout << possibleMoves_ << endl;
-    this->CalculatePenalty();
+    this->doubleValued_ = rackLeave;
+	this->singleValued_ = charValue;
+	this->CalculatePenalty();
 }
 
 
