@@ -11,6 +11,7 @@
 #include"Models/Bag.h"
 #include"GADDAG/GADDAG.h"
 #include "Evaluators/MidgameEvaluator.h"
+#include "Evaluators/PreendgameEvaluator.h"
 #include "Strategy/SuperLeaveLoader.h"
 #include <time.h>
 #include <chrono>
@@ -77,6 +78,10 @@ int main(){
 	ofstream OutputFile;
 
 	OutputFile.open("results.txt");
+
+	//FOR TESTING OPPONENT RACK ONLY
+	PreendgameEvaluator PreEval = PreendgameEvaluator(syn2);
+	PreEval.OponentRackEstimation();
 
 	char c = 'y';
 	while(c == 'y'){
