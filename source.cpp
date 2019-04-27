@@ -11,13 +11,14 @@
 #include"Models/Bag.h"
 #include"GADDAG/GADDAG.h"
 #include "Evaluators/MidgameEvaluator.h"
+#include "Strategy/SuperLeaveLoader.h"
 #include <time.h>
 #include <chrono>
 
 
 using namespace std;
-string 	GADDAG_PATH = "assets/Dict.txt";
-string 	BAG_PATH = "assets/letters.txt";
+string 	GADDAG_PATH = "C:/Users/Ismail/Documents/Gam3a/Senior 1/Semester 8/MI/Project/omni-scrabbler/assets/Dict.txt";
+string 	BAG_PATH = "C:/Users/Ismail/Documents/Gam3a/Senior 1/Semester 8/MI/Project/omni-scrabbler/assets/letters.txt";
 Board 	board;
 //
 Rack  	RACK;
@@ -68,9 +69,14 @@ int main(){
 
 	MidgameEvaluator* evaluator = NULL;
 
+	map<string, double>* syn2 = new map<string, double>();
+	map<char, double>* worth = new map<char, double>();
+	SuperLeaveLoader loader(syn2, worth, "assets/syn2", "assets/worths");
+
+	cout << "Loaded the rack leave map with count " << syn2->size() << endl;
 	ofstream OutputFile;
 
-  OutputFile.open("results.txt");
+	OutputFile.open("results.txt");
 
 	char c = 'y';
 	while(c == 'y'){
@@ -79,13 +85,13 @@ int main(){
 		auto  end = chrono::high_resolution_clock::now();
 
 		cout << &moves << endl;
-		evaluator = new MidgameEvaluator(&moves, &board);
-
+		evaluator = new MidgameEvaluator(&moves, &board, syn2, worth);
+		
 		cout << moves.size() << endl;
 		for(int i = 0; i < (int)moves.size(); i++)
 		{
 			Move * move = &moves[i];
-			cout << "Move (" << i << ") " << "\tPenalty : " << move->GetPenalty() << "\tHeuristic : " << move->GetHeuristic() << std::endl;
+			cout << "Move (" << i << ") " << move->GetPlay()->GetLetters() << "\tLeaving " << move->GetRack() << "\tPenalty : " << move->GetPenalty() << "\tRack Leave : " << move->GetRackLeave() << std::endl;
 		}
 		
 		 for(int i = 0; i < (int)moves.size(); i++)
