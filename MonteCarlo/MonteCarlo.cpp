@@ -14,7 +14,8 @@
 
 using namespace std;
 
-MonteCarlo::MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, Bag bag){
+MonteCarlo::MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, Bag bag)
+{
     NodeMC *temp = new NodeMC;
     Rack tempRack = currentRack;
 
@@ -41,7 +42,8 @@ MonteCarlo::MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, B
     firstLevel();
 }
 
-void MonteCarlo::firstLevel(){
+void MonteCarlo::firstLevel()
+{
     //temp rack to use until we implement the random function.
     //we should use the bag to generate the random racks for each new state inside the loop.
     Tile RackTiles[7];
@@ -71,7 +73,7 @@ void MonteCarlo::firstLevel(){
 
         //generate the first board state after my move.
         tempLevel1Board.SimulateMove(&(this->Root->nodeState.possibleActions[i]));
-         
+
         //using the move generator to generate new set of moves for each action.
         vector<Move> nextMoves;
         MoveGenerator movGen(tempLevel1Board);
@@ -83,7 +85,8 @@ void MonteCarlo::firstLevel(){
     cout << "done" << endl;
 }
 
-NodeMC *MonteCarlo::newNode(Board boardState, vector<Move> Moves, Rack currentRack, Bag bag, NodeMC *parent, int level){
+NodeMC *MonteCarlo::newNode(Board boardState, vector<Move> Moves, Rack currentRack, Bag bag, NodeMC *parent, int level)
+{
     NodeMC *temp = new NodeMC;
     Rack tempRack = currentRack;
 
@@ -100,8 +103,8 @@ NodeMC *MonteCarlo::newNode(Board boardState, vector<Move> Moves, Rack currentRa
     temp->nodeState.UCB = INT_MAX;
 }
 
-
-void MonteCarlo::LevelOrderTraversal(NodeMC *root){
+void MonteCarlo::LevelOrderTraversal(NodeMC *root)
+{
     if (root == NULL)
         return;
 
@@ -117,7 +120,7 @@ void MonteCarlo::LevelOrderTraversal(NodeMC *root){
             Tile *tiles[15][15];
             p->boardState.GetTiles(tiles);
 
-            cout << "child begin ... " <<endl;
+            cout << "child begin ... " << endl;
             for (int i = 0; i < 15; i++)
             {
                 for (int j = 0; j < 15; j++)
@@ -126,7 +129,7 @@ void MonteCarlo::LevelOrderTraversal(NodeMC *root){
                 }
                 cout << endl;
             }
-            cout << "child end ..." <<endl;
+            cout << "child end ..." << endl;
             for (int i = 0; i < p->children.size(); i++)
                 q.push(p->children[i]);
             n--;
