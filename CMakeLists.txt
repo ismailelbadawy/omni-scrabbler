@@ -15,6 +15,8 @@ ${PROJECT_SOURCE_DIR}/TileScoreCalculator/*.h
 ${PROJECT_SOURCE_DIR}/TileScoreCalculator/*.cpp
 ${PROJECT_SOURCE_DIR}/Evaluators/*.h
 ${PROJECT_SOURCE_DIR}/Evaluators/*.cpp
+${PROJECT_SOURCE_DIR}/Strategy/*.cpp
+${PROJECT_SOURCE_DIR}/Strategy/*.cpp
 ${PROJECT_SOURCE_DIR}/source.cpp)
 add_executable(
     omniscrabbler
