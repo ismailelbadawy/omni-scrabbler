@@ -39,10 +39,10 @@ private:
     void firstLevel();
     
     //Utility function to calculate the best UCB.
-    NodeMC *calculateUCB();
+    NodeMC *getHighestUCB(NodeMC *root);
 
     //get the node with the best UCB.
-    NodeMC *promisingNode(NodeMC *Root);
+    NodeMC *promisingNode(NodeMC *root);
 
 public:
     //Root of the tree containing the current and main state of the game.

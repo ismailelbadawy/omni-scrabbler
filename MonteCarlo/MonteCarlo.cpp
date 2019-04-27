@@ -134,27 +134,26 @@ void MonteCarlo::LevelOrderTraversal(NodeMC *root){
     }
 }
 
-NodeMC *MonteCarlo::calculateUCB(){
-    //calculate and compare all the children
-    
+NodeMC *MonteCarlo::getHighestUCB(NodeMC *root){
+    NodeMC *temp;
+    for(int i = 0 ; i < root->children.size() ; i++){
+        
+    }
 }
 
 NodeMC *MonteCarlo::promisingNode(NodeMC *root){
-    // loop over the children and find the best UCT
-    for(int i = 0 ; i < root->children.size() ; i ++){
-        
-    }
+    NodeMC *temp;
+    temp = getHighestUCB(root);
+
 }
 
 
 
 NodeMC* MonteCarlo::Simulation(){ 
 
-    while(){
-        //choose a promising node
-        //if leaf node expand else go deeper 
-
-        //go further in the tree
-
+    int i = 0;
+    while(i < 3){
+        promisingNode(this->Root);
+        i++;
     }
 }
