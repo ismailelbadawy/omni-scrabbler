@@ -27,6 +27,7 @@ MonteCarlo::MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, B
     temp->nodeState.reward = 0;
     temp->nodeState.nbOfVisits = 0;
 
+    temp->nodeState.UCB = 0;
     temp->currentBag = bag;
     this->mainRack = tempRack;
     //populate the first level of actions.
@@ -96,6 +97,7 @@ NodeMC *MonteCarlo::newNode(Board boardState, vector<Move> Moves, Rack currentRa
     //the reward should be the score of the move.
     temp->nodeState.reward = 0;
     temp->nodeState.nbOfVisits = 0;
+    temp->nodeState.UCB = INT_MAX;
 }
 
 
@@ -134,26 +136,47 @@ void MonteCarlo::LevelOrderTraversal(NodeMC *root){
     }
 }
 
-NodeMC *MonteCarlo::getHighestUCB(NodeMC *root){
-    NodeMC *temp;
-    for(int i = 0 ; i < root->children.size() ; i++){
-        
-    }
+double MonteCarlo::calculateUCB(NodeMC *node){
+    //calculate UCB
 }
 
 NodeMC *MonteCarlo::promisingNode(NodeMC *root){
-    NodeMC *temp;
-    temp = getHighestUCB(root);
-
+    NodeMC *Max = root->children.at(0);
+    for(int i = 0 ; i < root->children.size() ; i++){
+        if(root->children.at(i)->nodeState.UCB > Max->nodeState.UCB){
+            Max = root->children.at(i);
+        }
+    }
+    return Max;
 }
-
 
 
 NodeMC* MonteCarlo::Simulation(){ 
 
     int i = 0;
     while(i < 3){
-        promisingNode(this->Root);
-        i++;
+        NodeMC *node = promisingNode(this->Root);
+
+        while(node->children.size() != 0){
+            node=promisingNode(node);            
+        }
+
+        if(node->nodeState.nbOfVisits == 0){
+            node->nodeState.UCB = calculateUCB(node);
+            //increment nbofvisits
+            //Rollout
+        }else{
+            if(node->nodeState.treeDepth < 3){
+                //expand.
+                //choose random child.
+                //calculate UCB.
+                //increment nbofvisits.
+                //Rollout()
+            }else{
+                //calculate UCB.
+                //increment nbofvisits.
+                //Rolllout
+            }
+        }
     }
 }

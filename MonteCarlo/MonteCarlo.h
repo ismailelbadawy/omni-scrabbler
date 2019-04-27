@@ -38,8 +38,8 @@ private:
     //function to populate the first level.
     void firstLevel();
     
-    //Utility function to calculate the best UCB.
-    NodeMC *getHighestUCB(NodeMC *root);
+    //Utility function to calculate the UCB.
+    double calculateUCB(NodeMC *node);
 
     //get the node with the best UCB.
     NodeMC *promisingNode(NodeMC *root);
