@@ -52,7 +52,7 @@ void Move::SetScore(double score)
 
 void Move::CalculateScore()
 {
-	this->heuristicscore_ = this->play_->GetScore()-this->penalty_;
+	this->heuristicscore_ =this->rackLeave_+this->play_->GetScore()-this->penalty_;
 
 }
 

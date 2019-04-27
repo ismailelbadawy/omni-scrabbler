@@ -146,9 +146,9 @@ int MidgameEvaluator::GetBonus(int rowIterator, int columnIterator){
 double MidgameEvaluator::CalculateLeave(string rack)
 {
 	double rackLeave = 0.0;
-    for(int i = 0; i < rack.length(); i++)
+    for(int i = 0; i < (int)rack.length(); i++)
     {
-        for(int j = i + 1; j < rack.length(); j++)
+        for(int j = i + 1; j < (int)rack.length(); j++)
         {
             // Rack
             if(i != j)

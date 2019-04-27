@@ -80,18 +80,19 @@ int main(){
 	OutputFile.open("results.txt");
 
 	//FOR TESTING OPPONENT RACK ONLY
-	PreendgameEvaluator PreEval = PreendgameEvaluator(syn2);
-	PreEval.OponentRackEstimation();
+	//PreEval.OpponentRackEstimation();
 
 	char c = 'y';
 	while(c == 'y'){
 		auto  start = chrono::high_resolution_clock::now();
-		moves = movGen.Generate(&rack, board.GetCount()==0);
+		moves = movGen.Generate(&rack,board, board.GetCount()==0);
 		auto  end = chrono::high_resolution_clock::now();
-
+	
+		PreendgameEvaluator PreEval = PreendgameEvaluator(syn2,&board,&movGen,moves);
 		cout << &moves << endl;
 		evaluator = new MidgameEvaluator(&moves, &board, syn2, worth);
-		
+		Move * move = new Move();
+		PreEval.Evaluate(move);
 		cout << moves.size() << endl;
 		for(int i = 0; i < (int)moves.size(); i++)
 		{

@@ -23,7 +23,7 @@ public:
     MoveGenerator();
     MoveGenerator(Board &board);
     ~MoveGenerator();
-    vector<Move> Generate(const Rack *,bool isEmpty);
+    vector<Move> Generate(const Rack *, Board &board,bool isEmpty);
 
 private:
     void GenerateWordsAtCols();

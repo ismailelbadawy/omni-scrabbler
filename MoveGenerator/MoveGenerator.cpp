@@ -616,8 +616,9 @@ bool MoveGenerator::WordIsTouching(string word, int row, int column, bool horizo
 return flag;
 }
 
-vector<Move> MoveGenerator::Generate(const Rack * rack,bool isEmpty)
+vector<Move> MoveGenerator::Generate(const Rack * rack,Board &board,bool isEmpty)
 {
+	board.GetTiles(this->boardTiles_);
 	moves_.clear();
 	this->SetRack(*rack);
 	GenerateRackWords(isEmpty); 
