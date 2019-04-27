@@ -15,7 +15,7 @@ struct NodeState
     vector<Move> possibleActions; //possible moves to play from the current state of the board.
     
     //paramaters used to calculate the UCT of the node.
-    double reward; //currently eqauls to the score of the move only.
+    double reward,UCB; //currently eqauls to the score of the move only.
     int nbOfVisits; //number of visits of the current node.
 };
 
@@ -35,8 +35,14 @@ class MonteCarlo
 
 private:
 
-//function to populate the first level.
-void firstLevel();
+    //function to populate the first level.
+    void firstLevel();
+    
+    //Utility function to calculate the best UCB.
+    NodeMC *calculateUCB();
+
+    //get the node with the best UCB.
+    NodeMC *promisingNode(NodeMC *Root);
 
 public:
     //Root of the tree containing the current and main state of the game.
@@ -51,4 +57,10 @@ public:
 
     //traverse the tree.
     void LevelOrderTraversal(NodeMC *root);
+
+    
+
+
+    //Function to start the simulation.
+    NodeMC *Simulation();
 };

@@ -9,12 +9,12 @@
 #include "../Models/Bag.h"
 #include "../Models/Tile.h"
 #include "../Models/Play.h"
+#include "../Models/Tile.h"
 #include "../MoveGenerator/MoveGenerator.h"
 
 using namespace std;
 
-MonteCarlo::MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, Bag bag)
-{
+MonteCarlo::MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, Bag bag){
     NodeMC *temp = new NodeMC;
     Rack tempRack = currentRack;
 
@@ -40,8 +40,7 @@ MonteCarlo::MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, B
     firstLevel();
 }
 
-void MonteCarlo::firstLevel()
-{
+void MonteCarlo::firstLevel(){
     //temp rack to use until we implement the random function.
     //we should use the bag to generate the random racks for each new state inside the loop.
     Tile RackTiles[7];
@@ -68,20 +67,22 @@ void MonteCarlo::firstLevel()
     for (int i = 0; i < 10; i++)
     {
         Board tempLevel1Board = this->Root->boardState;
+
         //generate the first board state after my move.
         tempLevel1Board.SimulateMove(&(this->Root->nodeState.possibleActions[i]));
+         
         //using the move generator to generate new set of moves for each action.
         vector<Move> nextMoves;
         MoveGenerator movGen(tempLevel1Board);
 
         nextMoves = movGen.Generate(&rack, tempLevel1Board.GetCount() == 0);
 
-        this->Root->children.push_back(this->newNode(tempLevel1Board, nextMoves, rack, Root->currentBag, Root, 1));
+        this->Root->children.push_back(newNode(tempLevel1Board, nextMoves, rack, Root->currentBag, Root, 1));
     }
+    cout << "done" << endl;
 }
 
-NodeMC *MonteCarlo::newNode(Board boardState, vector<Move> Moves, Rack currentRack, Bag bag, NodeMC *parent, int level)
-{
+NodeMC *MonteCarlo::newNode(Board boardState, vector<Move> Moves, Rack currentRack, Bag bag, NodeMC *parent, int level){
     NodeMC *temp = new NodeMC;
     Rack tempRack = currentRack;
 
@@ -97,8 +98,8 @@ NodeMC *MonteCarlo::newNode(Board boardState, vector<Move> Moves, Rack currentRa
     temp->nodeState.nbOfVisits = 0;
 }
 
-void MonteCarlo::LevelOrderTraversal(NodeMC *root)
-{
+
+void MonteCarlo::LevelOrderTraversal(NodeMC *root){
     if (root == NULL)
         return;
 
@@ -114,19 +115,46 @@ void MonteCarlo::LevelOrderTraversal(NodeMC *root)
             Tile *tiles[15][15];
             p->boardState.GetTiles(tiles);
 
+            cout << "child begin ... " <<endl;
             for (int i = 0; i < 15; i++)
             {
                 for (int j = 0; j < 15; j++)
                 {
-                    cout << tiles[i][j]->GetLetter() << endl;
+                    cout << tiles[i][j]->GetLetter() << " ";
                 }
+                cout << endl;
             }
-
+            cout << "child end ..." <<endl;
             for (int i = 0; i < p->children.size(); i++)
                 q.push(p->children[i]);
             n--;
         }
 
         cout << endl;
+    }
+}
+
+NodeMC *MonteCarlo::calculateUCB(){
+    //calculate and compare all the children
+    
+}
+
+NodeMC *MonteCarlo::promisingNode(NodeMC *root){
+    // loop over the children and find the best UCT
+    for(int i = 0 ; i < root->children.size() ; i ++){
+        
+    }
+}
+
+
+
+NodeMC* MonteCarlo::Simulation(){ 
+
+    while(){
+        //choose a promising node
+        //if leaf node expand else go deeper 
+
+        //go further in the tree
+
     }
 }
