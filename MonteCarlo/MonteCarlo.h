@@ -47,7 +47,7 @@ private:
     void Rollout(NodeMC *node, int depth);
 
     //adds children to the node of choice.
-    void Expand(NodeMC *node);
+    void Expand(NodeMC*& node);
 
 public:
     //Root of the tree containing the current and main state of the game.

@@ -139,8 +139,26 @@ void MonteCarlo::LevelOrderTraversal(NodeMC *root)
     }
 }
 
-double MonteCarlo::calculateUCB(NodeMC *node)
+void MonteCarlo::Expand(NodeMC*& node)
 {
+	//Generate Random rack based on current bag ---Ismail and Walaa IIRC
+	vector<NodeMC*> newstates;
+	for (size_t i = 0; i < 30; i++)
+	{
+		//Tweaks all the new states retrieved from the MoveGeneration & Static eval. so that expansion is complete
+		//However Bag state? Rack state? Board state? How do I get those?
+		
+		newstates[i]->Parent = node;
+		newstates[i]->nodeState.nbOfVisits = 0;
+		newstates[i]->nodeState.treeDepth = node->nodeState.treeDepth + 1;
+		newstates[i]->nodeState.UCB = INT_MAX;
+
+	}
+	//Finally append this new vector to the children of this node
+	node->children = newstates;
+}
+
+double MonteCarlo::calculateUCB(NodeMC *node){
     //calculate UCB
 }
 
