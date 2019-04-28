@@ -178,6 +178,7 @@ NodeMC *MonteCarlo::promisingNode(NodeMC *root){
 NodeMC* MonteCarlo::Simulation(){ 
 
     int i = 0;
+	//Change While to time instead
     while(i < 3){
         NodeMC *node = promisingNode(this->Root);
 		
@@ -196,11 +197,13 @@ NodeMC* MonteCarlo::Simulation(){
                 //choose random child.
                 //calculate UCB.
                 //increment nbofvisits.
+				node->nodeState.nbOfVisits++;
                 //Rollout()
             }else{
                 //calculate UCB.
                 //increment nbofvisits.
-                //Rolllout
+				node->nodeState.nbOfVisits++;
+				//Rolllout
             }
         }
     }
