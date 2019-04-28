@@ -64,6 +64,7 @@ int main()
 
 	vector<Move> moves;
 	MoveGenerator movGen(board);
+	cout << "Hi world";
 	ofstream OutputFile;
 
 	OutputFile.open("results.txt");
@@ -86,11 +87,12 @@ int main()
 	}
 
 	vector<Move> simVec;
-	for(int i = 0 ; i < 10 ; i++){
+	for (int i = 0; i < 10; i++)
+	{
 		simVec.push_back(moves.at(i));
 	}
 
-	MonteCarlo testTree(board,simVec,rack,oprack,bag);
+	MonteCarlo testTree(board, simVec, rack, oprack, bag);
 
 	NodeMC *node = testTree.Simulation();
 	vector<Tile> remTiles = bag.GetRemainingTiles();

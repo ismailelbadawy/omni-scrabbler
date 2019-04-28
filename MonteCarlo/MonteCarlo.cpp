@@ -108,7 +108,7 @@ NodeMC *MonteCarlo::newNode(Board boardState, vector<Move> Moves, Rack currentRa
 
     vector<NodeMC *> children;
     temp->children = children;
-   
+
     temp->nodeState.treeDepth = level;
     temp->nodeState.possibleActions = Moves;
 
@@ -159,11 +159,13 @@ void MonteCarlo::LevelOrderTraversal(NodeMC *root)
 double MonteCarlo::calculateUCB(NodeMC *node)
 {
     //calculate UCB
+    return 0.0;
 }
 
 double MonteCarlo::calculateMoveReward(NodeMC *node)
 {
     //i think it should be used while expansion.
+    return 0.0;
 }
 
 NodeMC *MonteCarlo::promisingNode(NodeMC *root)
@@ -219,7 +221,6 @@ NodeMC *MonteCarlo::Simulation()
     while (i < 3)
     {
         NodeMC *node = promisingNode(this->Root);
-
 
         cout << node->children.size() << endl;
         while (node->children.size() != 0)

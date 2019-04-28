@@ -1,3 +1,8 @@
 .vscode/
 build/
 vendor/
+*.db
+.vs/omni-scrabbler/v16/Browse.VC.opendb
+.vs/omni-scrabbler/v16/ipch/AutoPCH/a262eb7b3f8bdebf/SOURCE.ipch
+.vs/ProjectSettings.json
+.vs/slnx.sqlite
