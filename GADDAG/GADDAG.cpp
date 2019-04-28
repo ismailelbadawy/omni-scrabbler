@@ -9,6 +9,7 @@ GADDAG:: GADDAG() {
 GADDAG::GADDAG(string InputPath) {
 	RootNode = new Node(Node::Root);
 	LoadDag(InputPath);
+	cout << "Loaded GADDAG successfully with input file " << InputPath << "\n";
 }
 
 void GADDAG::add(string NewWord) {

@@ -63,6 +63,8 @@ int main()
 	Rack oprack(rackTiles);
 
 	vector<Move> moves;
+	cout << "Loading GADDAG...\n";
+	auto startDag = chrono::high_resolution_clock::now();
 	MoveGenerator movGen(board);
 	cout << "Hi world";
 	ofstream OutputFile;

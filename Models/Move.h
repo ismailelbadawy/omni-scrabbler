@@ -11,8 +11,6 @@ class Move
 	Rack rack_;
 	double heuristicscore_;
 	double penalty_;
-
-
 public:
 	
 	Move();
@@ -26,6 +24,8 @@ public:
 	void SetScore(double score);
 	void CalculateScore();
 	void SetPenalty(double penalty);
+	double inline GetPenalty() { return penalty_; }
+	double inline GetHeuristic(){ return heuristicscore_; }
 	~Move();
 };
 
