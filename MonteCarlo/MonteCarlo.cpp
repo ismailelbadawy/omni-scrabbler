@@ -139,6 +139,27 @@ void MonteCarlo::LevelOrderTraversal(NodeMC *root)
     }
 }
 
+void MonteCarlo::Expand(NodeMC*& node)
+{
+	//Generate Random rack based on current bag ---Ismail and Walaa IIRC
+	vector<NodeMC*> newstates;
+	for (size_t i = 0; i < 30; i++)
+	{
+		//Tweaks all the new states retrieved from the MoveGeneration & Static eval. so that expansion is complete
+		//However Bag state? Rack state? Board state? How do I get those?
+		
+		newstates[i]->Parent = node;
+		newstates[i]->nodeState.nbOfVisits = 0;
+		newstates[i]->nodeState.treeDepth = node->nodeState.treeDepth + 1;
+		newstates[i]->nodeState.UCB = INT_MAX;
+
+	}
+	//Finally append this new vector to the children of this node
+	node->children = newstates;
+	
+
+}
+
 double MonteCarlo::calculateUCB(NodeMC *node){
     //calculate UCB
 }
@@ -159,7 +180,7 @@ NodeMC* MonteCarlo::Simulation(){
     int i = 0;
     while(i < 3){
         NodeMC *node = promisingNode(this->Root);
-
+		
         while(node->children.size() != 0){
             node=promisingNode(node);            
         }
@@ -168,7 +189,8 @@ NodeMC* MonteCarlo::Simulation(){
             node->nodeState.UCB = calculateUCB(node);
             //increment nbofvisits
             //Rollout
-        }else{
+        }
+		else{
             if(node->nodeState.treeDepth < 3){
                 //expand.
                 //choose random child.

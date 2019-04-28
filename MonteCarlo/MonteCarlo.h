@@ -57,7 +57,7 @@ public:
 
     //traverse the tree.
     void LevelOrderTraversal(NodeMC *root);
-
+	void Expand(NodeMC*& node);
     
 
 
