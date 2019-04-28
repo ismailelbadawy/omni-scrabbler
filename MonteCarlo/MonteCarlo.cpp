@@ -14,7 +14,7 @@
 
 using namespace std;
 
-MonteCarlo::MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, Bag bag)
+MonteCarlo::MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, Rack oponentRack, Bag bag)
 {
     NodeMC *temp = new NodeMC;
     Rack tempRack = currentRack;
@@ -30,7 +30,12 @@ MonteCarlo::MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, B
 
     temp->nodeState.UCB = 0;
     temp->currentBag = bag;
+
+    vector<NodeMC *> children;
+    temp->children = children;
+
     this->mainRack = tempRack;
+    this->oponentRack = oponentRack;
     //populate the first level of actions.
     // i need the new rack of each state
     // board state
@@ -39,6 +44,7 @@ MonteCarlo::MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, B
     //set of moves
     //
     this->Root = temp;
+    //should generate the oponent Rack.
     firstLevel();
 }
 
@@ -66,21 +72,27 @@ void MonteCarlo::firstLevel()
     vector<Tile> rackTiles(RackTiles, RackTiles + sizeof RackTiles / sizeof RackTiles[0]);
     Rack rack(rackTiles);
 
+    Board tempLevel1Board = this->Root->boardState;
+    MoveGenerator movGen(tempLevel1Board);
     //loop over the number of possible actions to make in order to get all the possible states in the level.
     for (int i = 0; i < 10; i++)
     {
-        Board tempLevel1Board = this->Root->boardState;
 
+        tempLevel1Board = this->Root->boardState;
         //generate the first board state after my move.
         tempLevel1Board.SimulateMove(&(this->Root->nodeState.possibleActions[i]));
 
         //using the move generator to generate new set of moves for each action.
         vector<Move> nextMoves;
-        MoveGenerator movGen(tempLevel1Board);
 
         nextMoves = movGen.Generate(&rack, tempLevel1Board.GetCount() == 0);
+        vector<Move> simVec;
+        for (int i = 0; i < 10; i++)
+        {
+            simVec.push_back(nextMoves.at(i));
+        }
 
-        this->Root->children.push_back(newNode(tempLevel1Board, nextMoves, rack, Root->currentBag, Root, 1));
+        this->Root->children.push_back(newNode(tempLevel1Board, simVec, rack, Root->currentBag, Root, 1));
     }
     cout << "done" << endl;
 }
@@ -94,13 +106,18 @@ NodeMC *MonteCarlo::newNode(Board boardState, vector<Move> Moves, Rack currentRa
     temp->Rack = tempRack;
     temp->Parent = parent;
 
+    vector<NodeMC *> children;
+    temp->children = children;
+   
     temp->nodeState.treeDepth = level;
     temp->nodeState.possibleActions = Moves;
 
     //the reward should be the score of the move.
     temp->nodeState.reward = 0;
     temp->nodeState.nbOfVisits = 0;
-    temp->nodeState.UCB = INT_MAX;
+    temp->nodeState.UCB = 4;
+
+    return temp;
 }
 
 void MonteCarlo::LevelOrderTraversal(NodeMC *root)
@@ -139,11 +156,13 @@ void MonteCarlo::LevelOrderTraversal(NodeMC *root)
     }
 }
 
-double MonteCarlo::calculateUCB(NodeMC *node){
+double MonteCarlo::calculateUCB(NodeMC *node)
+{
     //calculate UCB
 }
 
-double MonteCarlo::calculateMoveReward(NodeMC *node){
+double MonteCarlo::calculateMoveReward(NodeMC *node)
+{
     //i think it should be used while expansion.
 }
 
@@ -160,7 +179,8 @@ NodeMC *MonteCarlo::promisingNode(NodeMC *root)
     return Max;
 }
 
-void MonteCarlo::Rollout(NodeMC *node, int depth){
+void MonteCarlo::Rollout(NodeMC *node, int depth)
+{
     NodeMC *tempNode = node;
     while (tempNode != nullptr)
     {
@@ -174,24 +194,22 @@ void MonteCarlo::Rollout(NodeMC *node, int depth){
     }
 }
 
-
-void MonteCarlo::Expand(NodeMC*& node)
+void MonteCarlo::Expand(NodeMC *&node)
 {
-	//Generate Random rack based on current bag ---Ismail and Walaa IIRC
-	vector<NodeMC*> newstates;
-	for (size_t i = 0; i < 30; i++)
-	{
-		//Tweaks all the new states retrieved from the MoveGeneration & Static eval. so that expansion is complete
-		//However Bag state? Rack state? Board state? How do I get those?
-		
-		newstates[i]->Parent = node;
-		newstates[i]->nodeState.nbOfVisits = 0;
-		newstates[i]->nodeState.treeDepth = node->nodeState.treeDepth + 1;
-		newstates[i]->nodeState.UCB = INT_MAX;
+    //Generate Random rack based on current bag ---Ismail and Walaa IIRC
+    vector<NodeMC *> newstates;
+    for (size_t i = 0; i < 30; i++)
+    {
+        //Tweaks all the new states retrieved from the MoveGeneration & Static eval. so that expansion is complete
+        //However Bag state? Rack state? Board state? How do I get those?
 
-	}
-	//Finally append this new vector to the children of this node
-	node->children = newstates;
+        newstates[i]->Parent = node;
+        newstates[i]->nodeState.nbOfVisits = 0;
+        newstates[i]->nodeState.treeDepth = node->nodeState.treeDepth + 1;
+        newstates[i]->nodeState.UCB = 4;
+    }
+    //Finally append this new vector to the children of this node
+    node->children = newstates;
 }
 
 NodeMC *MonteCarlo::Simulation()
@@ -202,6 +220,8 @@ NodeMC *MonteCarlo::Simulation()
     {
         NodeMC *node = promisingNode(this->Root);
 
+
+        cout << node->children.size() << endl;
         while (node->children.size() != 0)
         {
             node = promisingNode(node);
@@ -210,7 +230,7 @@ NodeMC *MonteCarlo::Simulation()
         if (node->nodeState.nbOfVisits == 0)
         {
             node->nodeState.UCB = calculateUCB(node);
-            Rollout(node,node->nodeState.treeDepth);
+            Rollout(node, node->nodeState.treeDepth);
         }
         else
         {
@@ -219,12 +239,12 @@ NodeMC *MonteCarlo::Simulation()
                 Expand(node);
                 node = node->children.at(rand() % 30);
                 node->nodeState.UCB = calculateUCB(node);
-                Rollout(node,node->nodeState.treeDepth);
+                Rollout(node, node->nodeState.treeDepth);
             }
             else
             {
                 node->nodeState.UCB = calculateUCB(node);
-                Rollout(node,node->nodeState.treeDepth);
+                Rollout(node, node->nodeState.treeDepth);
             }
         }
     }

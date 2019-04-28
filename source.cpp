@@ -58,6 +58,10 @@ int main()
 
 	vector<Tile> rackTiles(RackTiles, RackTiles + sizeof RackTiles / sizeof RackTiles[0]);
 	Rack rack(rackTiles);
+
+	//opRAck
+	Rack oprack(rackTiles);
+
 	vector<Move> moves;
 	MoveGenerator movGen(board);
 	ofstream OutputFile;
@@ -86,8 +90,9 @@ int main()
 		simVec.push_back(moves.at(i));
 	}
 
-	MonteCarlo testTree(board,simVec,rack,bag);
+	MonteCarlo testTree(board,simVec,rack,oprack,bag);
 
+	NodeMC *node = testTree.Simulation();
 	vector<Tile> remTiles = bag.GetRemainingTiles();
 
 	// testTree.LevelOrderTraversal(testTree.Root);
