@@ -10,6 +10,8 @@
 #include "Models/Tile.h"
 #include "Models/Bag.h"
 #include "GADDAG/GADDAG.h"
+#include "Evaluators/PreendgameEvaluator.h"
+#include "Strategy/SuperLeaveLoader.h"
 #include <time.h>
 #include <chrono>
 #include "./MonteCarlo/MonteCarlo.h"
@@ -66,21 +68,41 @@ int main()
 	cout << "Loading GADDAG...\n";
 	auto startDag = chrono::high_resolution_clock::now();
 	MoveGenerator movGen(board);
-	cout << "Hi world";
+	auto endDag = chrono::high_resolution_clock::now();
+	auto diff = endDag - startDag;
+	cout << "Time to load GADDAG: " << chrono::duration_cast<chrono::seconds>(diff).count() << " s" << endl;
+
+	MidgameEvaluator *evaluator = NULL;
+
+	map<string, double> *syn2 = new map<string, double>();
+	map<char, double> *worth = new map<char, double>();
+	SuperLeaveLoader loader(syn2, worth, "assets/syn2", "assets/worths");
+
+	cout << "Loaded the rack leave map with count " << syn2->size() << endl;
 	ofstream OutputFile;
 
 	OutputFile.open("results.txt");
 
-	while (true)
+	//FOR TESTING OPPONENT RACK ONLY
+	//PreEval.OpponentRackEstimation();
+
+	char c = 'y';
+	while (c == 'y')
 	{
 		auto start = chrono::high_resolution_clock::now();
-		moves = movGen.Generate(&rack, board.GetCount() == 0);
+		moves = movGen.Generate(&rack, board, board.GetCount() == 0);
 		auto end = chrono::high_resolution_clock::now();
 
+		PreendgameEvaluator PreEval = PreendgameEvaluator(syn2, &board, &movGen, moves);
+		cout << &moves << endl;
+		evaluator = new MidgameEvaluator(&moves, &board, syn2, worth);
+		Move *move = new Move();
+		PreEval.Evaluate(move);
+		cout << moves.size() << endl;
 		for (int i = 0; i < (int)moves.size(); i++)
 		{
-			/* code */
-			OutputFile << moves[i].GetPlay()->GetLetters() << " " << moves[i].GetPlay()->GetRow() << " " << moves[i].GetPlay()->GetColumn() << " " << moves[i].GetPlay()->GetIsHorizontal() << " " << moves[i].GetPlay()->GetScore() << endl;
+			Move *move = &moves[i];
+			cout << "Move (" << i << ") " << move->GetPlay()->GetLetters() << "\tLeaving " << move->GetRack() << "\tPenalty : " << move->GetPenalty() << "\tRack Leave : " << move->GetRackLeave() << std::endl;
 		}
 		// board.SimulateMove(&moves[0]);
 		// moves[0].GetPlay()->GetScore();

@@ -1,4 +1,3 @@
-.vscode/
 build/
 vendor/
 *.db
@@ -6,3 +5,9 @@ vendor/
 .vs/omni-scrabbler/v16/ipch/AutoPCH/a262eb7b3f8bdebf/SOURCE.ipch
 .vs/ProjectSettings.json
 .vs/slnx.sqlite
+
+vendor/
+
+.vs/
+
+.vscode/
