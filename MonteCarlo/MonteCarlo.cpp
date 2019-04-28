@@ -139,46 +139,73 @@ void MonteCarlo::LevelOrderTraversal(NodeMC *root)
     }
 }
 
-double MonteCarlo::calculateUCB(NodeMC *node){
+double MonteCarlo::calculateUCB(NodeMC *node)
+{
     //calculate UCB
 }
 
-NodeMC *MonteCarlo::promisingNode(NodeMC *root){
+NodeMC *MonteCarlo::promisingNode(NodeMC *root)
+{
     NodeMC *Max = root->children.at(0);
-    for(int i = 0 ; i < root->children.size() ; i++){
-        if(root->children.at(i)->nodeState.UCB > Max->nodeState.UCB){
+    for (int i = 0; i < root->children.size(); i++)
+    {
+        if (root->children.at(i)->nodeState.UCB > Max->nodeState.UCB)
+        {
             Max = root->children.at(i);
         }
     }
     return Max;
 }
 
+void MonteCarlo::Rollout(NodeMC *node, int depth){
+    NodeMC *tempNode = node;
+    while (tempNode != nullptr)
+    {
+        //increment the number of visits.
+        tempNode->nodeState.nbOfVisits++;
+        if (tempNode->nodeState.treeDepth == depth)
+        {
+            //add reward here.
+        }
+        tempNode = tempNode->Parent;
+    }
+}
 
-NodeMC* MonteCarlo::Simulation(){ 
+void MonteCarlo::Expand(NodeMC *node){
+
+}
+
+NodeMC *MonteCarlo::Simulation()
+{
 
     int i = 0;
-    while(i < 3){
+    while (i < 3)
+    {
         NodeMC *node = promisingNode(this->Root);
 
-        while(node->children.size() != 0){
-            node=promisingNode(node);            
+        while (node->children.size() != 0)
+        {
+            node = promisingNode(node);
         }
 
-        if(node->nodeState.nbOfVisits == 0){
+        if (node->nodeState.nbOfVisits == 0)
+        {
             node->nodeState.UCB = calculateUCB(node);
-            //increment nbofvisits
-            //Rollout
-        }else{
-            if(node->nodeState.treeDepth < 3){
-                //expand.
-                //choose random child.
-                //calculate UCB.
-                //increment nbofvisits.
-                //Rollout()
-            }else{
-                //calculate UCB.
-                //increment nbofvisits.
-                //Rolllout
+            Rollout(node,node->nodeState.treeDepth);
+        }
+        else
+        {
+            if (node->nodeState.treeDepth < 3)
+            {
+                Expand(node);
+                node = node->children.at(rand() % 30);
+                node->nodeState.UCB = calculateUCB(node);
+                Rollout(node,node->nodeState.treeDepth);
+            }
+            else
+            {
+                node->nodeState.UCB = calculateUCB(node);
+                Rollout(node,node->nodeState.treeDepth);
             }
         }
     }
