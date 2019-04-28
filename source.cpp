@@ -11,7 +11,6 @@
 #include "Models/Bag.h"
 #include "GADDAG/GADDAG.h"
 #include "Evaluators/PreendgameEvaluator.h"
-#include "Strategy/SuperLeaveLoader.h"
 #include <time.h>
 #include <chrono>
 #include "./MonteCarlo/MonteCarlo.h"
@@ -72,13 +71,6 @@ int main()
 	auto diff = endDag - startDag;
 	cout << "Time to load GADDAG: " << chrono::duration_cast<chrono::seconds>(diff).count() << " s" << endl;
 
-	MidgameEvaluator *evaluator = NULL;
-
-	map<string, double> *syn2 = new map<string, double>();
-	map<char, double> *worth = new map<char, double>();
-	SuperLeaveLoader loader(syn2, worth, "assets/syn2", "assets/worths");
-
-	cout << "Loaded the rack leave map with count " << syn2->size() << endl;
 	ofstream OutputFile;
 
 	OutputFile.open("results.txt");
@@ -93,11 +85,6 @@ int main()
 		moves = movGen.Generate(&rack, board, board.GetCount() == 0);
 		auto end = chrono::high_resolution_clock::now();
 
-		PreendgameEvaluator PreEval = PreendgameEvaluator(syn2, &board, &movGen, moves);
-		cout << &moves << endl;
-		evaluator = new MidgameEvaluator(&moves, &board, syn2, worth);
-		Move *move = new Move();
-		PreEval.Evaluate(move);
 		cout << moves.size() << endl;
 		for (int i = 0; i < (int)moves.size(); i++)
 		{

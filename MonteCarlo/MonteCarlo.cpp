@@ -85,7 +85,7 @@ void MonteCarlo::firstLevel()
         //using the move generator to generate new set of moves for each action.
         vector<Move> nextMoves;
 
-        nextMoves = movGen.Generate(&rack, tempLevel1Board.GetCount() == 0);
+        nextMoves = movGen.Generate(&rack,this->Root->boardState, tempLevel1Board.GetCount() == 0);
         vector<Move> simVec;
         for (int i = 0; i < 10; i++)
         {
