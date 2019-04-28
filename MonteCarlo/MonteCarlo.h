@@ -37,6 +37,9 @@ private:
     //function to populate the first level.
     void firstLevel();
 
+    //Use heuristics to caluclate the reward of a certain move.
+    double calculateMoveReward(NodeMC *node);
+
     //Utility function to calculate the UCB.
     double calculateUCB(NodeMC *node);
 
