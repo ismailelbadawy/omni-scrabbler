@@ -167,9 +167,12 @@ void MonteCarlo::calculateUCB(NodeMC *&node)
     
 }
 
-double MonteCarlo::calculateMoveReward(NodeMC *node)
+double MonteCarlo::calculateMoveReward(Move m)
 {
-    return 0.0;
+    //On expansions we are going to have a 30 sized vector containing the reward per each move, thus this func would only be used during expansion
+	//Cause it's the only place where you know a state is achievable and the reward doesn't change anyways it's the UCB that does change cause it's a function of nbofVisits
+	//So it takes move not node as param
+	return m.GetScore();
 }
 
 NodeMC *MonteCarlo::promisingNode(NodeMC *root)

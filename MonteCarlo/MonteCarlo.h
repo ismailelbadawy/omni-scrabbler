@@ -38,7 +38,7 @@ private:
     void firstLevel();
 	MoveGenerator* movGen;
     //Use heuristics to caluclate the reward of a certain move.
-    double calculateMoveReward(NodeMC *node);
+    double calculateMoveReward(Move m);
 
     //Utility function to calculate the UCB.
     void calculateUCB(NodeMC *&node);
