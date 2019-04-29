@@ -16,8 +16,8 @@
 #include "./MonteCarlo/MonteCarlo.h"
 
 using namespace std;
-string GADDAG_PATH = "assets/Dict.txt";
-string BAG_PATH = "assets/letters.txt";
+string GADDAG_PATH = "E:/Projects/omni-scrabbler/assets/Dict.txt";
+string BAG_PATH = "E:/Projects/omni-scrabbler/assets/letters.txt";
 Board board;
 //
 Rack RACK;
@@ -70,7 +70,7 @@ int main()
 	auto endDag = chrono::high_resolution_clock::now();
 	auto diff = endDag - startDag;
 	cout << "Time to load GADDAG: " << chrono::duration_cast<chrono::seconds>(diff).count() << " s" << endl;
-
+	cout << "Hi";
 	ofstream OutputFile;
 
 	OutputFile.open("results.txt");
@@ -102,8 +102,8 @@ int main()
 	{
 		simVec.push_back(moves.at(i));
 	}
-
-	MonteCarlo testTree(board, simVec, rack, oprack, bag);
+	MoveGenerator* movGenPointer = &movGen;
+	MonteCarlo testTree(board, simVec, rack, oprack, bag, movGenPointer);
 
 	NodeMC *node = testTree.Simulation();
 	vector<Tile> remTiles = bag.GetRemainingTiles();

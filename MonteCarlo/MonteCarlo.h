@@ -2,7 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <queue>
-
+#include "../MoveGenerator/MoveGenerator.h"
 #include "../Models/Board.h"
 #include "../Models/Rack.h"
 #include "../Models/Move.h"
@@ -36,7 +36,7 @@ class MonteCarlo
 private:
     //function to populate the first level.
     void firstLevel();
-
+	MoveGenerator* movGen;
     //Use heuristics to caluclate the reward of a certain move.
     double calculateMoveReward(NodeMC *node);
 
@@ -47,7 +47,7 @@ private:
     NodeMC *promisingNode(NodeMC *root);
 
     //backpropagation function.
-    void Rollout(NodeMC *node, int depth);
+    void Rollout(NodeMC *&node);
 
     //adds children to the node of choice.
     void Expand(NodeMC *&node);
@@ -59,7 +59,7 @@ public:
     Rack oponentRack; //oponent RAck will be generated in the constructor.
 
     //constructor.
-    MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, Rack oponentRack, Bag bag);
+    MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, Rack oponentRack, Bag bag, MoveGenerator *movGen);
 
     //adding new node to the tree.
     NodeMC *newNode(Board boardState, vector<Move> Moves, Rack currentRack, Bag bag, NodeMC *parent, int level);

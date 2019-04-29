@@ -14,11 +14,11 @@
 
 using namespace std;
 
-MonteCarlo::MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, Rack oponentRack, Bag bag)
+MonteCarlo::MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, Rack oponentRack, Bag bag, MoveGenerator* movGen)
 {
     NodeMC *temp = new NodeMC;
     Rack tempRack = currentRack;
-
+	this->movGen = movGen;
     temp->boardState = boardState;
     temp->Rack = tempRack;
     temp->Parent = nullptr;
@@ -73,7 +73,7 @@ void MonteCarlo::firstLevel()
     Rack rack(rackTiles);
 
     Board tempLevel1Board = this->Root->boardState;
-    MoveGenerator movGen(tempLevel1Board);
+    
     //loop over the number of possible actions to make in order to get all the possible states in the level.
     for (int i = 0; i < 10; i++)
     {
@@ -85,7 +85,7 @@ void MonteCarlo::firstLevel()
         //using the move generator to generate new set of moves for each action.
         vector<Move> nextMoves;
 
-        nextMoves = movGen.Generate(&rack,this->Root->boardState, tempLevel1Board.GetCount() == 0);
+        nextMoves = this->movGen->Generate(&rack,this->Root->boardState, tempLevel1Board.GetCount() == 0);
         vector<Move> simVec;
         for (int i = 0; i < 10; i++)
         {
@@ -94,7 +94,8 @@ void MonteCarlo::firstLevel()
 
         this->Root->children.push_back(newNode(tempLevel1Board, simVec, rack, Root->currentBag, Root, 1));
     }
-    cout << "done" << endl;
+	//Every child's board is the same now despite them having different boards really---Changed when updateBoard is made
+    cout << "done making first level" << endl;
 }
 
 NodeMC *MonteCarlo::newNode(Board boardState, vector<Move> Moves, Rack currentRack, Bag bag, NodeMC *parent, int level)
@@ -115,7 +116,7 @@ NodeMC *MonteCarlo::newNode(Board boardState, vector<Move> Moves, Rack currentRa
     //the reward should be the score of the move.
     temp->nodeState.reward = 0;
     temp->nodeState.nbOfVisits = 0;
-    temp->nodeState.UCB = 4;
+    temp->nodeState.UCB = INT_MAX;
 
     return temp;
 }
@@ -181,34 +182,43 @@ NodeMC *MonteCarlo::promisingNode(NodeMC *root)
     return Max;
 }
 
-void MonteCarlo::Rollout(NodeMC *node, int depth)
+void MonteCarlo::Rollout(NodeMC *&node)
 {
-    NodeMC *tempNode = node;
-    while (tempNode != nullptr)
-    {
-        //increment the number of visits.
-        tempNode->nodeState.nbOfVisits++;
-        if (tempNode->nodeState.treeDepth == depth)
-        {
-            //add reward here.
-        }
-        tempNode = tempNode->Parent;
-    }
+	
+	switch (node->nodeState.treeDepth)
+	{
+	case 1:
+		break;
+	case 2:
+		node->Parent->nodeState.UCB -= node->nodeState.UCB;
+		break;
+	case 3:
+		node->Parent->nodeState.UCB -= node->nodeState.UCB; //Mutate second element
+		node->Parent->Parent->nodeState.UCB -= node->Parent->nodeState.UCB;//mutate the top Element
+	default:
+		break;
+	}
 }
 
 void MonteCarlo::Expand(NodeMC *&node)
 {
     //Generate Random rack based on current bag ---Ismail and Walaa IIRC
     vector<NodeMC *> newstates;
+	Board tempBoard = node->boardState;
+	//Gets all possibles moves generated from current game state when we are on this specific node
+	vector<Move> moves = movGen->Generate(&node->Rack, tempBoard, node->boardState.GetCount() == 0);
     for (size_t i = 0; i < 30; i++)
     {
         //Tweaks all the new states retrieved from the MoveGeneration & Static eval. so that expansion is complete
         //However Bag state? Rack state? Board state? How do I get those?
-
+		//we Need updateBoard so that we can simulate the new levels
         newstates[i]->Parent = node;
         newstates[i]->nodeState.nbOfVisits = 0;
         newstates[i]->nodeState.treeDepth = node->nodeState.treeDepth + 1;
-        newstates[i]->nodeState.UCB = 4;
+        newstates[i]->nodeState.UCB = INT_MAX;
+		newstates[i]->
+		//Random rack needed heree...newstates[i]->Rack=
+		
     }
     //Finally append this new vector to the children of this node
     node->children = newstates;
@@ -231,7 +241,8 @@ NodeMC *MonteCarlo::Simulation()
         if (node->nodeState.nbOfVisits == 0)
         {
             node->nodeState.UCB = calculateUCB(node);
-            Rollout(node, node->nodeState.treeDepth);
+            //No rollout needed here cause the UCB would be infinity and would ruin the tree
+			//Rollout(node);
         }
         else
         {
@@ -240,12 +251,12 @@ NodeMC *MonteCarlo::Simulation()
                 Expand(node);
                 node = node->children.at(rand() % 30);
                 node->nodeState.UCB = calculateUCB(node);
-                Rollout(node, node->nodeState.treeDepth);
+                Rollout(node);
             }
             else
             {
                 node->nodeState.UCB = calculateUCB(node);
-                Rollout(node, node->nodeState.treeDepth);
+                Rollout(node);
             }
         }
     }
