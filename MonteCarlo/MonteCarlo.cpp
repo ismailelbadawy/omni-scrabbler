@@ -174,8 +174,8 @@ double MonteCarlo::calculateMoveReward(NodeMC *node)
 
 NodeMC *MonteCarlo::promisingNode(NodeMC *root)
 {
-	//Promising node's UCB is calculated here
-	//When is reward calculated
+	//Promising node's reward is calculated here
+	//UCB is calculated on rollout
     NodeMC *Max = root->children.at(0);
     for (int i = 0; i < root->children.size(); i++)
     {
