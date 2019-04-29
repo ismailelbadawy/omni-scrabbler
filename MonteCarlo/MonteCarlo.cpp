@@ -166,6 +166,8 @@ double MonteCarlo::calculateUCB(NodeMC *node)
 double MonteCarlo::calculateMoveReward(NodeMC *node)
 {
     //i think it should be used while expansion.
+	//Not really since on the first expansion all UCB values are equal zero
+	//And another question isn't UCB = MoveReward?
     return 0.0;
 }
 
