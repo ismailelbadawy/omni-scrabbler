@@ -202,6 +202,7 @@ void MonteCarlo::Rollout(NodeMC *&node)
 		//State after my move
 		node->nodeState.nbOfVisits++;
 		node->Parent->nodeState.nbOfVisits++;
+		calculateUCB(node);
 		break;
 	case 2:
 		//State after my move + opponenet move
@@ -209,6 +210,8 @@ void MonteCarlo::Rollout(NodeMC *&node)
 		node->nodeState.nbOfVisits++;
 		node->Parent->nodeState.nbOfVisits++;
 		node->Parent->Parent->nodeState.nbOfVisits++;
+		calculateUCB(node);
+		calculateUCB(node->Parent);
 		break;
 	case 3:
 		//State after my move -> opp -> my mmove
@@ -217,6 +220,10 @@ void MonteCarlo::Rollout(NodeMC *&node)
 		node->Parent->nodeState.nbOfVisits++;
 		node->Parent->Parent->nodeState.nbOfVisits++;
 		node->Parent->Parent->Parent->nodeState.nbOfVisits++;
+		calculateUCB(node);
+		calculateUCB(node->Parent);
+		calculateUCB(node->Parent->Parent);
+		break;
 	default:
 		break;
 	}
