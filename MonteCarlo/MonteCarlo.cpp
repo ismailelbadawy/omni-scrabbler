@@ -169,7 +169,7 @@ void MonteCarlo::calculateUCB(NodeMC *&node)
 
 double MonteCarlo::calculateMoveReward(Move m)
 {
-    //On expansions we are going to have a 30 sized vector containing the reward per each move, thus this func would only be used during expansion
+    //On expansions we are going to have a 30 sized vector containing the reward per each move, thus this func would only be used in Expand() and appends each move's score to a vector to be used later in Expand() when the children states vector is made
 	//Cause it's the only place where you know a state is achievable and the reward doesn't change anyways it's the UCB that does change cause it's a function of nbofVisits
 	//So it takes move not node as param
 	return m.GetScore();
