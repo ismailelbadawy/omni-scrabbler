@@ -41,7 +41,7 @@ private:
     double calculateMoveReward(NodeMC *node);
 
     //Utility function to calculate the UCB.
-    double calculateUCB(NodeMC *node);
+    void calculateUCB(NodeMC *&node);
 
     //get the node with the best UCB.
     NodeMC *promisingNode(NodeMC *root);

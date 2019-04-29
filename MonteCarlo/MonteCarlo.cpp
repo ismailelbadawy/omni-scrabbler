@@ -157,22 +157,25 @@ void MonteCarlo::LevelOrderTraversal(NodeMC *root)
     }
 }
 
-double MonteCarlo::calculateUCB(NodeMC *node)
+void MonteCarlo::calculateUCB(NodeMC *&node)
 {
     //calculate UCB
-    return 0.0;
+	//Assume C = root(2)
+	//http://mcts.ai/about/
+	//Warning don't calculate the parent's UCB
+	node->nodeState.UCB = node->nodeState.reward + sqrt(2) * sqrt(log(node->nodeState.nbOfVisits) / node->Parent->nodeState.nbOfVisits);
+    
 }
 
 double MonteCarlo::calculateMoveReward(NodeMC *node)
 {
-    //i think it should be used while expansion.
-	//Not really since on the first expansion all UCB values are equal zero
-	//And another question isn't UCB = MoveReward?
     return 0.0;
 }
 
 NodeMC *MonteCarlo::promisingNode(NodeMC *root)
 {
+	//Promising node's UCB is calculated here
+	//When is reward calculated
     NodeMC *Max = root->children.at(0);
     for (int i = 0; i < root->children.size(); i++)
     {
@@ -186,17 +189,34 @@ NodeMC *MonteCarlo::promisingNode(NodeMC *root)
 
 void MonteCarlo::Rollout(NodeMC *&node)
 {
-	
+	//E7na hanrollout el node direct ahan kan el level
+	//Bs msh hano3od ntl3
+	//y3ni lw kona @node fi level=3 han3ml rollout(elNodeDeh) w bas msh han3ml rollout(elNodeDeh); rollout(elNodeDehwElFo2eha); y3ni msh recusrive
 	switch (node->nodeState.treeDepth)
 	{
+	case 0:
+		//Current state no Simulations
+		node->nodeState.nbOfVisits++;
+		break;
 	case 1:
+		//State after my move
+		node->nodeState.nbOfVisits++;
+		node->Parent->nodeState.nbOfVisits++;
 		break;
 	case 2:
-		node->Parent->nodeState.UCB -= node->nodeState.UCB;
+		//State after my move + opponenet move
+		node->Parent->nodeState.reward -= node->nodeState.reward;
+		node->nodeState.nbOfVisits++;
+		node->Parent->nodeState.nbOfVisits++;
+		node->Parent->Parent->nodeState.nbOfVisits++;
 		break;
 	case 3:
-		node->Parent->nodeState.UCB -= node->nodeState.UCB; //Mutate second element
-		node->Parent->Parent->nodeState.UCB -= node->Parent->nodeState.UCB;//mutate the top Element
+		//State after my move -> opp -> my mmove
+		node->Parent->nodeState.reward -= node->nodeState.reward; 
+		node->nodeState.nbOfVisits++;
+		node->Parent->nodeState.nbOfVisits++;
+		node->Parent->Parent->nodeState.nbOfVisits++;
+		node->Parent->Parent->Parent->nodeState.nbOfVisits++;
 	default:
 		break;
 	}
@@ -218,7 +238,7 @@ void MonteCarlo::Expand(NodeMC *&node)
         newstates[i]->nodeState.nbOfVisits = 0;
         newstates[i]->nodeState.treeDepth = node->nodeState.treeDepth + 1;
         newstates[i]->nodeState.UCB = INT_MAX;
-		newstates[i]->
+		
 		//Random rack needed heree...newstates[i]->Rack=
 		
     }
@@ -242,7 +262,7 @@ NodeMC *MonteCarlo::Simulation()
 
         if (node->nodeState.nbOfVisits == 0)
         {
-            node->nodeState.UCB = calculateUCB(node);
+            calculateUCB(node);
             //No rollout needed here cause the UCB would be infinity and would ruin the tree
 			//Rollout(node);
         }
@@ -252,12 +272,12 @@ NodeMC *MonteCarlo::Simulation()
             {
                 Expand(node);
                 node = node->children.at(rand() % 30);
-                node->nodeState.UCB = calculateUCB(node);
+                calculateUCB(node);
                 Rollout(node);
             }
             else
             {
-                node->nodeState.UCB = calculateUCB(node);
+                calculateUCB(node);
                 Rollout(node);
             }
         }
