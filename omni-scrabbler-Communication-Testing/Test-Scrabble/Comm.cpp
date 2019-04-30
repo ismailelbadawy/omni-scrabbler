@@ -67,8 +67,54 @@ string Comm::GetCurrentState(){
 }
 
 
+std::vector<uint8_t> Comm::PlayToBuffer(Play Move)
+{
+	std::vector<uint8_t> buffer(0);
+	buffer.push_back(static_cast<uint8_t>(4));
+	buffer.push_back(Move.Column - (int)'0');
+	buffer.push_back(Move.Row - (int)'0');
+	buffer.push_back(Move.Direction - (int)'0');
+	for (int i = 0; i < 7; i++)
+		buffer.push_back(Move.Tiles[i]);
 
-GameState Comm::BufferToGameState(const std::vector<uint8_t>& message){
+	for (int i = 0; i < 4; i++)
+		buffer.push_back(static_cast<uint8_t>(0));
+	//check that this function works
+	for (int j = 0; j < 4; j++)
+		buffer[14 - j] = Move.Score >> (j * 8);
+	return buffer;
+}
+std::vector<uint8_t> Comm::ExchangeToBuffer(TilesStruct Tiles)
+{
+	std::vector<uint8_t> buffer(0);
+	buffer.push_back(static_cast<uint8_t>(3));
+	for (int i = 0; i < 7; i++)
+		buffer.push_back(Tiles.Tiles[i]);
+
+
+	return buffer;
+}
+
+std::vector<uint8_t> Comm::PassToBuffer()
+{
+	std::vector<uint8_t> buffer(0);
+	buffer.push_back(static_cast<uint8_t>(2));
+
+	return buffer;
+}
+
+
+
+void Comm::StringToAscii(std::vector<uint8_t>& T, std::string name)
+{
+	for (int i = 0; i < name.length(); i++) {
+		T.push_back(int(name[i]));
+	}
+
+}
+
+GameState Comm::BufferToGameState(const std::vector<uint8_t>& message)
+{
 	GameState Player;
 
 	Player.Order = message[1];
@@ -92,7 +138,10 @@ GameState Comm::BufferToGameState(const std::vector<uint8_t>& message){
 			Player.Board[row][column] = message[count];
 			count++;
 		}
+
 	}
+
+	//check that this function works properly
 	for (int j = 0; j < 4; j++)
 		Player.Score = (Player.Score << 8) + message[234 + j];
 	std::cout << " Your Score " << Player.Score;
@@ -113,52 +162,9 @@ GameState Comm::BufferToGameState(const std::vector<uint8_t>& message){
 	return Player;
 }
 
-std::vector<uint8_t> Comm::PlayToBuffer(Play Move){
 
-    std::vector<uint8_t> buffer(0);
-	buffer.push_back(static_cast<uint8_t>(4));
-	buffer.push_back(Move.Column);
-	buffer.push_back(Move.Row);
-	buffer.push_back(Move.Direction);
-	for (int i = 0; i < 7; i++)
-		buffer.push_back(Move.Tiles[i]);
-
-	for (int i = 0; i < 4; i++)
-		buffer.push_back(static_cast<uint8_t>(0));
-	//check that this function works
-	for (int j = 0; j < 4; j++)
-		buffer[14 - j] = Move.Score >> (j * 8);
-	return buffer;
-    
-}
-
-
-std::vector<uint8_t> Comm::ExchangeToBuffer(TilesStruct Tiles)
+TimesOnly Comm::Time(const std::vector<uint8_t>& message)
 {
-	std::vector<uint8_t> buffer(0);
-	buffer.push_back(static_cast<uint8_t>(3));
-	for (int i = 0; i < 7; i++)
-		buffer.push_back(Tiles.Tiles[i]);
-
-
-	return buffer;
-}
-
-std::vector<uint8_t> Comm::PassToBuffer()
-{
-	std::vector<uint8_t> buffer(0);
-	buffer.push_back(static_cast<uint8_t>(2));
-
-	return buffer;
-}
-
-
-
-
-
-
-
-TimesOnly Comm::Time(const std::vector<uint8_t>& message){
 	TimesOnly Player;
 	Player.Player_Time = 0;
 	Player.Total_Time = 0;
@@ -173,10 +179,11 @@ TimesOnly Comm::Time(const std::vector<uint8_t>& message){
 	return Player;
 }
 
-ChallengeReject Comm::Reject_Case(const std::vector<uint8_t>& message){
-  
-   ChallengeReject Player;
-   for (int i = 0; i < 7; i++)
+ChallengeReject Comm::Reject_Case(const std::vector<uint8_t>& message)
+{
+	ChallengeReject Player;
+
+	for (int i = 0; i < 7; i++)
 	{
 		Player.Tiles[i] = message[1 + i];
 
@@ -189,10 +196,31 @@ ChallengeReject Comm::Reject_Case(const std::vector<uint8_t>& message){
 		Player.Total_Time = (Player.Total_Time << 8) + message[13 + j];
 
 	return Player;
+
 }
 
-OpponentPlayState Comm::Play_Agent(const std::vector<uint8_t>& message){
-    	OpponentPlayState Player;
+CountTime Comm::CountWithTimes(const std::vector<uint8_t>& message)
+{
+	CountTime Player;
+	Player.Count = message[1];
+
+	Player.Player_Time = 0;
+	Player.Total_Time = 0;
+
+	for (int j = 0; j < 4; j++)
+		Player.Player_Time = (Player.Player_Time << 8) + message[2 + j];
+
+	for (int j = 0; j < 4; j++)
+		Player.Total_Time = (Player.Total_Time << 8) + message[6 + j];
+
+	return Player;
+
+
+}
+
+OpponentPlayState Comm::Play_Agent(const std::vector<uint8_t>& message)
+{
+	OpponentPlayState Player;
 	Player.Column = message[1];
 	Player.Row = message[2];
 	Player.Direction = message[3];
@@ -219,9 +247,26 @@ OpponentPlayState Comm::Play_Agent(const std::vector<uint8_t>& message){
 	return Player;
 }
 
-EndState Comm::EndGame(const std::vector<uint8_t>& message){
-  EndState Player;
+EndState Comm::EndGame(const std::vector<uint8_t>& message)
+{
+	EndState Player;
 	Player.Reason = message[1];
+	if (Player.Reason == 0)
+	{
+		std::cout << "All tiles are used";
+	}
+	else if (Player.Reason == 1)
+	{
+		std::cout << "Time ended";
+	}
+	else if (Player.Reason == 2)
+	{
+		std::cout << "Conenction Error";
+	}
+	else if (Player.Reason == 3)
+	{
+		std::cout << "Stop button pressed";
+	}
 
 	Player.Score = 0;
 	Player.Opponent_Score = 0;
@@ -235,28 +280,8 @@ EndState Comm::EndGame(const std::vector<uint8_t>& message){
 	return Player;
 }
 
-CountTime Comm::CountWithTimes(const std::vector<uint8_t>& message){
- 	CountTime Player;
-	Player.Count = message[1];
 
-	Player.Player_Time = 0;
-	Player.Total_Time = 0;
 
-	for (int j = 0; j < 4; j++)
-		Player.Player_Time = (Player.Player_Time << 8) + message[2 + j];
-
-	for (int j = 0; j < 4; j++)
-		Player.Total_Time = (Player.Total_Time << 8) + message[6 + j];
-
-	return Player;
-}
-void Comm::StringToAscii(std::vector<uint8_t>& T, std::string name){
-
-	for (int i = 0; i < name.length(); i++) {
-		T.push_back(int(name[i]));
-	}
-
-}
 
 void Comm::RecieveFromServer(const std::vector<uint8_t>& message){
    std::cout << CurrentState << std::endl;
