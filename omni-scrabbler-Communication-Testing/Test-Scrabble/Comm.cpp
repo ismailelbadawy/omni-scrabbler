@@ -1,4 +1,5 @@
-#include "comm.h"
+#include "Comm.h"
+//#include"easywsclient.hpp"
 #include <assert.h>
 #include<vector>
 #include <stdio.h>
@@ -6,12 +7,26 @@
 #include <algorithm>    // std::copy
 #include<map>
 #include <iostream>
-
+#ifdef _WIN32
+#pragma comment( lib, "ws2_32" )
+#include <WinSock2.h>
+#endif
+using easywsclient::WebSocket;
 
 using namespace std;
+TilesStruct Comm::rack;
+ChallengeReject Comm::rejected;
+GameState Comm::game;
+TimesOnly Comm::timesonly;
+CountTime Comm::counter;
+PlayState Comm::playstate;
+EndState Comm::endstate;
+string Comm::CurrentState;
+std::vector<uint8_t> Comm::T;
+WebSocket::pointer Comm::ws;
 
 Comm::Comm(){
-	ws=NULL;
+	Comm::ws=NULL;
      CurrentState = "INIT"; 
      #ifdef _WIN32
 	 INT rc;
@@ -22,8 +37,8 @@ Comm::Comm(){
 		printf("WSAStartup Failed.\n");
 	}
 #endif
-	ws = WebSocket::from_url("ws://localhost:8081");
-	assert(ws);   
+	Comm::ws = WebSocket::from_url("ws://localhost:8080");
+	assert(Comm::ws);   
 }
 
 TilesStruct Comm::GetRack(){

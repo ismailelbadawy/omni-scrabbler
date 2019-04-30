@@ -1,7 +1,11 @@
 #pragma once
 #include<iostream>
-
+#include"easywsclient.hpp"
 #include "Structs.cpp"
+#ifdef _WIN32
+#pragma comment( lib, "ws2_32" )
+#include <WinSock2.h>
+#endif
 using namespace std;
 using easywsclient::WebSocket;
 
@@ -21,38 +25,38 @@ class Comm{
 	END = 10,
 };
 
-TilesStruct rack;
-ChallengeReject rejected;
-GameState game;
-TimesOnly timesonly;
-CountTime counter;
-PlayState playstate;
-EndState endstate;
-string CurrentState;
-std::vector<uint8_t> T;
-static WebSocket::pointer ws;
-
-GameState BufferToGameState(const std::vector<uint8_t>& message);
-std::vector<uint8_t> PlayToBuffer(Play Move);
-TimesOnly Time(const std::vector<uint8_t>& message);
-ChallengeReject Reject_Case(const std::vector<uint8_t>& message);
-PlayState Play_Agent(const std::vector<uint8_t>& message);
-EndState EndGame(const std::vector<uint8_t>& message);
-CountTime CountWithTimes(const std::vector<uint8_t>& message);
-void StringToAscii(std::vector<uint8_t>& T, std::string name);
+ static TilesStruct rack;
+ static ChallengeReject rejected;
+ static GameState game;
+ static TimesOnly timesonly;
+ static CountTime counter;
+ static PlayState playstate;
+ static EndState endstate;
+ static string CurrentState;
+ static std::vector<uint8_t> T;
+ static GameState BufferToGameState(const std::vector<uint8_t>& message);
+ static std::vector<uint8_t> PlayToBuffer(Play Move);
+ static TimesOnly Time(const std::vector<uint8_t>& message);
+ static ChallengeReject Reject_Case(const std::vector<uint8_t>& message);
+ static PlayState Play_Agent(const std::vector<uint8_t>& message);
+ static EndState EndGame(const std::vector<uint8_t>& message);
+ static CountTime CountWithTimes(const std::vector<uint8_t>& message);
+ static void StringToAscii(std::vector<uint8_t>& T, std::string name);
 
 public:
-Comm();
-void RecieveFromServer(const std::vector<uint8_t>& message);
-void ThinkingThread();
-TilesStruct GetRack();
-ChallengeReject GetRejected();
-GameState GetGame();
-TimesOnly GetTimesOnly();
-CountTime GetCounter();
-PlayState GetPlayState();
-EndState GetEndState();
-string GetCurrentState();
+static WebSocket::pointer ws;
+ Comm();
+ static void RecieveFromServer(const std::vector<uint8_t>& message);
+ static void ThinkingThread();
+ static TilesStruct GetRack();
+ static ChallengeReject GetRejected();
+ static GameState GetGame();
+ static TimesOnly GetTimesOnly();
+ static CountTime GetCounter();
+ static PlayState GetPlayState();
+ static EndState GetEndState();
+ static string GetCurrentState();
+ static WebSocket::pointer GetWs();
 ~Comm();
 
-}
+};

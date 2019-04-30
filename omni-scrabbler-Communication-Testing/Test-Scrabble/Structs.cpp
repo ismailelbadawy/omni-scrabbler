@@ -41,8 +41,8 @@ struct CountTime
 
 struct GameState
 {
-	int Type;
-	int Order;
+	int Type; //message
+	int Order; //turn of players
 	int Tiles[7];
 	int Board[15][15];
 	int Score;

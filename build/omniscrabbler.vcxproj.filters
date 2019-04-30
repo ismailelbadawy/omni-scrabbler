@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\user\Desktop\omni-scrabbler\omni-scrabbler-Communication-Testing\Test-Scrabble\Comm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\user\Desktop\omni-scrabbler\omni-scrabbler-Communication-Testing\Test-Scrabble\CommInetrface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\user\Desktop\omni-scrabbler\omni-scrabbler-Communication-Testing\Test-Scrabble\MessageStruct.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\user\Desktop\omni-scrabbler\omni-scrabbler-Communication-Testing\Test-Scrabble\Structs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\user\Desktop\omni-scrabbler\omni-scrabbler-Communication-Testing\Test-Scrabble\easywsclient.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\user\Desktop\omni-scrabbler\omni-scrabbler-Communication-Testing\Test-Scrabble\Source.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\user\Desktop\omni-scrabbler\omni-scrabbler-Communication-Testing\Test-Scrabble\Comm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\user\Desktop\omni-scrabbler\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{2ED71E66-1F24-34C3-AA3D-9B480FD1101F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{9E149E90-5061-338D-8AFC-A3023B0A1DFE}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
