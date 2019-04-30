@@ -37,7 +37,7 @@ Comm::Comm(){
 		printf("WSAStartup Failed.\n");
 	}
 #endif
-	Comm::ws = WebSocket::from_url("ws://localhost:8080");
+	Comm::ws = WebSocket::from_url("ws://localhost:8081");
 	assert(Comm::ws);   
 }
 

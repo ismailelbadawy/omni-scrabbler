@@ -1,6 +1,9 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\omni-scrabbler-Communication-Testing",
+    "\\omni-scrabbler-Communication-Testing\\Test-Scrabble"
   ],
+  "SelectedNode": "\\omni-scrabbler-Communication-Testing\\Test-Scrabble\\Comm.cpp",
   "PreviewInSolutionExplorer": false
 }
