@@ -39,19 +39,6 @@ struct CountTime
 	int Total_Time;
 };
 
-struct GameState
-{
-	int Type; //message
-	int Order; //turn of players
-	int Tiles[7];
-	int Board[15][15];
-	int Score;
-	int Opponent_Score;
-	int Player_Time;
-	int Total_Time;
-
-};
-
 struct Play
 {
 	uint8_t Column;
@@ -62,12 +49,10 @@ struct Play
 
 };
 
-//struct Exchange
-//{
-//	uint8_t Tiles[7];
-//};
 
-struct PlayState
+
+
+struct OpponentPlayState
 {
 	uint8_t Column;
 	uint8_t Row;
@@ -77,6 +62,24 @@ struct PlayState
 	int Challenge_Time;
 	int Player_Time;
 	int Total_Time;
+
+};
+
+struct GameState
+{
+	int Order;
+	int Tiles[7];
+	int Board[15][15];
+	int Score;
+	int Opponent_Score;
+	int Player_Time;
+	int Total_Time;
+
+	int ExchangedTiles[7];
+	int NewTilesAfterPlay[7];
+
+	OpponentPlayState OpponentPlayedTiles;
+	int OpponentExchangeCount;
 
 };
 
