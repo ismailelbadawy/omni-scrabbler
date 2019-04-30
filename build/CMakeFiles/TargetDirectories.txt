@@ -1,9 +1,0 @@
-C:/Users/user/Desktop/omni-scrabbler/build/CMakeFiles/NightlyMemoryCheck.dir
-C:/Users/user/Desktop/omni-scrabbler/build/CMakeFiles/Experimental.dir
-C:/Users/user/Desktop/omni-scrabbler/build/CMakeFiles/Continuous.dir
-C:/Users/user/Desktop/omni-scrabbler/build/CMakeFiles/Nightly.dir
-C:/Users/user/Desktop/omni-scrabbler/build/CMakeFiles/omniscrabbler.dir
-C:/Users/user/Desktop/omni-scrabbler/build/CMakeFiles/PACKAGE.dir
-C:/Users/user/Desktop/omni-scrabbler/build/CMakeFiles/RUN_TESTS.dir
-C:/Users/user/Desktop/omni-scrabbler/build/CMakeFiles/ALL_BUILD.dir
-C:/Users/user/Desktop/omni-scrabbler/build/CMakeFiles/ZERO_CHECK.dir
