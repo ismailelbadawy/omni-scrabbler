@@ -36,8 +36,8 @@ class Comm{
  static std::vector<uint8_t> T;
  static GameState BufferToGameState(const std::vector<uint8_t>& message);
  static std::vector<uint8_t> PlayToBuffer(Play Move);
- static std::vector<uint8_t> Comm::ExchangeToBuffer(TilesStruct Tiles);
-static std::vector<uint8_t> Comm::PassToBuffer();
+ static std::vector<uint8_t> ExchangeToBuffer(TilesStruct Tiles);
+ static std::vector<uint8_t> PassToBuffer();
  static TimesOnly Time(const std::vector<uint8_t>& message);
  static ChallengeReject Reject_Case(const std::vector<uint8_t>& message);
  static OpponentPlayState Play_Agent(const std::vector<uint8_t>& message);

@@ -1,9 +1,8 @@
 {
   "ExpandedNodes": [
     "",
-    "\\omni-scrabbler-Communication-Testing",
-    "\\omni-scrabbler-Communication-Testing\\Test-Scrabble"
+    "\\build"
   ],
-  "SelectedNode": "\\omni-scrabbler-Communication-Testing\\Test-Scrabble\\Comm.cpp",
+  "SelectedNode": "\\build\\CMakeFiles",
   "PreviewInSolutionExplorer": false
 }
