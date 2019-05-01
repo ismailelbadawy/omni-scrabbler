@@ -5,6 +5,7 @@
 #include <string>
 #include <fstream>
 
+
 #include "./MonteCarlo.h"
 #include "../Models/Bag.h"
 #include "../Models/Tile.h"
@@ -94,7 +95,6 @@ void MonteCarlo::firstLevel()
 
         this->Root->children.push_back(newNode(tempLevel1Board, simVec, rack, Root->currentBag, Root, 1));
     }
-	//Every child's board is the same now despite them having different boards really---Changed when updateBoard is made
     cout << "done making first level" << endl;
 }
 
@@ -157,12 +157,13 @@ void MonteCarlo::LevelOrderTraversal(NodeMC *root)
     }
 }
 
-void MonteCarlo::calculateUCB(NodeMC *&node)
+void MonteCarlo::calculateUCB(NodeMC *node)
 {
     //calculate UCB
 	//Assume C = root(2)
 	//http://mcts.ai/about/
 	//Warning don't calculate the parent's UCB
+    node->nodeState.nbOfVisits++;
 	node->nodeState.UCB = node->nodeState.reward + sqrt(2) * sqrt(log(node->nodeState.nbOfVisits) / node->Parent->nodeState.nbOfVisits);
     
 }
@@ -190,55 +191,68 @@ NodeMC *MonteCarlo::promisingNode(NodeMC *root)
     return Max;
 }
 
-void MonteCarlo::Rollout(NodeMC *&node)
+void MonteCarlo::Rollout(NodeMC *node)
 {
-	//E7na hanrollout el node direct ahan kan el level
-	//Bs msh hano3od ntl3
-	//y3ni lw kona @node fi level=3 han3ml rollout(elNodeDeh) w bas msh han3ml rollout(elNodeDeh); rollout(elNodeDehwElFo2eha); y3ni msh recusrive
-	switch (node->nodeState.treeDepth)
-	{
-	case 0:
-		//Current state no Simulations
-		node->nodeState.nbOfVisits++;
-		break;
-	case 1:
-		//State after my move
-		node->nodeState.nbOfVisits++;
-		node->Parent->nodeState.nbOfVisits++;
-		calculateUCB(node);
-		break;
-	case 2:
-		//State after my move + opponenet move
-		node->Parent->nodeState.reward -= node->nodeState.reward;
-		node->nodeState.nbOfVisits++;
-		node->Parent->nodeState.nbOfVisits++;
-		node->Parent->Parent->nodeState.nbOfVisits++;
-		calculateUCB(node);
-		calculateUCB(node->Parent);
-		break;
-	case 3:
-		//State after my move -> opp -> my mmove
-		node->Parent->nodeState.reward -= node->nodeState.reward; 
-		node->nodeState.nbOfVisits++;
-		node->Parent->nodeState.nbOfVisits++;
-		node->Parent->Parent->nodeState.nbOfVisits++;
-		node->Parent->Parent->Parent->nodeState.nbOfVisits++;
-		calculateUCB(node);
-		calculateUCB(node->Parent);
-		calculateUCB(node->Parent->Parent);
-		break;
-	default:
-		break;
-	}
+	// //E7na hanrollout el node direct ahan kan el level
+	// //Bs msh hano3od ntl3
+	// //y3ni lw kona @node fi level=3 han3ml rollout(elNodeDeh) w bas msh han3ml rollout(elNodeDeh); rollout(elNodeDehwElFo2eha); y3ni msh recusrive
+	// switch (node->nodeState.treeDepth)
+	// {
+	// case 0:
+	// 	//Current state no Simulations
+	// 	node->nodeState.nbOfVisits++;
+	// 	break;
+	// case 1:
+	// 	//State after my move
+	// 	//node->nodeState.nbOfVisits++; already done while calculating ucb.
+	// 	node->Parent->nodeState.nbOfVisits++;
+	// 	calculateUCB(node);
+	// 	break;
+	// case 2:
+	// 	//State after my move + opponenet move
+	// 	node->Parent->nodeState.reward -= node->nodeState.reward;
+	// 	node->nodeState.nbOfVisits++;
+	// 	node->Parent->nodeState.nbOfVisits++;
+	// 	node->Parent->Parent->nodeState.nbOfVisits++;
+	// 	calculateUCB(node);
+	// 	calculateUCB(node->Parent);
+	// 	break;
+	// case 3:
+	// 	//State after my move -> opp -> my mmove
+	// 	node->Parent->nodeState.reward -= node->nodeState.reward; 
+	// 	node->nodeState.nbOfVisits++;
+	// 	node->Parent->nodeState.nbOfVisits++;
+	// 	node->Parent->Parent->nodeState.nbOfVisits++;
+	// 	node->Parent->Parent->Parent->nodeState.nbOfVisits++;
+	// 	calculateUCB(node);
+	// 	calculateUCB(node->Parent);
+	// 	calculateUCB(node->Parent->Parent);
+	// 	break;
+	// default:
+	// 	break;
+	// }
+
+    NodeMC* tempNode = node;
+    double childUCB = 0;
+    while (tempNode != nullptr) {
+        tempNode->nodeState.nbOfVisits++;
+        if (tempNode->nodeState.treeDepth == 0) {
+            tempNode->nodeState.UCB += childUCB;
+        }else if (tempNode->nodeState.treeDepth == 1 || tempNode->nodeState.treeDepth == 2){
+            tempNode->nodeState.UCB -= childUCB;
+        }
+        childUCB = tempNode->nodeState.UCB;
+        tempNode = tempNode->Parent;
+    }
 }
 
-void MonteCarlo::Expand(NodeMC *&node)
+void MonteCarlo::Expand(NodeMC *node)
 {
     //Generate Random rack based on current bag ---Ismail and Walaa IIRC
     vector<NodeMC *> newstates;
 	Board tempBoard = node->boardState;
 	//Gets all possibles moves generated from current game state when we are on this specific node
-	vector<Move> moves = movGen->Generate(&node->Rack, tempBoard, node->boardState.GetCount() == 0);
+	//vector<Move> moves = movGen->Generate(&node->Rack, tempBoard, node->boardState.GetCount() == 0);
     for (size_t i = 0; i < 30; i++)
     {
         //Tweaks all the new states retrieved from the MoveGeneration & Static eval. so that expansion is complete
@@ -258,13 +272,11 @@ void MonteCarlo::Expand(NodeMC *&node)
 
 NodeMC *MonteCarlo::Simulation()
 {
-
     int i = 0;
     while (i < 3)
     {
         NodeMC *node = promisingNode(this->Root);
 
-        cout << node->children.size() << endl;
         while (node->children.size() != 0)
         {
             node = promisingNode(node);
@@ -273,8 +285,7 @@ NodeMC *MonteCarlo::Simulation()
         if (node->nodeState.nbOfVisits == 0)
         {
             calculateUCB(node);
-            //No rollout needed here cause the UCB would be infinity and would ruin the tree
-			//Rollout(node);
+			Rollout(node);
         }
         else
         {

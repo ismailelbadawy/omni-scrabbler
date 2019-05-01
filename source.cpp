@@ -105,6 +105,8 @@ int main()
 	MoveGenerator* movGenPointer = &movGen;
 	MonteCarlo testTree(board, simVec, rack, oprack, bag, movGenPointer);
 
+
+
 	NodeMC *node = testTree.Simulation();
 	vector<Tile> remTiles = bag.GetRemainingTiles();
 
