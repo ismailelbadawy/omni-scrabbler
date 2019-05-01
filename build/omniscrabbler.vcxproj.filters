@@ -7,6 +7,12 @@
     <ClCompile Include="C:\Users\user\Desktop\omni-scrabbler\omni-scrabbler-Communication-Testing\Test-Scrabble\CommInetrface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="C:\Users\user\Desktop\omni-scrabbler\omni-scrabbler-Communication-Testing\Test-Scrabble\GUI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\user\Desktop\omni-scrabbler\omni-scrabbler-Communication-Testing\Test-Scrabble\GameManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="C:\Users\user\Desktop\omni-scrabbler\omni-scrabbler-Communication-Testing\Test-Scrabble\MessageStruct.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -16,12 +22,21 @@
     <ClCompile Include="C:\Users\user\Desktop\omni-scrabbler\omni-scrabbler-Communication-Testing\Test-Scrabble\easywsclient.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\user\Desktop\omni-scrabbler\omni-scrabbler-Communication-Testing\Test-Scrabble\Source.cpp">
+    <ClCompile Include="C:\Users\user\Desktop\omni-scrabbler\omni-scrabbler-Communication-Testing\Test-Scrabble\source.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="C:\Users\user\Desktop\omni-scrabbler\omni-scrabbler-Communication-Testing\Test-Scrabble\AgentInerface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="C:\Users\user\Desktop\omni-scrabbler\omni-scrabbler-Communication-Testing\Test-Scrabble\Comm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\user\Desktop\omni-scrabbler\omni-scrabbler-Communication-Testing\Test-Scrabble\GUI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\user\Desktop\omni-scrabbler\omni-scrabbler-Communication-Testing\Test-Scrabble\GameManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

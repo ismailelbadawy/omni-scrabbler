@@ -1,6 +1,7 @@
 #include<iostream>
 using namespace std;
 #include"Comm.h"
+
 #include"easywsclient.hpp"
 #include<thread>
 using easywsclient::WebSocket;
@@ -8,24 +9,28 @@ using easywsclient::WebSocket;
 #pragma comment( lib, "ws2_32" )
 #include <WinSock2.h>
 #endif
+#include"GameManager.h"
 
 int main(){
     std::cout<<"hello"<<std::endl;
-    Comm* client=new Comm();
+  //  Comm* client=new Comm();
   
-  while(true)
-  {
-   std::thread thread1(&Comm::ThinkingThread);
+  // while(true)
+  // {
+  //  std::thread thread1(&Comm::ThinkingThread);
 
-	while (Comm::ws->getReadyState() != WebSocket::CLOSED) {
+	// while (Comm::ws->getReadyState() != WebSocket::CLOSED) {
 
-		Comm::ws->poll();
+	// 	Comm::ws->poll();
 
-		Comm::ws->dispatchBinary(&Comm::RecieveFromServer);
+	// 	Comm::ws->dispatchBinary(&Comm::RecieveFromServer);
 
-	}
-  }
-    return 0;
+	// }
+  // }
+GameManager manager;
+manager.InitGame();
+
+     return 0;
 }
 
 

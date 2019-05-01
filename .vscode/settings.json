@@ -51,5 +51,7 @@
         "xtree": "cpp",
         "xutility": "cpp",
         "xthread": "cpp"
-    }
+    },
+    "C_Cpp.intelliSenseEngineFallback": "Enabled",
+    "C_Cpp.errorSquiggles": "Disabled"
 }

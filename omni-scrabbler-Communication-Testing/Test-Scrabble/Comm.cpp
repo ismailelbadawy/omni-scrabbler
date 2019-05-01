@@ -37,7 +37,7 @@ Comm::Comm(){
 		printf("WSAStartup Failed.\n");
 	}
 #endif
-	Comm::ws = WebSocket::from_url("ws://localhost:8081");
+	Comm::ws = WebSocket::from_url("ws://localhost:8080");
 	assert(Comm::ws);   
 }
 
@@ -232,7 +232,7 @@ OpponentPlayState Comm::Play_Agent(const std::vector<uint8_t>& message)
 	}
 
 	for (int j = 0; j < 4; j++)
-		Player.Score = (Player.Score << 8) + message[11 + j];
+		Player.Score  = (Player.Score << 8) + message[11 + j];
 
 	for (int j = 0; j < 4; j++)
 		Player.Challenge_Time = (Player.Challenge_Time << 8) + message[15 + j];
@@ -296,7 +296,7 @@ void Comm::RecieveFromServer(const std::vector<uint8_t>& message){
 
 	if (MsgType == MessageTypes::NAME && CurrentState == "INIT")
 	{
-		std::string name = "farah";
+		std::string name = "Red Army";
 		StringToAscii(T, name);
 		CurrentState = "READY";
 		std::cout << " Current State = " + CurrentState << std::endl;
@@ -380,6 +380,7 @@ void Comm::RecieveFromServer(const std::vector<uint8_t>& message){
 			{
 				Tiles.Tiles[i] = message[1 + i];
 				game.NewTilesAfterPlay[i] = Tiles.Tiles[i];
+				std::cout << (int) message[1+i];
 			}
 
 			CurrentState = "IDLE";
@@ -527,3 +528,7 @@ Comm::~Comm(){
 	WSACleanup();
 #endif
 }
+
+
+
+

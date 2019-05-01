@@ -62,6 +62,8 @@ struct OpponentPlayState
 	int Challenge_Time;
 	int Player_Time;
 	int Total_Time;
+   int  MoveType; // 0 play , 1 exchange , 2 pass 
+      
 
 };
 
@@ -74,13 +76,16 @@ struct GameState
 	int Opponent_Score;
 	int Player_Time;
 	int Total_Time;
-
 	int ExchangedTiles[7];
 	int NewTilesAfterPlay[7];
 
 	OpponentPlayState OpponentPlayedTiles;
 	int OpponentExchangeCount;
 
+};
+
+struct AgentMessage
+{   
 };
 
 struct EndState 
