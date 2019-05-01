@@ -818,20 +818,88 @@ vector<WordPossibility> MoveGenerator::ContainsHookWithRack(string hook, string 
 	transform(hook.begin(), hook.end(), hook.begin(), ::tolower);
 	reverse(hook.begin(), hook.end());
 
+	vector <int> BlankPos;
+	//check for blank tiles
+	for (int i= 0; i< rack.length(); i++){
+		if (rack[i]== '?') //blank tiles found
+			BlankPos.push_back(i);
+	}
+
 	vector<WordPossibility> VectorOfPossibleWords;
-	ContainsHookWithRackRecursive(dag_->GetRoot(), VectorOfPossibleWords, "", rack, hook);
+	if (BlankPos.size()== 0){ //no blanks found
+		ContainsHookWithRackRecursive(dag_->GetRoot(), VectorOfPossibleWords, "", rack, hook);
+	}
+	else if (BlankPos.size()== 1){ // 1 or 2 blanks
+		int blankindex = BlankPos[0];
+		char newChar = 'a';
+		for (int i=0; i< 26; i++){
+			rack[blankindex] = newChar + i;
+			ContainsHookWithRackRecursive(dag_->GetRoot(), VectorOfPossibleWords, "", rack, hook);
+		}
+	}
+	else if (BlankPos.size() == 2){
+		int blankindex1 = BlankPos[0];
+		char newChar1 = 'a';
+		int blankindex2 = BlankPos[1];
+		char newChar2 = 'a';
+		for (int i=0; i< 26; i++){
+			rack[blankindex1] = newChar1 + i;
+			for (int k=0; k<26; k++){
+				rack[blankindex2] = newChar2 + k;
+				ContainsHookWithRackRecursive(dag_->GetRoot(), VectorOfPossibleWords, "", rack, hook);
+			}
+		}
+	}
+	
+	
 	return VectorOfPossibleWords;
 }
 
 
 vector<WordPossibility> MoveGenerator::ContainsHookWithRackAtPos(string hook, string rack, int pos, int CurrPosOnBoard) {
 	transform(hook.begin(), hook.end(), hook.begin(), ::tolower);
+	
+	vector <int> BlankPos;
+	//check for blank tiles
+	for (int i= 0; i< rack.length(); i++){
+		if (rack[i]== '?') //blank tiles found
+			BlankPos.push_back(i);
+	}
 
 	vector<WordPossibility> VectorOfPossibleWords;
 
-	if (dag_->GetRoot()->ContainsKey(hook[0])) {
-		Node* newNode = dag_->GetRoot()->AT(hook[0]);
-		ContainsHookWithRackRecursiveAtPos(newNode, VectorOfPossibleWords, "", rack, hook.erase(0,1), pos, 0, false, CurrPosOnBoard);
+	if (BlankPos.size()== 0){ //no blanks found
+		if (dag_->GetRoot()->ContainsKey(hook[0])) {
+			Node* newNode = dag_->GetRoot()->AT(hook[0]);
+			ContainsHookWithRackRecursiveAtPos(newNode, VectorOfPossibleWords, "", rack, hook.erase(0,1), pos, 0, false, CurrPosOnBoard);
+		}
+	}
+	else if (BlankPos.size()== 1){ // 1 or 2 blanks
+		int blankindex = BlankPos[0];
+		char newChar = 'a';
+		for (int i=0; i< 26; i++){
+			rack[blankindex] = newChar + i;
+			if (dag_->GetRoot()->ContainsKey(hook[0])) {
+				Node* newNode = dag_->GetRoot()->AT(hook[0]);
+				ContainsHookWithRackRecursiveAtPos(newNode, VectorOfPossibleWords, "", rack, hook.erase(0,1), pos, 0, false, CurrPosOnBoard);
+			}
+		}
+	}
+	else if (BlankPos.size() == 2){
+		int blankindex1 = BlankPos[0];
+		char newChar1 = 'a';
+		int blankindex2 = BlankPos[1];
+		char newChar2 = 'a';
+		for (int i=0; i< 26; i++){
+			rack[blankindex1] = newChar1 + i;
+			for (int k=0; k<26; k++){
+				rack[blankindex2] = newChar2 + k;
+				if (dag_->GetRoot()->ContainsKey(hook[0])) {
+					Node* newNode = dag_->GetRoot()->AT(hook[0]);
+					ContainsHookWithRackRecursiveAtPos(newNode, VectorOfPossibleWords, "", rack, hook.erase(0,1), pos, 0, false, CurrPosOnBoard);
+				}
+			}
+		}
 	}
 
 	return VectorOfPossibleWords;
