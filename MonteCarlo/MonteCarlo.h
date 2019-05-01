@@ -85,5 +85,5 @@ public:
     void LevelOrderTraversal(NodeMC *root);
 
     //Function to start the simulation.
-	vector <NodeMC*>Simulation();
+	int Simulation();
 };

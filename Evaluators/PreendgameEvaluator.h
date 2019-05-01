@@ -21,7 +21,6 @@ class PreendgameEvaluator : public Evaluator {
     int GetBonus(int rowIterator, int columnIterator, Board board);
     double CalculatePenalty(Move * move, Board board);
     Move ComputeBestMove();
-  
     void Combination(int start, int size, string &rem, string &rackleave, double &MaxScore, string &BestRackLeave);
    
 public:
@@ -30,5 +29,6 @@ public:
     PreendgameEvaluator(map<string, double> *,Board* board, MoveGenerator * movGen,vector<Move> possibleMoves);
     Move OpponentBestMove();
     double Evaluate(Move * move);
+    vector<Move>* Evaluate();
     ~PreendgameEvaluator();    
 };

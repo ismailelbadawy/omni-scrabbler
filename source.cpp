@@ -1,9 +1,12 @@
+
+
 #pragma once
 #include <iostream>
 #include <vector>
 #include <map>
 #include "MoveGenerator/MoveGenerator.h"
 #include "Evaluators/MidgameEvaluator.h"
+#include "Evaluators/Evaluator.h"
 #include "Models/Board.h"
 #include "Models/Play.h"
 #include "Models/Rack.h"
@@ -11,22 +14,36 @@
 #include "Models/Bag.h"
 #include "GADDAG/GADDAG.h"
 #include "Evaluators/PreendgameEvaluator.h"
+
 #include "Strategy/SuperLeaveLoader.h"
 
 #include <time.h>
+
 #include <chrono>
 #include "./MonteCarlo/MonteCarlo.h"
 
+
+
+
 using namespace std;
-string GADDAG_PATH = "E:/Projects/omni-scrabbler/assets/Dict.txt";
-string BAG_PATH = "E:/Projects/omni-scrabbler/assets/letter.txt";
-Board board;
+
+string 	GADDAG_PATH = "assets/Dict.txt";
+
+string 	BAG_PATH = "assets/letters.txt";
+
+Board 	board;
+
 //
-Rack RACK;
+
+Rack  	RACK;
+
 //GADDAG	DAG(GADDAG_PATH);
 
-int main()
-{
+
+
+int main(){
+
+
 
 	Bag bag(BAG_PATH);
 
@@ -44,41 +61,88 @@ int main()
 	board.Probe('c', 7, 13, 3);
 	Tile RackTiles[7]; //A simple array to carry the rack's letters
 
+
+
 	RackTiles[0].SetLetter('a');
+
 	RackTiles[0].SetScore(1);
+
 	RackTiles[1].SetLetter('w');
+
 	RackTiles[1].SetScore(4);
+
 	RackTiles[2].SetLetter('c');
+
 	RackTiles[2].SetScore(3);
+
 	RackTiles[3].SetLetter('d');
+
 	RackTiles[3].SetScore(2);
+
 	RackTiles[4].SetLetter('e');
+
 	RackTiles[4].SetScore(1);
+
 	RackTiles[5].SetLetter('h');
+
 	RackTiles[5].SetScore(4);
+
 	RackTiles[6].SetLetter('p');
+
 	RackTiles[6].SetScore(3);
 
+	
+
 	vector<Tile> rackTiles(RackTiles, RackTiles + sizeof RackTiles / sizeof RackTiles[0]);
+
 	Rack rack(rackTiles);
 
 	//opRAck
 	Rack oprack(rackTiles);
 
 	vector<Move> moves;
+
 	cout << "Loading GADDAG...\n";
+
 	auto startDag = chrono::high_resolution_clock::now();
+
 	MoveGenerator movGen(board);
+
 	auto endDag = chrono::high_resolution_clock::now();
+
 	auto diff = endDag - startDag;
+
 	cout << "Time to load GADDAG: " << chrono::duration_cast<chrono::seconds>(diff).count() << " s" << endl;
-	cout << "Hi";
+
+
+
+	MidgameEvaluator* evaluator = NULL;
+
+
+
+	map<string, double>* syn2 = new map<string, double>();
+
+	map<char, double>* worth = new map<char, double>();
+
+	SuperLeaveLoader loader(syn2, worth, "assets/syn2", "assets/worths");
+
+
+
+	cout << "Loaded the rack leave map with count " << syn2->size() << endl;
+
 	ofstream OutputFile;
+
+
 
 	OutputFile.open("results.txt");
 
+
+
 	//FOR TESTING OPPONENT RACK ONLY
+
 	//PreEval.OpponentRackEstimation();
+
+
 
 	char c = 'y';
 	while (c == 'y')
@@ -98,30 +162,25 @@ int main()
 		break;
 		//moves.clear();
 	}
-
-	map<string, double> *syn2 = new map<string, double>();
-	map<char, double> *worth = new map<char, double>();
-	SuperLeaveLoader loader(syn2, worth, "E:/Projects/omni-scrabbler/assets/syn2", "E:/Projects/omni-scrabbler/assets/worths");
-	vector<Move> simVec;
-	MidgameEvaluator evaluator(&moves, &board, syn2, worth);//MidgameEvaluator(&moves,&board,&syn2,&worth);
-	for (int i = 0; i < moves.size(); i++)
-	{
-		evaluator.Evaluate(&moves.at(i));
-	}
+	//MidgameEvaluator ev(&moves,&board,syn2,worth);
+	MidgameEvaluator ev(&moves, &board, syn2, worth);
+	vector<Move>* evaluatedMoves = ev.Evaluate();
 
 	
 
 	MoveGenerator *movGenPointer = &movGen;
-	MonteCarlo testTree(board, moves, rack, oprack, bag, movGenPointer,syn2,worth);
+	MonteCarlo testTree(board, *evaluatedMoves, rack, oprack, bag, movGenPointer,syn2,worth);
 
 
 	
-	NodeMC *node = testTree.Simulation();
+	int SimMovesIndex = testTree.Simulation();
+
+	Move bestFuckingMove = evaluatedMoves->at(SimMovesIndex);
 	//vector<Tile> remTiles = bag.GetRemainingTiles();
 
 	// testTree.LevelOrderTraversal(testTree.Root);
 	// board.SimulateMove(&moves[0]);
 	// testTree.Root->child.push_back(testTree.newNode(board));
-	cout << "/////////////////////////////" << endl;
+	cout << bestFuckingMove.GetPlay()->GetLetters() << endl;
 	// testTree.LevelOrderTraversal(testTree.Root); //child.push_back(board);
 }

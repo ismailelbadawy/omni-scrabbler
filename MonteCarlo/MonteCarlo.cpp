@@ -128,7 +128,7 @@ void MonteCarlo::firstLevel()
     Board tempLevel1Board = this->Root->boardState;
 
     //loop over the number of possible actions to make in order to get all the possible states in the level.
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < this->Root->nodeState.possibleActions.size(); i++)
     {
 		Rack tempRack = this->mainRack;
 		Bag tempBag = Root->currentBag;
@@ -337,7 +337,7 @@ void MonteCarlo::Expand(NodeMC *node)
 	//}
 
 
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < node->nodeState.possibleActions.size(); i++)
     {
 
         tempBoard = node->boardState;
@@ -397,10 +397,10 @@ void MonteCarlo::Expand(NodeMC *node)
     }
 }
 
-vector <NodeMC *> MonteCarlo::Simulation()
+int MonteCarlo::Simulation()
 {
     timer t;
-    while (t.seconds_elapsed() < 20)
+    while (t.seconds_elapsed() < 30)
     {
         NodeMC *node = promisingNode(this->Root);
         cout << t.seconds_elapsed() << endl;
@@ -420,7 +420,7 @@ vector <NodeMC *> MonteCarlo::Simulation()
             if (node->nodeState.treeDepth < 3)
             {
                 Expand(node);
-                node = node->children.at(rand() % 10);
+                node = node->children.at(rand() % node->children.size());
                 node->nodeState.nbOfVisits++;
                 calculateUCB(node);
                 Rollout(node);
@@ -434,6 +434,14 @@ vector <NodeMC *> MonteCarlo::Simulation()
         }
     }
 
-    //NodeMC *temp = promisingNode(this->Root);
-    return this->Root->children;
+    NodeMC *temp = promisingNode(this->Root);
+    for (size_t i = 0; i < this->Root->children.size(); i++)
+    {
+        if (this->Root->children.at(i)==temp)
+        {
+            return i;
+        }
+        
+    }
+    
 }

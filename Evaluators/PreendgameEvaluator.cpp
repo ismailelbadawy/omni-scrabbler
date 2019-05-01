@@ -42,7 +42,7 @@ double PreendgameEvaluator::CalculateLeave(string rack)
             // Rack
             if(i != j)
             {
-				char leaveValue[] = { rack[i] - 32, rack[j] - 32};
+				char leaveValue[] = { rack[i] == '?' ? '?' : (rack[i] - 32), rack[j] == '?' ? '?' : (rack[j] - 32)};
 				string leave(leaveValue);
 				leave = leave.substr(0, 2);
 				rackLeave += (*doubleValued_)[leave];
@@ -328,4 +328,16 @@ Move PreendgameEvaluator::ComputeBestMove()
 
 }
 return *bestMove;
+}
+
+
+vector<Move> * PreendgameEvaluator::Evaluate()
+{
+    vector<Move> * weReturn = new vector<Move>();
+    std::sort(possiblemoves_.begin(), possiblemoves_.end());
+    for(int i = 0; i < possiblemoves_.size(); i++)
+    {
+        weReturn->push_back(possiblemoves_.at(i));
+    }
+    return weReturn;
 }
