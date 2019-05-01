@@ -318,3 +318,15 @@ Move PreendgameEvaluator::ComputeBestMove()
 }
 return *bestMove;
 }
+
+
+vector<Move> * PreendgameEvaluator::Evaluate()
+{
+    vector<Move> * weReturn = new vector<Move>();
+    std::sort(possiblemoves_.begin(), possiblemoves_.end());
+    for(int i = 0; i < possiblemoves_.size(); i++)
+    {
+        weReturn->push_back(possiblemoves_.at(i));
+    }
+    return weReturn;
+}

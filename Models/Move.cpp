@@ -65,6 +65,11 @@ void Move::SetRackLeave(double leave)
 	this->rackLeave_ = leave;
 }
 
+bool operator<(const Move & m1, const Move & m2)
+{
+	return m1.GetHeuristic() > m2.GetHeuristic();
+}
+
 Move::~Move()
 {
 }
