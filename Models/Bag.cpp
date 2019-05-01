@@ -38,7 +38,7 @@ return bag_.at(tile);
 int Bag::GetRemainingTiles(){
 
 
-return 0;
+return bag_.size();
 }
 
 void Bag::TakeLetter(Tile* tile){  
