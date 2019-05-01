@@ -18,8 +18,8 @@
 #include "./MonteCarlo/MonteCarlo.h"
 
 using namespace std;
-string GADDAG_PATH = "./assets/Dict.txt";
-string BAG_PATH = "./letters.txt";
+string GADDAG_PATH = "E:/Projects/omni-scrabbler/assets/Dict.txt";
+string BAG_PATH = "E:/Projects/omni-scrabbler/assets/letter.txt";
 Board board;
 //
 Rack RACK;
@@ -101,7 +101,7 @@ int main()
 
 	map<string, double> *syn2 = new map<string, double>();
 	map<char, double> *worth = new map<char, double>();
-	SuperLeaveLoader loader(syn2, worth, "assets/syn2", "assets/worths");
+	SuperLeaveLoader loader(syn2, worth, "E:/Projects/omni-scrabbler/assets/syn2", "E:/Projects/omni-scrabbler/assets/worths");
 	vector<Move> simVec;
 	MidgameEvaluator evaluator(&moves, &board, syn2, worth);//MidgameEvaluator(&moves,&board,&syn2,&worth);
 	for (int i = 0; i < moves.size(); i++)
@@ -109,13 +109,10 @@ int main()
 		evaluator.Evaluate(&moves.at(i));
 	}
 
-	for (int i = 0; i < 10; i++)
-	{
-		simVec.push_back(moves.at(i));
-	}
+	
 
 	MoveGenerator *movGenPointer = &movGen;
-	MonteCarlo testTree(board, simVec, rack, oprack, bag, movGenPointer);
+	MonteCarlo testTree(board, moves, rack, oprack, bag, movGenPointer,syn2,worth);
 
 
 	

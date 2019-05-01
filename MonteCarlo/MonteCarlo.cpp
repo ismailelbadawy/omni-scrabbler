@@ -23,7 +23,7 @@
 
 using namespace std;
 
-MonteCarlo::MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, Rack oponentRack, Bag bag, MoveGenerator *movGen)
+MonteCarlo::MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, Rack oponentRack, Bag bag, MoveGenerator *movGen, map<string, double>* syn2, map<char, double>* worth)
 {
     NodeMC *temp = new NodeMC;
     Rack tempRack = currentRack;
@@ -31,7 +31,8 @@ MonteCarlo::MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, R
     temp->boardState = boardState;
     temp->Rack = tempRack;
     temp->Parent = nullptr;
-
+	this->worth = worth;
+	this->syn2 = syn2;
     temp->nodeState.treeDepth = 0;
     temp->nodeState.possibleActions = Moves;
     temp->nodeState.reward = 0;
@@ -43,6 +44,7 @@ MonteCarlo::MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, R
 	{
 		temp->currentBag.TakeLetter(oponentRack.GetLetter(i));
 	}
+	
     vector<NodeMC *> children;
     temp->children = children;
 
@@ -64,32 +66,13 @@ void MonteCarlo::firstLevel()
 {
     //temp rack to use until we implement the random function.
     //we should use the bag to generate the random racks for each new state inside the loop.
-    Tile RackTiles[7];
-
-    RackTiles[0].SetLetter('f');
-    RackTiles[0].SetScore(1);
-    RackTiles[1].SetLetter('a');
-    RackTiles[1].SetScore(4);
-    RackTiles[2].SetLetter('l');
-    RackTiles[2].SetScore(3);
-    RackTiles[3].SetLetter('e');
-    RackTiles[3].SetScore(2);
-    RackTiles[4].SetLetter('m');
-    RackTiles[4].SetScore(1);
-    RackTiles[5].SetLetter('o');
-    RackTiles[5].SetScore(4);
-    RackTiles[6].SetLetter('r');
-    RackTiles[6].SetScore(3);
-
-    vector<Tile> rackTiles(RackTiles, RackTiles + sizeof RackTiles / sizeof RackTiles[0]);
-    Rack rack(rackTiles);
-
+   
     Board tempLevel1Board = this->Root->boardState;
 
     //loop over the number of possible actions to make in order to get all the possible states in the level.
     for (int i = 0; i < 10; i++)
     {
-		Rack tempRack = rack;
+		Rack tempRack = this->mainRack;
 		Bag tempBag = Root->currentBag;
         tempLevel1Board = this->Root->boardState;
         //generate the first board state after my move.
@@ -122,13 +105,15 @@ void MonteCarlo::firstLevel()
         vector<Move> nextMoves;
 
         nextMoves = this->movGen->Generate(&this->oponentRack, tempLevel1Board, tempLevel1Board.GetCount() == 0);
-        vector<Move> simVec;
-        for (int j = 0; j < 10; j++)
-        {
-            simVec.push_back(nextMoves.at(j));
-        }
+		
+		MidgameEvaluator evaluator(&nextMoves, &tempLevel1Board, syn2, worth);//MidgameEvaluator(&moves,&board,&syn2,&worth);
+		for (int i = 0; i < nextMoves.size(); i++)
+		{
+			evaluator.Evaluate(&nextMoves.at(i));
+		}
 
-        this->Root->children.push_back(newNode(tempLevel1Board, simVec, tempRack, tempBag, Root, 1, reward));
+        
+        this->Root->children.push_back(newNode(tempLevel1Board, nextMoves, this->oponentRack, tempBag, Root, 1, reward));
     }
     cout << "done making first level" << endl;
 }

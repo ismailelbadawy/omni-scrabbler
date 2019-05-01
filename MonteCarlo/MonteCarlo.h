@@ -28,7 +28,7 @@ struct NodeState
 {
     int treeDepth;                //depth 0 and 2 represent my turn and depth 1 is the oponent's turn.
     vector<Move> possibleActions; //possible moves to play from the current state of the board.
-
+	
     //paramaters used to calculate the UCT of the node.
     long double reward, UCB; //currently eqauls to the score of the move only.
     int nbOfVisits;     //number of visits of the current node.
@@ -72,9 +72,10 @@ public:
     NodeMC *Root;
     Rack mainRack;
     Rack oponentRack; //oponent RAck will be generated in the constructor.
-
+	map<string, double>* syn2;
+	map<char, double>* worth;
     //constructor.
-    MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, Rack oponentRack, Bag bag, MoveGenerator *movGen);
+    MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, Rack oponentRack, Bag bag, MoveGenerator *movGen, map<string, double>* syn2, map<char, double>* worth);
 
     //adding new node to the tree.
     NodeMC *newNode(Board boardState, vector<Move> Moves, Rack currentRack, Bag bag, NodeMC *parent, int level,double reward);
