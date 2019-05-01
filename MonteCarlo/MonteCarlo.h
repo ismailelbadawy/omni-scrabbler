@@ -39,7 +39,8 @@ struct NodeMC
 {
     Board boardState; //current game state.
     Bag currentBag;
-    Rack Rack;
+    Rack rack;
+	Rack oldRack;
     NodeMC *Parent;
     NodeState nodeState;
     vector<NodeMC *> children;
@@ -76,9 +77,9 @@ public:
 	map<char, double>* worth;
     //constructor.
     MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, Rack oponentRack, Bag bag, MoveGenerator *movGen, map<string, double>* syn2, map<char, double>* worth);
-
+	Rack GenerateRack(Rack r, NodeMC* node);
     //adding new node to the tree.
-    NodeMC *newNode(Board boardState, vector<Move> Moves, Rack currentRack, Bag bag, NodeMC *parent, int level,double reward);
+    NodeMC *newNode(Board boardState, vector<Move> Moves, Rack currentRack , Rack oldRack, Bag bag, NodeMC *parent, int level,double reward);
 
     //traverse the tree.
     void LevelOrderTraversal(NodeMC *root);
