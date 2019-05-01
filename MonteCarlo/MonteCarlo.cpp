@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
-
+#include "math.h"
 
 #include "./MonteCarlo.h"
 #include "../Models/Bag.h"
@@ -13,13 +13,15 @@
 #include "../Models/Tile.h"
 #include "../MoveGenerator/MoveGenerator.h"
 
+#define INTMAX = 2147483647;
+
 using namespace std;
 
-MonteCarlo::MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, Rack oponentRack, Bag bag, MoveGenerator* movGen)
+MonteCarlo::MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, Rack oponentRack, Bag bag, MoveGenerator *movGen)
 {
     NodeMC *temp = new NodeMC;
     Rack tempRack = currentRack;
-	this->movGen = movGen;
+    this->movGen = movGen;
     temp->boardState = boardState;
     temp->Rack = tempRack;
     temp->Parent = nullptr;
@@ -74,7 +76,7 @@ void MonteCarlo::firstLevel()
     Rack rack(rackTiles);
 
     Board tempLevel1Board = this->Root->boardState;
-    
+
     //loop over the number of possible actions to make in order to get all the possible states in the level.
     for (int i = 0; i < 10; i++)
     {
@@ -83,22 +85,23 @@ void MonteCarlo::firstLevel()
         //generate the first board state after my move.
         tempLevel1Board.SimulateMove(&(this->Root->nodeState.possibleActions[i]));
 
+        double reward = calculateMoveReward(this->Root->nodeState.possibleActions[i]);
         //using the move generator to generate new set of moves for each action.
         vector<Move> nextMoves;
 
-        nextMoves = this->movGen->Generate(&rack,this->Root->boardState, tempLevel1Board.GetCount() == 0);
+        nextMoves = this->movGen->Generate(&this->oponentRack, tempLevel1Board, tempLevel1Board.GetCount() == 0);
         vector<Move> simVec;
-        for (int i = 0; i < 10; i++)
+        for (int j = 0; j < 10; j++)
         {
-            simVec.push_back(nextMoves.at(i));
+            simVec.push_back(nextMoves.at(j));
         }
 
-        this->Root->children.push_back(newNode(tempLevel1Board, simVec, rack, Root->currentBag, Root, 1));
+        this->Root->children.push_back(newNode(tempLevel1Board, simVec, rack, Root->currentBag, Root, 1, reward));
     }
     cout << "done making first level" << endl;
 }
 
-NodeMC *MonteCarlo::newNode(Board boardState, vector<Move> Moves, Rack currentRack, Bag bag, NodeMC *parent, int level)
+NodeMC *MonteCarlo::newNode(Board boardState, vector<Move> Moves, Rack currentRack, Bag bag, NodeMC *parent, int level, double reward)
 {
     NodeMC *temp = new NodeMC;
     Rack tempRack = currentRack;
@@ -114,9 +117,9 @@ NodeMC *MonteCarlo::newNode(Board boardState, vector<Move> Moves, Rack currentRa
     temp->nodeState.possibleActions = Moves;
 
     //the reward should be the score of the move.
-    temp->nodeState.reward = 0;
+    temp->nodeState.reward = reward;
     temp->nodeState.nbOfVisits = 0;
-    temp->nodeState.UCB = INT_MAX;
+    temp->nodeState.UCB = 100000000;
 
     return temp;
 }
@@ -160,26 +163,21 @@ void MonteCarlo::LevelOrderTraversal(NodeMC *root)
 void MonteCarlo::calculateUCB(NodeMC *node)
 {
     //calculate UCB
-	//Assume C = root(2)
-	//http://mcts.ai/about/
-	//Warning don't calculate the parent's UCB
-    node->nodeState.nbOfVisits++;
-	node->nodeState.UCB = node->nodeState.reward + sqrt(2) * sqrt(log(node->nodeState.nbOfVisits) / node->Parent->nodeState.nbOfVisits);
-    
+    //Assume C = root(2)
+    //http://mcts.ai/about/
+    //Warning don't calculate the parent's UCB
+    node->nodeState.UCB = node->nodeState.reward + sqrt(2) * sqrt(log(node->Parent->nodeState.nbOfVisits) / node->nodeState.nbOfVisits);
 }
 
-double MonteCarlo::calculateMoveReward(Move m)
+double MonteCarlo::calculateMoveReward(Move move)
 {
-    //On expansions we are going to have a 30 sized vector containing the reward per each move, thus this func would only be used in Expand() and appends each move's score to a vector to be used later in Expand() when the children states vector is made
-	//Cause it's the only place where you know a state is achievable and the reward doesn't change anyways it's the UCB that does change cause it's a function of nbofVisits
-	//So it takes move not node as param
-	return m.GetScore();
+    return move.GetScore(); //+ move.GetRackLeave() + move.GetPenalty();
 }
 
 NodeMC *MonteCarlo::promisingNode(NodeMC *root)
 {
-	//Promising node's reward is calculated here
-	//UCB is calculated on rollout
+    //Promising node's reward is calculated here
+    //UCB is calculated on rollout
     NodeMC *Max = root->children.at(0);
     for (int i = 0; i < root->children.size(); i++)
     {
@@ -193,87 +191,131 @@ NodeMC *MonteCarlo::promisingNode(NodeMC *root)
 
 void MonteCarlo::Rollout(NodeMC *node)
 {
-	// //E7na hanrollout el node direct ahan kan el level
-	// //Bs msh hano3od ntl3
-	// //y3ni lw kona @node fi level=3 han3ml rollout(elNodeDeh) w bas msh han3ml rollout(elNodeDeh); rollout(elNodeDehwElFo2eha); y3ni msh recusrive
-	// switch (node->nodeState.treeDepth)
-	// {
-	// case 0:
-	// 	//Current state no Simulations
-	// 	node->nodeState.nbOfVisits++;
-	// 	break;
-	// case 1:
-	// 	//State after my move
-	// 	//node->nodeState.nbOfVisits++; already done while calculating ucb.
-	// 	node->Parent->nodeState.nbOfVisits++;
-	// 	calculateUCB(node);
-	// 	break;
-	// case 2:
-	// 	//State after my move + opponenet move
-	// 	node->Parent->nodeState.reward -= node->nodeState.reward;
-	// 	node->nodeState.nbOfVisits++;
-	// 	node->Parent->nodeState.nbOfVisits++;
-	// 	node->Parent->Parent->nodeState.nbOfVisits++;
-	// 	calculateUCB(node);
-	// 	calculateUCB(node->Parent);
-	// 	break;
-	// case 3:
-	// 	//State after my move -> opp -> my mmove
-	// 	node->Parent->nodeState.reward -= node->nodeState.reward; 
-	// 	node->nodeState.nbOfVisits++;
-	// 	node->Parent->nodeState.nbOfVisits++;
-	// 	node->Parent->Parent->nodeState.nbOfVisits++;
-	// 	node->Parent->Parent->Parent->nodeState.nbOfVisits++;
-	// 	calculateUCB(node);
-	// 	calculateUCB(node->Parent);
-	// 	calculateUCB(node->Parent->Parent);
-	// 	break;
-	// default:
-	// 	break;
-	// }
+    // //E7na hanrollout el node direct ahan kan el level
+    // //Bs msh hano3od ntl3
+    // //y3ni lw kona @node fi level=3 han3ml rollout(elNodeDeh) w bas msh han3ml rollout(elNodeDeh); rollout(elNodeDehwElFo2eha); y3ni msh recusrive
+    // switch (node->nodeState.treeDepth)
+    // {
+    // case 0:
+    // 	//Current state no Simulations
+    // 	node->nodeState.nbOfVisits++;
+    // 	break;
+    // case 1:
+    // 	//State after my move
+    // 	//node->nodeState.nbOfVisits++; already done while calculating ucb.
+    // 	node->Parent->nodeState.nbOfVisits++;
+    // 	calculateUCB(node);
+    // 	break;
+    // case 2:
+    // 	//State after my move + opponenet move
+    // 	node->Parent->nodeState.reward -= node->nodeState.reward;
+    // 	node->nodeState.nbOfVisits++;
+    // 	node->Parent->nodeState.nbOfVisits++;
+    // 	node->Parent->Parent->nodeState.nbOfVisits++;
+    // 	calculateUCB(node);
+    // 	calculateUCB(node->Parent);
+    // 	break;
+    // case 3:
+    // 	//State after my move -> opp -> my mmove
+    // 	node->Parent->nodeState.reward -= node->nodeState.reward;
+    // 	node->nodeState.nbOfVisits++;
+    // 	node->Parent->nodeState.nbOfVisits++;
+    // 	node->Parent->Parent->nodeState.nbOfVisits++;
+    // 	node->Parent->Parent->Parent->nodeState.nbOfVisits++;
+    // 	calculateUCB(node);
+    // 	calculateUCB(node->Parent);
+    // 	calculateUCB(node->Parent->Parent);
+    // 	break;
+    // default:
+    // 	break;
+    // }
 
-    NodeMC* tempNode = node;
+    NodeMC *tempNode = node;
     double childUCB = 0;
-    while (tempNode != nullptr) {
-        tempNode->nodeState.nbOfVisits++;
-        if (tempNode->nodeState.treeDepth == 0) {
+    while (tempNode != nullptr)
+    {
+        if (tempNode->nodeState.treeDepth == 0)
+        {
             tempNode->nodeState.UCB += childUCB;
-        }else if (tempNode->nodeState.treeDepth == 1 || tempNode->nodeState.treeDepth == 2){
+        }
+        else if (tempNode->nodeState.treeDepth == 1 || tempNode->nodeState.treeDepth == 2)
+        {
             tempNode->nodeState.UCB -= childUCB;
         }
         childUCB = tempNode->nodeState.UCB;
         tempNode = tempNode->Parent;
+        if(tempNode != nullptr) tempNode->nodeState.nbOfVisits++;
     }
 }
 
 void MonteCarlo::Expand(NodeMC *node)
 {
-    //Generate Random rack based on current bag ---Ismail and Walaa IIRC
-    vector<NodeMC *> newstates;
-	Board tempBoard = node->boardState;
-	//Gets all possibles moves generated from current game state when we are on this specific node
-	//vector<Move> moves = movGen->Generate(&node->Rack, tempBoard, node->boardState.GetCount() == 0);
-    for (size_t i = 0; i < 30; i++)
+
+    // vector<NodeMC *> newstates;
+    Board tempBoard = node->boardState;
+    //MoveGenerator movGen(tempBoard);
+
+    for (int i = 0; i < 10; i++)
     {
-        //Tweaks all the new states retrieved from the MoveGeneration & Static eval. so that expansion is complete
-        //However Bag state? Rack state? Board state? How do I get those?
-		//we Need updateBoard so that we can simulate the new levels
-        newstates[i]->Parent = node;
-        newstates[i]->nodeState.nbOfVisits = 0;
-        newstates[i]->nodeState.treeDepth = node->nodeState.treeDepth + 1;
-        newstates[i]->nodeState.UCB = INT_MAX;
-		
-		//Random rack needed heree...newstates[i]->Rack=
-		
+
+        tempBoard = node->boardState;
+
+        if (node->nodeState.treeDepth == 1)
+        {
+            //generate the first board state after my move.
+            tempBoard.SimulateMove(&(node->nodeState.possibleActions[i]));
+
+            double reward = calculateMoveReward(node->nodeState.possibleActions[i]);
+
+            //using the move generator to generate new set of moves for each action.
+            vector<Move> nextMoves;
+
+            Rack myRackRem;
+            nextMoves = this->movGen->Generate(&myRackRem, tempBoard, tempBoard.GetCount() == 0);
+            vector<Move> simVec;
+            for (int i = 0; i < 10; i++)
+            {
+                simVec.push_back(nextMoves.at(i));
+            }
+
+            //generate a random rack for me.
+
+            //keeping track of the bag
+            Bag bagRem;
+
+            node->children.push_back(newNode(tempBoard, simVec, myRackRem, bagRem, node, node->nodeState.treeDepth + 1, reward));
+        }
+        else if (node->nodeState.treeDepth == 2)
+        {
+            //generate the first board state after my move.
+            tempBoard.SimulateMove(&(node->nodeState.possibleActions[i]));
+
+            double reward = calculateMoveReward(node->nodeState.possibleActions[i]);
+
+            //using the move generator to generate new set of moves for each action.
+            vector<Move> nextMoves;
+
+            Rack myRackRem;
+            nextMoves = this->movGen->Generate(&myRackRem, tempBoard, tempBoard.GetCount() == 0);
+            vector<Move> simVec;
+            for (int i = 0; i < 10; i++)
+            {
+                simVec.push_back(nextMoves.at(i));
+            }
+
+            //generate a random rack for me.
+
+            //keeping track of the bag
+            Bag bagRem;
+
+            node->children.push_back(newNode(tempBoard, simVec, myRackRem, bagRem, node, node->nodeState.treeDepth + 1, reward));
+        }
     }
-    //Finally append this new vector to the children of this node
-    node->children = newstates;
 }
 
 NodeMC *MonteCarlo::Simulation()
 {
-    int i = 0;
-    while (i < 3)
+    while (true)
     {
         NodeMC *node = promisingNode(this->Root);
 
@@ -282,10 +324,11 @@ NodeMC *MonteCarlo::Simulation()
             node = promisingNode(node);
         }
 
-        if (node->nodeState.nbOfVisits == 0)
+        if (node->nodeState.nbOfVisits <= 0)
         {
+            node->nodeState.nbOfVisits++;
             calculateUCB(node);
-			Rollout(node);
+            Rollout(node);
         }
         else
         {

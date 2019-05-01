@@ -108,7 +108,7 @@ int main()
 
 
 	NodeMC *node = testTree.Simulation();
-	vector<Tile> remTiles = bag.GetRemainingTiles();
+	//vector<Tile> remTiles = bag.GetRemainingTiles();
 
 	// testTree.LevelOrderTraversal(testTree.Root);
 	// board.SimulateMove(&moves[0]);

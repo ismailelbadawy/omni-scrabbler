@@ -38,7 +38,7 @@ private:
     void firstLevel();
 	MoveGenerator* movGen;
     //Use heuristics to caluclate the reward of a certain move.
-    double calculateMoveReward(Move m);
+    double calculateMoveReward(Move move);
 
     //Utility function to calculate the UCB.
     void calculateUCB(NodeMC *node);
@@ -62,7 +62,7 @@ public:
     MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, Rack oponentRack, Bag bag, MoveGenerator *movGen);
 
     //adding new node to the tree.
-    NodeMC *newNode(Board boardState, vector<Move> Moves, Rack currentRack, Bag bag, NodeMC *parent, int level);
+    NodeMC *newNode(Board boardState, vector<Move> Moves, Rack currentRack, Bag bag, NodeMC *parent, int level,double reward);
 
     //traverse the tree.
     void LevelOrderTraversal(NodeMC *root);
