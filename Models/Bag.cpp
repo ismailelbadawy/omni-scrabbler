@@ -62,6 +62,10 @@ void Bag::TakeLetter(Tile tile)
     }
 }
 
+void Bag::TakeLetter(char letter)
+{
+}
+
 
 void Bag::GiveTiles(vector<Tile> tiles)
 {
