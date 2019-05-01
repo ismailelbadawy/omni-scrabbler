@@ -33,7 +33,10 @@ MonteCarlo::MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, R
 
     temp->nodeState.UCB = 0;
     temp->currentBag = bag;
-
+	for (size_t i = 0; i < oponentRack.GetLength(); i++)
+	{
+		temp->currentBag.TakeLetter(oponentRack.GetLetter(i));
+	}
     vector<NodeMC *> children;
     temp->children = children;
 
@@ -80,13 +83,36 @@ void MonteCarlo::firstLevel()
     //loop over the number of possible actions to make in order to get all the possible states in the level.
     for (int i = 0; i < 10; i++)
     {
-
+		Rack tempRack = rack;
+		Bag tempBag = Root->currentBag;
         tempLevel1Board = this->Root->boardState;
         //generate the first board state after my move.
         tempLevel1Board.SimulateMove(&(this->Root->nodeState.possibleActions[i]));
 
         double reward = calculateMoveReward(this->Root->nodeState.possibleActions[i]);
         //using the move generator to generate new set of moves for each action.
+		Play* movee = this->Root->nodeState.possibleActions[i].GetPlay();
+		vector<Tile> moveTiles=movee->GetTiles();
+		
+		for (size_t i = 0; i < moveTiles.size(); i++)
+		{
+			char letter= moveTiles[i].GetLetter();
+			//Also take letters from bag
+			if (islower(moveTiles[i].GetLetter())!=0)
+			{
+				moveTiles[i].SetLetter(toupper(moveTiles[i].GetLetter()));
+			}
+			tempBag.TakeLetter(moveTiles[i]);
+			for (size_t j = 0; j < tempRack.GetLength(); j++)
+			{
+				if (tempRack.GetLetter(j)==letter || tempRack.GetLetter(j)==tolower(letter))
+				{
+					tempRack.SetTile('*', j);
+				}
+			}
+			
+		}
+		//TempRack & tempBag are updated
         vector<Move> nextMoves;
 
         nextMoves = this->movGen->Generate(&this->oponentRack, tempLevel1Board, tempLevel1Board.GetCount() == 0);
@@ -96,7 +122,7 @@ void MonteCarlo::firstLevel()
             simVec.push_back(nextMoves.at(j));
         }
 
-        this->Root->children.push_back(newNode(tempLevel1Board, simVec, rack, Root->currentBag, Root, 1, reward));
+        this->Root->children.push_back(newNode(tempLevel1Board, simVec, tempRack, tempBag, Root, 1, reward));
     }
     cout << "done making first level" << endl;
 }
