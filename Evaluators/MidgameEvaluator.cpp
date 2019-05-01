@@ -153,7 +153,7 @@ double MidgameEvaluator::CalculateLeave(string rack)
             // Rack
             if(i != j)
             {
-				char leaveValue[] = { rack[i] - 32, rack[j] - 32};
+				char leaveValue[] = { rack[i] == '?' ? '?': rack[i] - 32, rack[j] == '?' ? '?' : rack[j] - 32};
 				string leave(leaveValue);
 				leave = leave.substr(0, 2);
 				rackLeave += (*doubleValued_)[leave];
