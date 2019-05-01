@@ -397,7 +397,7 @@ void MonteCarlo::Expand(NodeMC *node)
     }
 }
 
-NodeMC *MonteCarlo::Simulation()
+vector <NodeMC *> MonteCarlo::Simulation()
 {
     timer t;
     while (t.seconds_elapsed() < 20)
@@ -434,6 +434,6 @@ NodeMC *MonteCarlo::Simulation()
         }
     }
 
-    NodeMC *temp = promisingNode(this->Root);
-    return temp;
+    //NodeMC *temp = promisingNode(this->Root);
+    return this->Root->children;
 }
