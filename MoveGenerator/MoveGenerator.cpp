@@ -776,8 +776,6 @@ void MoveGenerator::ContainsHookWithRackRecursiveAtPos(Node* CurrentNode, vector
 
 		}
 
-
-
 		if (it == VectorOfPossibleWords.end()) { //word not found in Vector
 
 			WordPossibility newWord(Word);

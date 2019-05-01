@@ -26,7 +26,7 @@ class PreendgameEvaluator : public Evaluator {
 public:
     void OpponentRackEstimation(); //public for testing only, should be private later
     PreendgameEvaluator();
-    PreendgameEvaluator(map<string, double> *,Board* board, MoveGenerator * movGen,vector<Move> possibleMoves);
+    PreendgameEvaluator(map<string, double> *,Board* board, MoveGenerator * movGen,vector<Move> possibleMoves, vector <char> remLetters);
     Move OpponentBestMove();
     double Evaluate(Move * move);
     vector<Move>* Evaluate();

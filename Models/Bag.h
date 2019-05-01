@@ -23,5 +23,6 @@ class Bag
     int GetRemainingTiles();
     void TakeLetter(Tile* tile);
     void GiveTiles(vector<Tile> tiles);
+    vector <char> GetRemainigLetters();
     ~Bag();
 };
