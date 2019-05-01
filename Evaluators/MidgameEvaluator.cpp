@@ -102,7 +102,10 @@ double MidgameEvaluator::CalculatePenalty()
 			move->SetRackLeave(this->CalculateLeave(rack));
 		}
 		move->CalculateScore();
-
+        move->SetHeuristic();
+        cout << "Move (" << i << ") has penalty of : " << move->GetPenalty() << " rack leave of : " << move->GetRackLeave() << " score of : " << move->GetScore() << " Total : " << move->GetHeuristic() << endl;
+        // Must be called after the rack leave and 
+        
         }
     }
     return 0.0;
@@ -172,6 +175,18 @@ MidgameEvaluator::MidgameEvaluator(vector<Move>* moves, Board *board, map<string
 	this->CalculatePenalty();
 }
 
+vector<Move>* MidgameEvaluator::Evaluate()
+{
+    // Should be called only after instantiation.
+    vector<Move> * weReturn = new vector<Move>();
+    // So it's safe to sort the moves.
+    std::sort(possibleMoves_->begin(), possibleMoves_->end());
+    for(int i = 0; i < 25; i++)
+    {
+        weReturn->push_back(possibleMoves_->at(i));
+    }
+    return weReturn;
+}
 
 
 MidgameEvaluator::~MidgameEvaluator()
