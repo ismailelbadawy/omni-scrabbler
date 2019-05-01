@@ -11,13 +11,15 @@
 #include "Models/Bag.h"
 #include "GADDAG/GADDAG.h"
 #include "Evaluators/PreendgameEvaluator.h"
+#include "Strategy/SuperLeaveLoader.h"
+
 #include <time.h>
 #include <chrono>
 #include "./MonteCarlo/MonteCarlo.h"
 
 using namespace std;
-string GADDAG_PATH = "E:/Projects/omni-scrabbler/assets/Dict.txt";
-string BAG_PATH = "E:/Projects/omni-scrabbler/assets/letters.txt";
+string GADDAG_PATH = "./assets/Dict.txt";
+string BAG_PATH = "./letters.txt";
 Board board;
 //
 Rack RACK;
@@ -97,16 +99,26 @@ int main()
 		//moves.clear();
 	}
 
+	map<string, double> *syn2 = new map<string, double>();
+	map<char, double> *worth = new map<char, double>();
+	SuperLeaveLoader loader(syn2, worth, "assets/syn2", "assets/worths");
 	vector<Move> simVec;
+	MidgameEvaluator evaluator(&moves, &board, syn2, worth);//MidgameEvaluator(&moves,&board,&syn2,&worth);
+	for (int i = 0; i < moves.size(); i++)
+	{
+		evaluator.Evaluate(&moves.at(i));
+	}
+
 	for (int i = 0; i < 10; i++)
 	{
 		simVec.push_back(moves.at(i));
 	}
-	MoveGenerator* movGenPointer = &movGen;
+
+	MoveGenerator *movGenPointer = &movGen;
 	MonteCarlo testTree(board, simVec, rack, oprack, bag, movGenPointer);
 
 
-
+	
 	NodeMC *node = testTree.Simulation();
 	//vector<Tile> remTiles = bag.GetRemainingTiles();
 

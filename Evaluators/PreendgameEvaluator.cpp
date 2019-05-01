@@ -17,7 +17,18 @@ PreendgameEvaluator::PreendgameEvaluator(map<string, double> *rackLeave,Board* b
     this->board_ = board;
     this->movegenerator_ = movGen;
     this->possiblemoves_ = possibleMoves;
-    this->remainingletters_ = {'a','b','d','a','e','c','h','h','x','p'}; //for testing only
+    vector<char> vect;
+vect.push_back('a');
+vect.push_back('b');
+vect.push_back('d');
+vect.push_back('a');
+vect.push_back('e');
+vect.push_back('c');
+vect.push_back('h');
+vect.push_back('h');
+vect.push_back('x');
+vect.push_back('p');
+this->remainingletters_ = vect;
     this->numTilesByOpponent_ = 3; //for testing only
 }
 

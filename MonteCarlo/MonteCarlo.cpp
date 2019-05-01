@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <chrono>
 #include "math.h"
 
 #include "./MonteCarlo.h"
@@ -12,6 +13,11 @@
 #include "../Models/Play.h"
 #include "../Models/Tile.h"
 #include "../MoveGenerator/MoveGenerator.h"
+
+#include "../MoveGenerator/MoveGenerator.h"
+#include "../Evaluators/MidgameEvaluator.h"
+#include "../Evaluators/PreendgameEvaluator.h"
+#include "../Strategy/SuperLeaveLoader.h"
 
 #define INTMAX = 2147483647;
 
@@ -29,7 +35,7 @@ MonteCarlo::MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, R
     temp->nodeState.treeDepth = 0;
     temp->nodeState.possibleActions = Moves;
     temp->nodeState.reward = 0;
-    temp->nodeState.nbOfVisits = 0;
+    temp->nodeState.nbOfVisits = 1;
 
     temp->nodeState.UCB = 0;
     temp->currentBag = bag;
@@ -255,6 +261,19 @@ void MonteCarlo::Expand(NodeMC *node)
     Board tempBoard = node->boardState;
     //MoveGenerator movGen(tempBoard);
 
+    map<string, double> *syn2 = new map<string, double>();
+	map<char, double> *worth = new map<char, double>();
+	SuperLeaveLoader loader(syn2, worth, "../assets/syn2", "../assets/worths");
+	vector<Move> simVec;
+	MidgameEvaluator evaluator(&node->nodeState.possibleActions, &node->boardState, syn2, worth);//MidgameEvaluator(&moves,&board,&syn2,&worth);
+	for (int i = 0; i < 10; i++)
+	{
+		simVec.push_back(node->nodeState.possibleActions.at(i));
+		evaluator.Evaluate(&node->nodeState.possibleActions.at(i));
+
+	}
+
+
     for (int i = 0; i < 10; i++)
     {
 
@@ -271,7 +290,7 @@ void MonteCarlo::Expand(NodeMC *node)
             vector<Move> nextMoves;
 
             Rack myRackRem;
-            nextMoves = this->movGen->Generate(&myRackRem, tempBoard, tempBoard.GetCount() == 0);
+            nextMoves = this->movGen->Generate(&this->mainRack, tempBoard, tempBoard.GetCount() == 0);
             vector<Move> simVec;
             for (int i = 0; i < 10; i++)
             {
@@ -296,12 +315,12 @@ void MonteCarlo::Expand(NodeMC *node)
             vector<Move> nextMoves;
 
             Rack myRackRem;
-            nextMoves = this->movGen->Generate(&myRackRem, tempBoard, tempBoard.GetCount() == 0);
+            //nextMoves = this->movGen->Generate(&myRackRem, tempBoard, tempBoard.GetCount() == 0);
             vector<Move> simVec;
-            for (int i = 0; i < 10; i++)
-            {
-                simVec.push_back(nextMoves.at(i));
-            }
+            // for (int i = 0; i < 10; i++)
+            // {
+            //     simVec.push_back(nextMoves.at(i));
+            // }
 
             //generate a random rack for me.
 
@@ -315,10 +334,11 @@ void MonteCarlo::Expand(NodeMC *node)
 
 NodeMC *MonteCarlo::Simulation()
 {
-    while (true)
+    timer t;
+    while (t.seconds_elapsed() < 20)
     {
         NodeMC *node = promisingNode(this->Root);
-
+        cout << t.seconds_elapsed() << endl;
         while (node->children.size() != 0)
         {
             node = promisingNode(node);
@@ -335,17 +355,20 @@ NodeMC *MonteCarlo::Simulation()
             if (node->nodeState.treeDepth < 3)
             {
                 Expand(node);
-                node = node->children.at(rand() % 30);
+                node = node->children.at(rand() % 10);
+                node->nodeState.nbOfVisits++;
                 calculateUCB(node);
                 Rollout(node);
             }
             else
             {
+                node->nodeState.nbOfVisits++;
                 calculateUCB(node);
                 Rollout(node);
             }
         }
     }
 
-    return promisingNode(this->Root);
+    NodeMC *temp = promisingNode(this->Root);
+    return temp;
 }
