@@ -629,281 +629,422 @@ vector<Move> MoveGenerator::Generate(const Rack * rack,Board &board,bool isEmpty
 	return moves_;
 }
 void MoveGenerator::ContainsHookWithRackRecursive(Node* CurrentNode, vector<WordPossibility> &VectorOfPossibleWords, string letters, string rack, string hook) 
+
 {
+
 		if (CurrentNode == NULL) {
+
 		string Word = dag_->GetWord(letters);
+
 		vector<WordPossibility>::iterator it;
+
 		for (it = VectorOfPossibleWords.begin(); it != VectorOfPossibleWords.end(); it++) {
+
 			if (it->GetWord() == Word) break;
+
 		}
+
+
 
 		if (it == VectorOfPossibleWords.end()) { //word not found in Vector
+
 			WordPossibility newWord(Word);
+
 			newWord.SetWord(Word);
+
 			newWord.AddPositions(7);
+
 			newWord.AddRacks(rack);
+
 			VectorOfPossibleWords.push_back(newWord);
+
 		}
+
 		
+
 		return;
+
 	}
+
+
 
 	if (hook != "" && hook != " ") 
+
 	{
+
 		if (CurrentNode->get_Letter() != Node::Root)
+
 			letters += CurrentNode->get_Letter();
+
+
 
 		if (CurrentNode->ContainsKey(hook[0])) 
+
 		{
+
 			string NewHook = hook;
+
 			NewHook = NewHook.erase(0, 1);
+
 			ContainsHookWithRackRecursive(CurrentNode->AT(hook[0]), VectorOfPossibleWords, letters, rack, NewHook);
+
 		}
+
 	}
+
 	else {
+
 		if (CurrentNode->get_Letter() != Node::Root)
+
 			letters += CurrentNode->get_Letter();
 
+
+
 		vector<char> vectorOfChildrenOfCurrentNode = CurrentNode->Keys();
+
 		for (int i = 0; i < (int)vectorOfChildrenOfCurrentNode.size(); i++) {
+
 			char Key = vectorOfChildrenOfCurrentNode[i];
 
+
+
 			std::size_t FoundInRack = rack.find(Key);
+
 			std::size_t BlankFoundInRack = rack.find('?');
+
 			if (Key == Node::EOW || Key == Node::Break || FoundInRack != std::string::npos || BlankFoundInRack != std::string::npos) {
+
 				string NewRack = rack;
+
 				if (Key != Node::EOW && Key != Node::Break && FoundInRack != std::string::npos) //found in rack
+
 					NewRack = NewRack.erase(FoundInRack, 1);
+
 				else if (Key != Node::EOW && Key != Node::Break && BlankFoundInRack != std::string::npos) //space in rack
+
 					NewRack = NewRack.erase(BlankFoundInRack, 1);
+
 				//NewRack = (Key != Node::EOW && Key != Node::Break) ? NewRack.erase(FoundInRack, 1) : NewRack;
+
 				ContainsHookWithRackRecursive(CurrentNode->AT(Key), VectorOfPossibleWords, letters, NewRack, hook);
+
 			}
+
 		}
+
 	}
+
 }
+
 void MoveGenerator::ContainsHookWithRackRecursiveAtPos(Node* CurrentNode, vector<WordPossibility> &VectorOfPossibleWords, string letters, string rack, string hook, int MaxPos, int CurrentCount, bool found, int CurrPosOnBoard) {
+
 	if (found) {
+
 		if ((CurrentNode != NULL && CurrentNode->get_Letter() != Node::Break && CurrentNode->get_Letter() != Node::EOW) || CurrentNode == NULL) {
+
 			int MaxLength = 15 - CurrPosOnBoard + CurrentCount; // ----er- if currposonboard= 12 (enters)
+
 																//currcount= 3 then maxlength= 15- 12 +3= 6 
+
 			if ((int)letters.length() - 1 > MaxLength)
+
 				return;
+
 		}
+
 	}
+
+
 
 	if (CurrentCount > MaxPos) return;
 
+
+
 	bool NewFound = found;
 
+
+
 	if (CurrentNode == NULL) {
+
 		string Word = dag_->GetWord(letters);
+
 		vector<WordPossibility>::iterator it;
+
 		for (it = VectorOfPossibleWords.begin(); it != VectorOfPossibleWords.end(); it++) {
+
 			if (it->GetWord() == Word) break;
+
 		}
+
+
 
 		if (it == VectorOfPossibleWords.end()) { //word not found in Vector
+
 			WordPossibility newWord(Word);
+
 			newWord.SetWord(Word);
+
 			newWord.AddPositions(CurrPosOnBoard - CurrentCount);
+
 			newWord.AddRacks(rack);
+
 			VectorOfPossibleWords.push_back(newWord);
+
 		}
+
 		else {
+
 			it->AddPositions(CurrPosOnBoard - CurrentCount);
+
 			it->AddRacks(rack);
+
 		}
+
 		return;
+
 	}
+
 	if (hook[0] == '.') { //blank space on board
+
 		int NewCount = CurrentCount;
+
 		if (CurrentNode->get_Letter() != Node::Root)
+
 			letters += CurrentNode->get_Letter();
 
+
+
 		vector<char> vectorOfChildrenOfCurrentNode = CurrentNode->Keys();
+
 		for (int i = 0; i < (int)vectorOfChildrenOfCurrentNode.size(); i++) {
+
 			NewFound = found;
+
 			NewCount = CurrentCount;
+
 			string NewHook = hook;
+
 			char Key = vectorOfChildrenOfCurrentNode[i];
 
+
+
 			if (Key == Node::Break) NewFound = true;
+
 			if (!NewFound) NewCount++;
+
+
 
 			if (NewFound && Key != hook[0] && hook[0] != '.') continue;
 
+
+
 			std::size_t FoundInRack = rack.find(Key);
+
 			std::size_t BlankFoundInRack = rack.find('?');
+
 			if (Key == Node::EOW || Key == Node::Break || FoundInRack != std::string::npos || BlankFoundInRack != std::string::npos) {
+
 				string NewRack = rack;
+
 				if (Key != Node::EOW && Key != Node::Break && FoundInRack != std::string::npos)
+
 					NewRack = NewRack.erase(FoundInRack, 1);
+
 				else if (Key != Node::EOW && Key != Node::Break && BlankFoundInRack != std::string::npos)
+
 					NewRack = NewRack.erase(BlankFoundInRack, 1);
+
 				//NewRack = (Key != Node::EOW && Key != Node::Break) ? NewRack.erase(FoundInRack, 1) : NewRack;
+
 				if (Key != Node::Break && Key != Node::EOW && NewFound) NewHook.erase(0, 1);
+
 				ContainsHookWithRackRecursiveAtPos(CurrentNode->AT(Key), VectorOfPossibleWords, letters, NewRack, NewHook, MaxPos, NewCount, NewFound, CurrPosOnBoard);
+
 			}
-		}
-	}
-	else if (hook != "") {
-		int NewCount = CurrentCount;
-		if (CurrentNode->get_Letter() != Node::Root) {
-			letters += CurrentNode->get_Letter();
+
 		}
 
+	}
+
+	else if (hook != "") {
+
+		int NewCount = CurrentCount;
+
+		if (CurrentNode->get_Letter() != Node::Root) {
+
+			letters += CurrentNode->get_Letter();
+
+		}
+
+
+
 		vector<char> vectorOfChildrenOfCurrentNode = CurrentNode->Keys();
+
 		for (int i = 0; i <(int)vectorOfChildrenOfCurrentNode.size(); i++) {
+
 			NewFound = found;
+
 			char Key = vectorOfChildrenOfCurrentNode[i];
+
 				
+
 			if (Key == Node::Break) NewFound = true;
+
 			else if (Key != hook[0] && NewFound) continue;
 
+
+
 			int NewCount = CurrentCount;
+
 			if (!NewFound && Key != Node::Break && Key != Node::EOW) NewCount++;
 
+
+
 			string NewHook = hook;
+
 			if (NewFound && Key == hook[0] && Key != Node::Break && Key != Node::EOW) NewHook = NewHook.erase(0, 1);
 
+
+
 			std::size_t FoundInRack = rack.find(Key);
+
 			std::size_t BlankFoundInRack = rack.find('?');
+
 			if (!NewFound && FoundInRack == std::string::npos && BlankFoundInRack == std::string::npos && Key != Node::Break && Key != Node::EOW) //letter(s) before hook not in rack
+
 				continue;
+
 			else if (!NewFound && (Key == Node::EOW || Key == Node::Break || FoundInRack != std::string::npos || BlankFoundInRack != std::string::npos)) {//letter(s) before hook in rack
+
 				string NewRack = rack;
+
 				if (Key != Node::EOW && Key != Node::Break && FoundInRack != std::string::npos)
+
 					NewRack = NewRack.erase(FoundInRack, 1);
+
 				else if (Key != Node::EOW && Key != Node::Break && BlankFoundInRack != std::string::npos)
+
 					NewRack = NewRack.erase(BlankFoundInRack, 1);
 
+
+
 				ContainsHookWithRackRecursiveAtPos(CurrentNode->AT(Key), VectorOfPossibleWords, letters, NewRack, hook, MaxPos, NewCount, NewFound, CurrPosOnBoard);
+
 			}
+
 			else if (NewFound)
+
 				ContainsHookWithRackRecursiveAtPos(CurrentNode->AT(Key), VectorOfPossibleWords, letters, rack, NewHook, MaxPos, NewCount, NewFound, CurrPosOnBoard);
+
 		}
+
 	}
+
 	else if (hook == "") {
+
 		if (CurrentNode->get_Letter() != Node::Root)
+
 			letters += CurrentNode->get_Letter();
+
+
 
 		int NewCount = CurrentCount;
 
+
+
 		vector<char> vectorOfChildrenOfCurrentNode = CurrentNode->Keys();
+
 		for (int i = 0; i < (int)vectorOfChildrenOfCurrentNode.size(); i++) {
+
 			NewCount = CurrentCount;
+
 			char Key = vectorOfChildrenOfCurrentNode[i];
 
+
+
 			if (Key == Node::Break) NewFound = true;
+
 			if (!NewFound) NewCount++;
 
+
+
 			std::size_t FoundInRack = rack.find(Key);
+
 			std::size_t BlankFoundInRack = rack.find('?');
+
 			if (Key == Node::EOW || Key == Node::Break || FoundInRack != std::string::npos || BlankFoundInRack != std::string::npos) {
+
 				string NewRack = rack;
+
 				if (Key != Node::EOW && Key != Node::Break && FoundInRack != std::string::npos)
+
 					NewRack = NewRack.erase(FoundInRack, 1);
+
 				else if (Key != Node::EOW && Key != Node::Break && BlankFoundInRack != std::string::npos)
+
 					NewRack = NewRack.erase(BlankFoundInRack, 1);
+
 				//NewRack = (Key != Node::EOW && Key != Node::Break) ? NewRack.erase(FoundInRack, 1) : NewRack;
+
 				ContainsHookWithRackRecursiveAtPos(CurrentNode->AT(Key), VectorOfPossibleWords, letters, NewRack, hook, MaxPos, NewCount, NewFound, CurrPosOnBoard);
+
 			}
+
 		}
+
 	}
+
 }
+
+
+
 
 
 vector<WordPossibility> MoveGenerator::ContainsHookWithRack(string hook, string rack) {
+
 	transform(hook.begin(), hook.end(), hook.begin(), ::tolower);
+
 	reverse(hook.begin(), hook.end());
 
-	vector <int> BlankPos;
-	//check for blank tiles
-	for (int i= 0; i< rack.length(); i++){
-		if (rack[i]== '?') //blank tiles found
-			BlankPos.push_back(i);
-	}
+
 
 	vector<WordPossibility> VectorOfPossibleWords;
-	if (BlankPos.size()== 0){ //no blanks found
-		ContainsHookWithRackRecursive(dag_->GetRoot(), VectorOfPossibleWords, "", rack, hook);
-	}
-	else if (BlankPos.size()== 1){ // 1 or 2 blanks
-		int blankindex = BlankPos[0];
-		char newChar = 'a';
-		for (int i=0; i< 26; i++){
-			rack[blankindex] = newChar + i;
-			ContainsHookWithRackRecursive(dag_->GetRoot(), VectorOfPossibleWords, "", rack, hook);
-		}
-	}
-	else if (BlankPos.size() == 2){
-		int blankindex1 = BlankPos[0];
-		char newChar1 = 'a';
-		int blankindex2 = BlankPos[1];
-		char newChar2 = 'a';
-		for (int i=0; i< 26; i++){
-			rack[blankindex1] = newChar1 + i;
-			for (int k=0; k<26; k++){
-				rack[blankindex2] = newChar2 + k;
-				ContainsHookWithRackRecursive(dag_->GetRoot(), VectorOfPossibleWords, "", rack, hook);
-			}
-		}
-	}
-	
-	
+
+	ContainsHookWithRackRecursive(dag_->GetRoot(), VectorOfPossibleWords, "", rack, hook);
+
 	return VectorOfPossibleWords;
+
 }
+
+
+
 
 
 vector<WordPossibility> MoveGenerator::ContainsHookWithRackAtPos(string hook, string rack, int pos, int CurrPosOnBoard) {
+
 	transform(hook.begin(), hook.end(), hook.begin(), ::tolower);
-	
-	vector <int> BlankPos;
-	//check for blank tiles
-	for (int i= 0; i< rack.length(); i++){
-		if (rack[i]== '?') //blank tiles found
-			BlankPos.push_back(i);
-	}
+
+
 
 	vector<WordPossibility> VectorOfPossibleWords;
 
-	if (BlankPos.size()== 0){ //no blanks found
-		if (dag_->GetRoot()->ContainsKey(hook[0])) {
-			Node* newNode = dag_->GetRoot()->AT(hook[0]);
-			ContainsHookWithRackRecursiveAtPos(newNode, VectorOfPossibleWords, "", rack, hook.erase(0,1), pos, 0, false, CurrPosOnBoard);
-		}
-	}
-	else if (BlankPos.size()== 1){ // 1 or 2 blanks
-		int blankindex = BlankPos[0];
-		char newChar = 'a';
-		for (int i=0; i< 26; i++){
-			rack[blankindex] = newChar + i;
-			if (dag_->GetRoot()->ContainsKey(hook[0])) {
-				Node* newNode = dag_->GetRoot()->AT(hook[0]);
-				ContainsHookWithRackRecursiveAtPos(newNode, VectorOfPossibleWords, "", rack, hook.erase(0,1), pos, 0, false, CurrPosOnBoard);
-			}
-		}
-	}
-	else if (BlankPos.size() == 2){
-		int blankindex1 = BlankPos[0];
-		char newChar1 = 'a';
-		int blankindex2 = BlankPos[1];
-		char newChar2 = 'a';
-		for (int i=0; i< 26; i++){
-			rack[blankindex1] = newChar1 + i;
-			for (int k=0; k<26; k++){
-				rack[blankindex2] = newChar2 + k;
-				if (dag_->GetRoot()->ContainsKey(hook[0])) {
-					Node* newNode = dag_->GetRoot()->AT(hook[0]);
-					ContainsHookWithRackRecursiveAtPos(newNode, VectorOfPossibleWords, "", rack, hook.erase(0,1), pos, 0, false, CurrPosOnBoard);
-				}
-			}
-		}
+
+
+	if (dag_->GetRoot()->ContainsKey(hook[0])) {
+
+		Node* newNode = dag_->GetRoot()->AT(hook[0]);
+
+		ContainsHookWithRackRecursiveAtPos(newNode, VectorOfPossibleWords, "", rack, hook.erase(0,1), pos, 0, false, CurrPosOnBoard);
+
 	}
 
+
+
 	return VectorOfPossibleWords;
+
 }
+
+
 
 void MoveGenerator::CalculatePlayScore(Play *p, int addedScore){
 	int score = 0;
