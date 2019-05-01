@@ -20,6 +20,7 @@ class MidgameEvaluator : public Evaluator
         MidgameEvaluator(vector<Move>*,Board *board, map<string, double> *, map<char, double> * );
         ~MidgameEvaluator();
         double Evaluate(Move * move) override;
+        vector<Move> * Evaluate() override;
     private:
         void RackLeaveEvaluation();
         void VToCRatio();

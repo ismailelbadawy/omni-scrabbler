@@ -318,3 +318,9 @@ Move PreendgameEvaluator::ComputeBestMove()
 }
 return *bestMove;
 }
+
+
+vector<Move> * PreendgameEvaluator::Evaluate()
+{
+    return NULL;
+}
