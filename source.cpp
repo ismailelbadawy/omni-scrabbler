@@ -91,13 +91,14 @@ int main(){
 		PreendgameEvaluator PreEval = PreendgameEvaluator(syn2,&board,&movGen,moves);
 		cout << &moves << endl;
 		evaluator = new MidgameEvaluator(&moves, &board, syn2, worth);
+		vector<Move> * evaluatedMoves = evaluator->Evaluate();
 		Move * move = new Move();
 		PreEval.Evaluate(move);
 		cout << moves.size() << endl;
-		for(int i = 0; i < (int)moves.size(); i++)
+		for(int i = 0; i < (int)evaluatedMoves->size(); i++)
 		{
-			Move * move = &moves[i];
-			cout << "Move (" << i << ") " << move->GetPlay()->GetLetters() << "\tLeaving " << move->GetRack() << "\tPenalty : " << move->GetPenalty() << "\tRack Leave : " << move->GetRackLeave() << std::endl;
+			Move * move = &(evaluatedMoves->at(i));
+			cout << "Move (" << i << ") " << move->GetPlay()->GetLetters() << "\tLeaving " << move->GetRack() << "\tHeuristic : " << move->GetHeuristic() << std::endl;
 		}
 		
 		 for(int i = 0; i < (int)moves.size(); i++)
@@ -111,5 +112,7 @@ int main(){
 		  moves.clear();
 			cout << "More moves?\n";
 			cin >> c;
+
+		delete evaluatedMoves;
 	}
 }
