@@ -11,13 +11,15 @@
 #include"Models/Bag.h"
 #include"GADDAG/GADDAG.h"
 #include "Evaluators/MidgameEvaluator.h"
+#include "Evaluators/PreendgameEvaluator.h"
+#include "Strategy/SuperLeaveLoader.h"
 #include <time.h>
 #include <chrono>
 
 
 using namespace std;
-string 	GADDAG_PATH = "assets/Dict.txt";
-string 	BAG_PATH = "assets/letters.txt";
+string 	GADDAG_PATH = "C:/Users/Ismail/Documents/Gam3a/Senior 1/Semester 8/MI/Project/omni-scrabbler/assets/Dict.txt";
+string 	BAG_PATH = "C:/Users/Ismail/Documents/Gam3a/Senior 1/Semester 8/MI/Project/omni-scrabbler/assets/letters.txt";
 Board 	board;
 //
 Rack  	RACK;
@@ -68,23 +70,34 @@ int main(){
 
 	MidgameEvaluator* evaluator = NULL;
 
+	map<string, double>* syn2 = new map<string, double>();
+	map<char, double>* worth = new map<char, double>();
+	SuperLeaveLoader loader(syn2, worth, "assets/syn2", "assets/worths");
+
+	cout << "Loaded the rack leave map with count " << syn2->size() << endl;
 	ofstream OutputFile;
 
-  OutputFile.open("results.txt");
+	OutputFile.open("results.txt");
+
+	//FOR TESTING OPPONENT RACK ONLY
+	//PreEval.OpponentRackEstimation();
 
 	char c = 'y';
 	while(c == 'y'){
 		auto  start = chrono::high_resolution_clock::now();
-		moves = movGen.Generate(&rack, board.GetCount()==0);
+		moves = movGen.Generate(&rack,board, board.GetCount()==0);
 		auto  end = chrono::high_resolution_clock::now();
-
-		evaluator = new MidgameEvaluator(moves, &board);
-
+	
+		PreendgameEvaluator PreEval = PreendgameEvaluator(syn2,&board,&movGen,moves);
+		cout << &moves << endl;
+		evaluator = new MidgameEvaluator(&moves, &board, syn2, worth);
+		Move * move = new Move();
+		PreEval.Evaluate(move);
 		cout << moves.size() << endl;
 		for(int i = 0; i < (int)moves.size(); i++)
 		{
-			Move move = moves[i];
-			cout << "Move (" << i << ") " << "Penalty : " << move.GetPenalty() << " Heuristic : " << move.GetHeuristic() << std::endl;
+			Move * move = &moves[i];
+			cout << "Move (" << i << ") " << move->GetPlay()->GetLetters() << "\tLeaving " << move->GetRack() << "\tPenalty : " << move->GetPenalty() << "\tRack Leave : " << move->GetRackLeave() << std::endl;
 		}
 		
 		 for(int i = 0; i < (int)moves.size(); i++)

@@ -1,6 +1,6 @@
 #include "Move.h"
 #include <vector>
-
+#include <algorithm>
 
 Move::Move()
 {
@@ -31,8 +31,8 @@ Play* Move::GetPlay()
 
 string Move::GetRack()
 {
-	string s ="";
-	for (int j = 0; j < 7; j++)
+	string s = "";
+	for (int j = 0; j < rack_.GetLength(); j++)
 	{
 		s+= rack_.GetLetter(j);
 	}
@@ -52,12 +52,17 @@ void Move::SetScore(double score)
 
 void Move::CalculateScore()
 {
-	this->heuristicscore_ = this->play_->GetScore()-this->penalty_;
+	this->heuristicscore_ =this->rackLeave_+this->play_->GetScore()-this->penalty_;
 
 }
 
 void Move::SetPenalty(double penalty){
 	this->penalty_ = penalty;
+}
+
+void Move::SetRackLeave(double leave)
+{
+	this->rackLeave_ = leave;
 }
 
 Move::~Move()
