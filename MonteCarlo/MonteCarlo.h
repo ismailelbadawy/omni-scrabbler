@@ -3,6 +3,7 @@
 #include <vector>
 #include <queue>
 #include "../MoveGenerator/MoveGenerator.h"
+
 #include "../Models/Board.h"
 #include "../Models/Rack.h"
 #include "../Models/Move.h"
@@ -32,6 +33,7 @@ struct NodeState
     //paramaters used to calculate the UCT of the node.
     long double reward, UCB; //currently eqauls to the score of the move only.
     int nbOfVisits;     //number of visits of the current node.
+
 };
 
 //The nodes of the tree will contain the current state of the game board.
@@ -40,7 +42,7 @@ struct NodeMC
     Board boardState; //current game state.
     Bag currentBag;
     Rack rack;
-	Rack oldRack;
+  	Rack oldRack;
     NodeMC *Parent;
     NodeState nodeState;
     vector<NodeMC *> children;
@@ -52,7 +54,7 @@ class MonteCarlo
 private:
     //function to populate the first level.
     void firstLevel();
-	MoveGenerator* movGen;
+	  MoveGenerator* movGen;
     //Use heuristics to caluclate the reward of a certain move.
     double calculateMoveReward(Move move);
 
@@ -86,4 +88,5 @@ public:
 
     //Function to start the simulation.
 	int Simulation();
+
 };

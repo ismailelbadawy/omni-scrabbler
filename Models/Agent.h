@@ -1,30 +1,21 @@
-#include"Board.h"
-#include"Rack.h"
-#include"Bag.h"
-#include"Move.h"
-#include"../MoveGenerator/MoveGenerator.h"
-#include"../Evaluators/MidgameEvaluator.h"
-#include"../Evaluators/PreendgameEvaluator.h"
-#include "../Strategy/SuperLeaveLoader.h"
-
+#include "Board.h"
+#include "Bag.h"
+#include "Rack.h"
+#include "Move.h"
+#include "../MoveGenerator/MoveGenerator.h"
+#include "../Evaluators/Evaluator.h"
+#include "../Evaluators/MidgameEvaluator.h"
+#include "../Evaluators/PreendgameEvaluator.h"
 
 class Agent{
     Board *board_;
-    Rack *rack_;
     Bag *bag_;
-    MoveGenerator *movegenerator_;
-    map<string, double>* syn2_;
-    map<char, double>* worth_;
-    Move chosenMove;
+    Rack *rack_;
     
     public:
-    Agent();
-    Agent(Board *, Rack*, Bag*, MoveGenerator*);
+    Agent(Board *, Bag*, Rack*);
 
-    //instead of void, data type fatma hat2oul 3aleh
-    void MidGame(vector<Move>*);
-    void PreEndGame();
-    void EndGame();
-    void ReturnMove (Move *FinalMove);
-
-};
+    void MidGame(vector<Move>, map<string, double> * rackLeave, map<char, double> * charValue);
+    void PreEndGame(map<string, double> * syn2, MoveGenerator * movGen, vector <Move> moves);
+    void EndGame(vector<Move>);
+}

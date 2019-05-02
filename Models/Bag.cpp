@@ -79,6 +79,20 @@ map<Tile,int> Bag::getBag(){
     return this->bag_;
 }
 
+vector <char> Bag::GetRemainigLetters(){
+    map<Tile,int> :: iterator it;
+    vector <char> RemainingLetters;
+    for (it = bag_.begin(); it != bag_.end(); it++) {
+        Tile tile= it->first;
+        char letter = tile.GetLetter();
+        int occ = it->second;
+
+        for (int occur = 0; occur < occ ; occur++){
+            RemainingLetters.push_back(letter);
+        }
+    }
+}
+
 Bag::~Bag()
 {
 }

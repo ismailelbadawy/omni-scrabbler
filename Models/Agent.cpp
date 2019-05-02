@@ -1,29 +1,30 @@
-#include"Agent.h"
+#include "Agent.h"
 
-Agent::Agent(Board *board, Rack* rack, Bag* bag, MoveGenerator* movegenerator){
+Agent::Agent(Board *board, Bag* bag, Rack* rack){
     board_ = board;
-    rack_ = rack;
     bag_ = bag;
-    MoveGenerator movgen(*this->board_);
-    this->movegenerator_ = movegenerator;
-    this->syn2_ = new map<string, double>();
-	this->worth_ = new map<char, double>();
-	SuperLeaveLoader loader(syn2_, worth_, "assets/syn2", "assets/worths");
-
+    rack_ = rack;
 }
 
-void Agent::MidGame(vector<Move>* moves){
-    MidgameEvaluator midgameEvaluator(moves,this->board_,this->syn2_,this->worth_);
-    vector<Move>* evaluatedMoves = new vector<Move>();
-    evaluatedMoves = midgameEvaluator.Evaluate();
-    
-    if (this->bag_->GetRemainingTiles().size() < 40 )
-    {
-        //instantiate from the simulation
-    }
+void Agent::MidGame(vector <Move> moves, map<string, double> * syn2, map<char, double> * worth){
+    MidgameEvaluator* evaluator = NULL;
+    evaluator = new MidgameEvaluator(&moves, board_, syn2, worth);
+	  vector<Move> * evaluatedMoves = evaluator->Evaluate();
 
-    // Choose the best move.
-    this->chosenMove = Move(evaluatedMoves->at(0));
+    //return best move
+    Move BestMove= (*evaluatedMoves)[0];
+}
 
-    delete evaluatedMoves;
+void Agent::PreEndGame(map<string, double> * syn2, MoveGenerator * movGen, vector <Move> moves){
+    vector <char> remLetters= bag_->GetRemainigLetters();
+    PreendgameEvaluator* PreEval = NULL;
+    PreEval = new PreendgameEvaluator(syn2,board_,movGen,moves, remLetters);
+    vector<Move> * EvaluatorMoves = PreEval->Evaluate();
+
+    //send EvaluatorMoves to simulator 
+    //return best move by simulation
+}
+
+void Agent::EndGame(vector<Move> moves){
+
 }

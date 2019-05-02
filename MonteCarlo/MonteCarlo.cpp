@@ -60,7 +60,7 @@ MonteCarlo::MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, R
     //set of moves
     //
     this->Root = temp;
-    //should generate the oponent Rack.
+   //should generate the oponent Rack.
     firstLevel();
 }
 
@@ -123,8 +123,7 @@ Rack MonteCarlo::GenerateRack(Rack r,NodeMC* node)
 void MonteCarlo::firstLevel()
 {
     //temp rack to use until we implement the random function.
-    //we should use the bag to generate the random racks for each new state inside the loop.
-   
+    //we should use the bag to generate the random racks for each new state inside the loop.   
     Board tempLevel1Board = this->Root->boardState;
 
     //loop over the number of possible actions to make in order to get all the possible states in the level.
@@ -182,7 +181,7 @@ NodeMC *MonteCarlo::newNode(Board boardState, vector<Move> Moves, Rack currentRa
     temp->boardState = boardState;
     temp->rack = tempRack;
     temp->Parent = parent;
-	temp->oldRack = oldRack;
+  	temp->oldRack = oldRack;
     vector<NodeMC *> children;
     temp->children = children;
 
@@ -232,7 +231,6 @@ void MonteCarlo::LevelOrderTraversal(NodeMC *root)
         cout << endl;
     }
 }
-
 void MonteCarlo::calculateUCB(NodeMC *node)
 {
     //calculate UCB

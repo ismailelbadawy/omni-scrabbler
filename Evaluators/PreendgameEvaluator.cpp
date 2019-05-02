@@ -12,23 +12,12 @@ double PreendgameEvaluator::Evaluate(Move * move)
     return this->ComputeBestMove().GetScore();
 }
 
-PreendgameEvaluator::PreendgameEvaluator(map<string, double> *rackLeave,Board* board, MoveGenerator * movGen,vector<Move> possibleMoves){
+PreendgameEvaluator::PreendgameEvaluator(map<string, double> *rackLeave,Board* board, MoveGenerator * movGen,vector<Move> possibleMoves, vector <char> remLetters){
     this->doubleValued_ = rackLeave;
     this->board_ = board;
     this->movegenerator_ = movGen;
     this->possiblemoves_ = possibleMoves;
-    vector<char> vect;
-vect.push_back('a');
-vect.push_back('b');
-vect.push_back('d');
-vect.push_back('a');
-vect.push_back('e');
-vect.push_back('c');
-vect.push_back('h');
-vect.push_back('h');
-vect.push_back('x');
-vect.push_back('p');
-this->remainingletters_ = vect;
+    this->remainingletters_ = remLetters; 
     this->numTilesByOpponent_ = 3; //for testing only
 }
 
