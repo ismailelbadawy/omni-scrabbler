@@ -16,5 +16,6 @@ public:
 	~Rack();
 	void SetTile(char c, int loc);
 	char GetLetter(int loc);
+	void generateRanRack(Rack rack);
 };
 

@@ -39,3 +39,7 @@ char Rack::GetLetter(int loc)
 int Rack::GetLength(){
     return tiles_.size();
 }
+
+void Rack::generateRanRack(Rack rack){
+    
+}

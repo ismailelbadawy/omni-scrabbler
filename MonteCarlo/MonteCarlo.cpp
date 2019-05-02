@@ -1,0 +1,132 @@
+#include <iostream>
+#include <iostream>
+#include <map>
+#include <vector>
+#include <string>
+#include <fstream>
+
+#include "./MonteCarlo.h"
+#include "../Models/Bag.h"
+#include "../Models/Tile.h"
+#include "../Models/Play.h"
+#include "../MoveGenerator/MoveGenerator.h"
+
+using namespace std;
+
+MonteCarlo::MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, Bag bag)
+{
+    NodeMC *temp = new NodeMC;
+    Rack tempRack = currentRack;
+
+    temp->boardState = boardState;
+    temp->Rack = tempRack;
+    temp->Parent = nullptr;
+
+    temp->nodeState.treeDepth = 0;
+    temp->nodeState.possibleActions = Moves;
+    temp->nodeState.reward = 0;
+    temp->nodeState.nbOfVisits = 0;
+
+    temp->currentBag = bag;
+    this->mainRack = tempRack;
+    //populate the first level of actions.
+    // i need the new rack of each state
+    // board state
+    // parent to be set to the root
+    //depth
+    //set of moves
+    //
+    this->Root = temp;
+    firstLevel();
+}
+
+void MonteCarlo::firstLevel()
+{
+    //temp rack to use until we implement the random function.
+    //we should use the bag to generate the random racks for each new state inside the loop.
+    Tile RackTiles[7];
+
+    RackTiles[0].SetLetter('f');
+    RackTiles[0].SetScore(1);
+    RackTiles[1].SetLetter('a');
+    RackTiles[1].SetScore(4);
+    RackTiles[2].SetLetter('l');
+    RackTiles[2].SetScore(3);
+    RackTiles[3].SetLetter('e');
+    RackTiles[3].SetScore(2);
+    RackTiles[4].SetLetter('m');
+    RackTiles[4].SetScore(1);
+    RackTiles[5].SetLetter('o');
+    RackTiles[5].SetScore(4);
+    RackTiles[6].SetLetter('r');
+    RackTiles[6].SetScore(3);
+
+    vector<Tile> rackTiles(RackTiles, RackTiles + sizeof RackTiles / sizeof RackTiles[0]);
+    Rack rack(rackTiles);
+
+    //loop over the number of possible actions to make in order to get all the possible states in the level.
+    for (int i = 0; i < 10; i++)
+    {
+        Board tempLevel1Board = this->Root->boardState;
+        //generate the first board state after my move.
+        tempLevel1Board.SimulateMove(&(this->Root->nodeState.possibleActions[i]));
+        //using the move generator to generate new set of moves for each action.
+        vector<Move> nextMoves;
+        MoveGenerator movGen(tempLevel1Board);
+
+        nextMoves = movGen.Generate(&rack, tempLevel1Board.GetCount() == 0);
+
+        this->Root->children.push_back(this->newNode(tempLevel1Board, nextMoves, rack, Root->currentBag, Root, 1));
+    }
+}
+
+NodeMC *MonteCarlo::newNode(Board boardState, vector<Move> Moves, Rack currentRack, Bag bag, NodeMC *parent, int level)
+{
+    NodeMC *temp = new NodeMC;
+    Rack tempRack = currentRack;
+
+    temp->boardState = boardState;
+    temp->Rack = tempRack;
+    temp->Parent = parent;
+
+    temp->nodeState.treeDepth = level;
+    temp->nodeState.possibleActions = Moves;
+
+    //the reward should be the score of the move.
+    temp->nodeState.reward = 0;
+    temp->nodeState.nbOfVisits = 0;
+}
+
+void MonteCarlo::LevelOrderTraversal(NodeMC *root)
+{
+    if (root == NULL)
+        return;
+
+    queue<NodeMC *> q;
+    q.push(root);
+    while (!q.empty())
+    {
+        int n = q.size();
+        while (n > 0)
+        {
+            NodeMC *p = q.front();
+            q.pop();
+            Tile *tiles[15][15];
+            p->boardState.GetTiles(tiles);
+
+            for (int i = 0; i < 15; i++)
+            {
+                for (int j = 0; j < 15; j++)
+                {
+                    cout << tiles[i][j]->GetLetter() << endl;
+                }
+            }
+
+            for (int i = 0; i < p->children.size(); i++)
+                q.push(p->children[i]);
+            n--;
+        }
+
+        cout << endl;
+    }
+}
