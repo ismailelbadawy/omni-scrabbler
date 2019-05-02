@@ -1,4 +1,5 @@
 #pragma once
+
 #include<iostream>
 #include<vector>
 #include<map>
@@ -12,6 +13,7 @@
 #include"Models/Agent.h"
 #include"GADDAG/GADDAG.h"
 #include "Evaluators/MidgameEvaluator.h"
+
 #include "Evaluators/PreendgameEvaluator.h"
 #include "Strategy/SuperLeaveLoader.h"
 #include <time.h>
@@ -61,7 +63,8 @@ int main(){
 
 	vector<Tile> rackTiles(RackTiles, RackTiles + sizeof RackTiles / sizeof RackTiles[0]);
 	Rack rack(rackTiles);
-	vector<Move> moves;
+
+  vector<Move> moves;
 
 	cout << "Loading GADDAG...\n";
 	auto startDag = chrono::high_resolution_clock::now();

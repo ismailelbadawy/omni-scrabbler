@@ -7,8 +7,8 @@
 using namespace std;
 class Rack
 {
-	vector<Tile> tiles_;
 public:
+	vector<Tile> tiles_;
 	Rack();
 	Rack(vector<Tile> tiles);
 	Rack(string rack);

@@ -73,7 +73,7 @@ bool MoveGenerator::CheckOtherDimension(string word,int row,int col,bool horizon
 				while (boardTiles_[row-rowIterUp-1][col+i]->GetLetter()!='0')
 				{
 					
-					if (row-rowIterUp==0)						//We must check so that we will not access an out of bound memory
+					if (row-rowIterUp-1<=0)						//We must check so that we will not access an out of bound memory
 						break;
 					rowIterUp++;
 				}
@@ -83,7 +83,7 @@ bool MoveGenerator::CheckOtherDimension(string word,int row,int col,bool horizon
 				while (boardTiles_[row+rowIterDown+1][col+i]->GetLetter()!='0')
 				{
 					
-					if (row+rowIterDown==14)					//We must check so that we will not access an out of bound memory
+					if (row+rowIterDown+1>=14)					//We must check so that we will not access an out of bound memory
 						break;
 					rowIterDown++;
 				}
@@ -145,7 +145,7 @@ bool MoveGenerator::CheckOtherDimension(string word,int row,int col,bool horizon
 			{
 				while (boardTiles_[row+i][col-colIterLeft-1]->GetLetter()!='0')
 				{
-					if (col-colIterLeft==0)						//We must check so that we will not access an out of bound memory
+					if (col-colIterLeft-1<=0)						//We must check so that we will not access an out of bound memory
 						break;
 					colIterLeft++;
 				}
@@ -156,7 +156,7 @@ bool MoveGenerator::CheckOtherDimension(string word,int row,int col,bool horizon
 				while (boardTiles_[row+i][col+colIterRight+1]->GetLetter()!='0')
 				{
 					
-					if (col+colIterRight==14)					//We must check so that we will not access an out of bound memory
+					if (col+colIterRight+1>=14)					//We must check so that we will not access an out of bound memory
 						break;
 					colIterRight++;
 				
@@ -300,7 +300,7 @@ void MoveGenerator::GenerateWordsAtRows()
 				}
 				}
 				
-				if (reverseIterator==-1) //We have reached the beginning of the row (First pattern special case)
+				if (reverseIterator<=-1) //We have reached the beginning of the row (First pattern special case)
 				{
 					//We are sending the entire row. Therefore, the hook will be the entire row...
 					//possibleWords=send_to_GADDAG(hook,rack_,1,1) 					
@@ -393,7 +393,7 @@ void MoveGenerator::GenerateWordsAtCols()
 					
 					}
 				
-				if (reverseIterator==-1) //We have reached the beginning of the row (First pattern special case)
+				if (reverseIterator<=-1) //We have reached the beginning of the row (First pattern special case)
 				{
 					//We are sending the entire row. Therefore, the hook will be the entire row...
 					//possibleWords=send_to_GADDAG(hook,rack_,1,1) 

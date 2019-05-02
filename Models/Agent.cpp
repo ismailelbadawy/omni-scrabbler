@@ -9,7 +9,7 @@ Agent::Agent(Board *board, Bag* bag, Rack* rack){
 void Agent::MidGame(vector <Move> moves, map<string, double> * syn2, map<char, double> * worth){
     MidgameEvaluator* evaluator = NULL;
     evaluator = new MidgameEvaluator(&moves, board_, syn2, worth);
-	vector<Move> * evaluatedMoves = evaluator->Evaluate();
+	  vector<Move> * evaluatedMoves = evaluator->Evaluate();
 
     //return best move
     Move BestMove= (*evaluatedMoves)[0];

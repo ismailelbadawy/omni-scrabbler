@@ -20,9 +20,11 @@ class Bag
     void Initialize();
     int GetOccurences(char letter);
     int GetOccurences(Tile tile);
-    int GetRemainingTiles();
-    void TakeLetter(Tile* tile);
+    vector<Tile> GetRemainingTiles();
+    void TakeLetter(Tile tile);
+    void TakeLetter(char letter);
     void GiveTiles(vector<Tile> tiles);
+    map<Tile,int> getBag();
     vector <char> GetRemainigLetters();
     ~Bag();
 };

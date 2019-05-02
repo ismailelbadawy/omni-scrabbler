@@ -103,7 +103,7 @@ double MidgameEvaluator::CalculatePenalty()
 		}
 		move->CalculateScore();
         move->SetHeuristic();
-        cout << "Move (" << i << ") has penalty of : " << move->GetPenalty() << " rack leave of : " << move->GetRackLeave() << " score of : " << move->GetScore() << " Total : " << move->GetHeuristic() << endl;
+        //cout << "Move (" << i << ") has penalty of : " << move->GetPenalty() << " rack leave of : " << move->GetRackLeave() << " score of : " << move->GetScore() << " Total : " << move->GetHeuristic() << endl;
         // Must be called after the rack leave and 
         
         }
