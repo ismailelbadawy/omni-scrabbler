@@ -10,6 +10,7 @@
 #ifdef _WIN32
 #pragma comment( lib, "ws2_32" )
 #include <WinSock2.h>
+#include <mutex>
 #endif
 using easywsclient::WebSocket;
 
@@ -284,9 +285,9 @@ EndState Comm::EndGame(const std::vector<uint8_t>& message)
 
 
 void Comm::RecieveFromServer(const std::vector<uint8_t>& message){
+	T.push_back(0);
    std::cout << CurrentState << std::endl;
 	int MsgType = message[0];
-	T.push_back(0);
 
 	if (MsgType == MessageTypes::END)  //End State
 	{
@@ -300,7 +301,9 @@ void Comm::RecieveFromServer(const std::vector<uint8_t>& message){
 		StringToAscii(T, name);
 		CurrentState = "READY";
 		std::cout << " Current State = " + CurrentState << std::endl;
+		g_lock.lock();
 		ws->sendBinary(T);
+		g_lock.unlock();
 	}
 
 	else if (MsgType == MessageTypes::START && CurrentState == "READY")
@@ -486,7 +489,9 @@ void Comm::ThinkingThread(){
 				std::cin >> mover.Score;
 
 				buffer = PlayToBuffer(mover);
+				g_lock.lock();
 				ws->sendBinary(buffer);
+				g_lock.unlock();
 				CurrentState = "AWAIT_PLAY_RESPONSE";
 				std::cout << " Current State = " + CurrentState << std::endl;
 			}
@@ -506,7 +511,9 @@ void Comm::ThinkingThread(){
 
 
 				buffer = ExchangeToBuffer(TilesExc);
+				g_lock.lock();
 				ws->sendBinary(buffer);
+				g_lock.unlock();
 				CurrentState = "AWAIT_EXCHANGE_RESPONSE";
 				std::cout << " Current State = " + CurrentState << std::endl;
 			}
@@ -514,7 +521,9 @@ void Comm::ThinkingThread(){
 			{
 				std::vector<uint8_t> buffer(0);
 				buffer = PassToBuffer();
+				g_lock.lock();
 				ws->sendBinary(buffer);
+				g_lock.unlock();
 				CurrentState = "IDLE";
 				std::cout << " Current State = " + CurrentState << std::endl;
 

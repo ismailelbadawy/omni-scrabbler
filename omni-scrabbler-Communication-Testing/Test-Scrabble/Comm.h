@@ -47,6 +47,7 @@ class Comm{
 
 public:
 static WebSocket::pointer ws;
+std::recursive_mutex g_lock;
  Comm();
  static void RecieveFromServer(const std::vector<uint8_t>& message);
  static void ThinkingThread();

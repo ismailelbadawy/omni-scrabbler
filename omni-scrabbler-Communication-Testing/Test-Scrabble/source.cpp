@@ -21,10 +21,13 @@ int main(){
 
 	// while (Comm::ws->getReadyState() != WebSocket::CLOSED) {
 
+  //g_lock.lock();
 	// 	Comm::ws->poll();
+//  g_unlock.lock();
 
+  //g_lock.lock();
 	// 	Comm::ws->dispatchBinary(&Comm::RecieveFromServer);
-
+//  g_unlock.lock();
 	// }
   // }
 GameManager manager;
