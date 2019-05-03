@@ -77,8 +77,9 @@ public:
     Rack oponentRack; //oponent RAck will be generated in the constructor.
 	map<string, double>* syn2;
 	map<char, double>* worth;
+    bool MidGame;
     //constructor.
-    MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, Rack oponentRack, Bag bag, MoveGenerator *movGen, map<string, double>* syn2, map<char, double>* worth);
+    MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, Rack oponentRack, Bag bag, MoveGenerator *movGen, map<string, double>* syn2, map<char, double>* worth,bool MidGame);
 	Rack GenerateRack(Rack r, NodeMC* node);
     //adding new node to the tree.
     NodeMC *newNode(Board boardState, vector<Move> Moves, Rack currentRack , Rack oldRack, Bag bag, NodeMC *parent, int level,double reward);

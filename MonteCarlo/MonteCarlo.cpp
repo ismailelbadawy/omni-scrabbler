@@ -6,6 +6,7 @@
 #include <fstream>
 #include <random>
 #include <chrono>
+#include <algorithm>
 #include "math.h"
 
 #include "./MonteCarlo.h"
@@ -14,6 +15,8 @@
 #include "../Models/Play.h"
 #include "../Models/Tile.h"
 #include "../MoveGenerator/MoveGenerator.h"
+
+#include "../Evaluators/PreendgameEvaluator.h"
 
 #include "../MoveGenerator/MoveGenerator.h"
 #include "../Evaluators/MidgameEvaluator.h"
@@ -24,7 +27,7 @@
 
 using namespace std;
 
-MonteCarlo::MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, Rack oponentRack, Bag bag, MoveGenerator *movGen, map<string, double>* syn2, map<char, double>* worth)
+MonteCarlo::MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, Rack oponentRack, Bag bag, MoveGenerator *movGen, map<string, double>* syn2, map<char, double>* worth,bool MidGame)
 {
     NodeMC *temp = new NodeMC;
     Rack tempRack = currentRack;
@@ -36,6 +39,10 @@ MonteCarlo::MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, R
 	this->worth = worth;
 	this->syn2 = syn2;
     temp->nodeState.treeDepth = 0;
+
+    //reverse all the moves
+    reverse(Moves.begin(), Moves.end());
+
     temp->nodeState.possibleActions = Moves;
     temp->nodeState.reward = 0;
     temp->nodeState.nbOfVisits = 1;
@@ -52,6 +59,7 @@ MonteCarlo::MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, R
 
     this->mainRack = tempRack;
     this->oponentRack = oponentRack;
+    this->MidGame = MidGame;
     //populate the first level of actions.
     // i need the new rack of each state
     // board state
@@ -161,14 +169,20 @@ void MonteCarlo::firstLevel()
 		//TempRack & tempBag are updated
         vector<Move> nextMoves;
         nextMoves = this->movGen->Generate(&this->oponentRack, tempLevel1Board, tempLevel1Board.GetCount() == 0);
-		MidgameEvaluator evaluator(&nextMoves, &tempLevel1Board, syn2, worth);//MidgameEvaluator(&moves,&board,&syn2,&worth);
-		for (int i = 0; i < nextMoves.size(); i++)
-		{
-			evaluator.Evaluate(&nextMoves.at(i));
-		}
 
+        vector<Move> * evaluatedMoves;
+        if(this->MidGame == true){
+            MidgameEvaluator *evaluator = new MidgameEvaluator(&nextMoves, &tempLevel1Board, syn2, worth);
+	        evaluatedMoves = evaluator->Evaluate();
+        }else{
+            PreendgameEvaluator* PreEval = new PreendgameEvaluator(syn2,&tempLevel1Board,this->movGen,nextMoves, this->Root->currentBag.GetRemainigLetters());
+            evaluatedMoves = PreEval->Evaluate();
+        }
+		
+        //reverse all the moves
+        reverse(evaluatedMoves->begin(), evaluatedMoves->end());
         
-        this->Root->children.push_back(newNode(tempLevel1Board, nextMoves, this->oponentRack, tempRack,tempBag, Root, 1, reward));
+        this->Root->children.push_back(newNode(tempLevel1Board, *evaluatedMoves, this->oponentRack, tempRack,tempBag, Root, 1, reward));
     }
     cout << "done making first level" << endl;
 }
@@ -262,45 +276,6 @@ NodeMC *MonteCarlo::promisingNode(NodeMC *root)
 
 void MonteCarlo::Rollout(NodeMC *node)
 {
-    // //E7na hanrollout el node direct ahan kan el level
-    // //Bs msh hano3od ntl3
-    // //y3ni lw kona @node fi level=3 han3ml rollout(elNodeDeh) w bas msh han3ml rollout(elNodeDeh); rollout(elNodeDehwElFo2eha); y3ni msh recusrive
-    // switch (node->nodeState.treeDepth)
-    // {
-    // case 0:
-    // 	//Current state no Simulations
-    // 	node->nodeState.nbOfVisits++;
-    // 	break;
-    // case 1:
-    // 	//State after my move
-    // 	//node->nodeState.nbOfVisits++; already done while calculating ucb.
-    // 	node->Parent->nodeState.nbOfVisits++;
-    // 	calculateUCB(node);
-    // 	break;
-    // case 2:
-    // 	//State after my move + opponenet move
-    // 	node->Parent->nodeState.reward -= node->nodeState.reward;
-    // 	node->nodeState.nbOfVisits++;
-    // 	node->Parent->nodeState.nbOfVisits++;
-    // 	node->Parent->Parent->nodeState.nbOfVisits++;
-    // 	calculateUCB(node);
-    // 	calculateUCB(node->Parent);
-    // 	break;
-    // case 3:
-    // 	//State after my move -> opp -> my mmove
-    // 	node->Parent->nodeState.reward -= node->nodeState.reward;
-    // 	node->nodeState.nbOfVisits++;
-    // 	node->Parent->nodeState.nbOfVisits++;
-    // 	node->Parent->Parent->nodeState.nbOfVisits++;
-    // 	node->Parent->Parent->Parent->nodeState.nbOfVisits++;
-    // 	calculateUCB(node);
-    // 	calculateUCB(node->Parent);
-    // 	calculateUCB(node->Parent->Parent);
-    // 	break;
-    // default:
-    // 	break;
-    // }
-
     NodeMC *tempNode = node;
     double childUCB = 0;
     while (tempNode != nullptr)
@@ -322,19 +297,8 @@ void MonteCarlo::Rollout(NodeMC *node)
 void MonteCarlo::Expand(NodeMC *node)
 {
 
-    // vector<NodeMC *> newstates;
     Board tempBoard = node->boardState;
-    //MoveGenerator movGen(tempBoard);
-
-	//MidgameEvaluator evaluator(&node->nodeState.possibleActions, &node->boardState, syn2, worth);//MidgameEvaluator(&moves,&board,&syn2,&worth);
-	//for (int i = 0; i < 10; i++)
-	//{
-	//	
-	//	evaluator.Evaluate(&node->nodeState.possibleActions.at(i));
-
-	//}
-
-
+    
     for (int i = 0; i < node->nodeState.possibleActions.size(); i++)
     {
 
@@ -354,18 +318,23 @@ void MonteCarlo::Expand(NodeMC *node)
             //Rack myRackRem = this->mainRack;
 			
             nextMoves = this->movGen->Generate(&tempRack, tempBoard, tempBoard.GetCount() == 0);
-			MidgameEvaluator evaluator(&nextMoves, &tempBoard, syn2, worth);//MidgameEvaluator(&moves,&board,&syn2,&worth);
-			for (int i = 0; i < nextMoves.size(); i++)
-			{
-				evaluator.Evaluate(&nextMoves.at(i));
-			}
+			// MidgameEvaluator evaluator(&nextMoves, &tempBoard, syn2, worth);//MidgameEvaluator(&moves,&board,&syn2,&worth);
+			// for (int i = 0; i < nextMoves.size(); i++)
+			// {
+			// 	evaluator.Evaluate(&nextMoves.at(i));
+			// }
 
-            //generate a random rack for me.
-
-            //keeping track of the bag
+            vector<Move> * evaluatedMoves;
+            if(this->MidGame == true){
+                MidgameEvaluator *evaluator = new MidgameEvaluator(&nextMoves, &tempBoard, syn2, worth);
+                evaluatedMoves = evaluator->Evaluate();
+            }else{
+                PreendgameEvaluator* PreEval = new PreendgameEvaluator(syn2,&tempBoard,this->movGen,nextMoves, this->Root->currentBag.GetRemainigLetters());
+                evaluatedMoves = PreEval->Evaluate();
+            }
             Bag bagRem;
 
-            node->children.push_back(newNode(tempBoard, nextMoves, tempRack,node->oldRack, bagRem, node, node->nodeState.treeDepth + 1, reward));
+            node->children.push_back(newNode(tempBoard, *evaluatedMoves, tempRack,node->oldRack, bagRem, node, node->nodeState.treeDepth + 1, reward));
         }
         else if (node->nodeState.treeDepth == 2)
         {
@@ -373,21 +342,9 @@ void MonteCarlo::Expand(NodeMC *node)
             tempBoard.SimulateMove(&(node->nodeState.possibleActions[i]));
 
             double reward = calculateMoveReward(node->nodeState.possibleActions[i]);
-
-            //using the move generator to generate new set of moves for each action.
             vector<Move> nextMoves;
-
             Rack myRackRem,oldrack;
-            //nextMoves = this->movGen->Generate(&myRackRem, tempBoard, tempBoard.GetCount() == 0);
             vector<Move> simVec;
-            // for (int i = 0; i < 10; i++)
-            // {
-            //     simVec.push_back(nextMoves.at(i));
-            // }
-
-            //generate a random rack for me.
-
-            //keeping track of the bag
             Bag bagRem;
 
             node->children.push_back(newNode(tempBoard, simVec, myRackRem, oldrack,bagRem, node, node->nodeState.treeDepth + 1, reward));
@@ -431,13 +388,13 @@ int MonteCarlo::Simulation()
             }
         }
     }
-
+    
     NodeMC *temp = promisingNode(this->Root);
     for (size_t i = 0; i < this->Root->children.size(); i++)
     {
         if (this->Root->children.at(i)==temp)
         {
-            return i;
+            return (this->Root->children.size() - 1 - i);
         }
         
     }
