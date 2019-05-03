@@ -1116,6 +1116,25 @@ void MoveGenerator::CalculatePlayScore(Play *p, int addedScore){
 	
 }
 
+
+bool MoveGenerator::IsValidMove(Play& play, string enemyRack){
+	string word = play.GetLetters();
+	if (!dag_->CheckWordInDict(word)){
+		return false;
+	}
+	int additionalScore = 0;
+	if (!WordIsTouching(word,play.GetRow(),play.GetColumn(),play.GetIsHorizontal()))
+	{
+		return false;
+	}
+
+	if(!CheckOtherDimension(word,play.GetRow(),play.GetColumn(), play.GetIsHorizontal(),additionalScore))
+	{
+		return false;
+	}
+	CalculatePlayScore(&play,additionalScore);
+}
+
 MoveGenerator::~MoveGenerator(){
 	
 }

@@ -24,6 +24,7 @@ public:
     MoveGenerator(Board &board);
     ~MoveGenerator();
     vector<Move> Generate(const Rack *, Board &board,bool isEmpty);
+	bool IsValidMove(Play& play, string enemyRack);
 
 private:
     void GenerateWordsAtCols();
