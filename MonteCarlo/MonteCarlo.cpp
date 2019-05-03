@@ -27,8 +27,9 @@
 
 using namespace std;
 
-MonteCarlo::MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, Rack oponentRack, Bag bag, MoveGenerator *movGen, map<string, double>* syn2, map<char, double>* worth,bool MidGame)
+MonteCarlo::MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, Rack oponentRack, Bag bag, MoveGenerator *movGen, map<string, double>* syn2, map<char, double>* worth,bool MidGame, int numTilesByOpponent)
 {
+    this->numTilesByOpponent_ = numTilesByOpponent;
     NodeMC *temp = new NodeMC;
     Rack tempRack = currentRack;
     this->movGen = movGen;
@@ -175,7 +176,7 @@ void MonteCarlo::firstLevel()
             MidgameEvaluator *evaluator = new MidgameEvaluator(&nextMoves, &tempLevel1Board, syn2, worth);
 	        evaluatedMoves = evaluator->Evaluate();
         }else{
-            PreendgameEvaluator* PreEval = new PreendgameEvaluator(syn2,&tempLevel1Board,this->movGen,nextMoves, this->Root->currentBag.GetRemainigLetters());
+            PreendgameEvaluator* PreEval = new PreendgameEvaluator(syn2,&tempLevel1Board,this->movGen,nextMoves, this->Root->currentBag.GetRemainigLetters(), this->numTilesByOpponent_);
             evaluatedMoves = PreEval->Evaluate();
         }
 		
@@ -329,7 +330,7 @@ void MonteCarlo::Expand(NodeMC *node)
                 MidgameEvaluator *evaluator = new MidgameEvaluator(&nextMoves, &tempBoard, syn2, worth);
                 evaluatedMoves = evaluator->Evaluate();
             }else{
-                PreendgameEvaluator* PreEval = new PreendgameEvaluator(syn2,&tempBoard,this->movGen,nextMoves, this->Root->currentBag.GetRemainigLetters());
+                PreendgameEvaluator* PreEval = new PreendgameEvaluator(syn2,&tempBoard,this->movGen,nextMoves, this->Root->currentBag.GetRemainigLetters(), this->numTilesByOpponent_);
                 evaluatedMoves = PreEval->Evaluate();
             }
             Bag bagRem;

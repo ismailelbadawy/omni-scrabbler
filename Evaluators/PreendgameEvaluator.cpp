@@ -12,13 +12,13 @@ double PreendgameEvaluator::Evaluate(Move * move)
     return this->ComputeBestMove().GetScore();
 }
 
-PreendgameEvaluator::PreendgameEvaluator(map<string, double> *rackLeave,Board* board, MoveGenerator * movGen,vector<Move> possibleMoves, vector <char> remLetters){
+PreendgameEvaluator::PreendgameEvaluator(map<string, double> *rackLeave,Board* board, MoveGenerator * movGen,vector<Move> possibleMoves, vector <char> remLetters, int numTilesByOpponent){
     this->doubleValued_ = rackLeave;
     this->board_ = board;
     this->movegenerator_ = movGen;
     this->possiblemoves_ = possibleMoves;
     this->remainingletters_ = remLetters; 
-    this->numTilesByOpponent_ = 3; //for testing only
+    this->numTilesByOpponent_ = numTilesByOpponent;
 }
 
 double PreendgameEvaluator::CalculateLeave(string rack)
@@ -234,7 +234,7 @@ Move PreendgameEvaluator::OpponentBestMove(){
     
 }
 
-Move PreendgameEvaluator::ComputeBestMove(Rack* opponentRack = NULL)
+Move PreendgameEvaluator::ComputeBestMove(Rack* opponentRack)
 {
     if (opponentRack == NULL) //Agent mode
         this->OpponentRackEstimation();
@@ -325,7 +325,7 @@ return *bestMove;
 }
 
 
-vector<Move> * PreendgameEvaluator::EvaluateGame(Rack* opponentRack = NULL)
+vector<Move> * PreendgameEvaluator::EvaluateGame(Rack* opponentRack)
 {
     ComputeBestMove(opponentRack);
     vector<Move> * weReturn = new vector<Move>();
@@ -338,4 +338,10 @@ vector<Move> * PreendgameEvaluator::EvaluateGame(Rack* opponentRack = NULL)
     return weReturn;
 }
 
-vector<Move> * PreendgameEvaluator::Evaluate(){}
+vector<Move> * PreendgameEvaluator::Evaluate(){
+    return NULL;
+}
+
+Rack PreendgameEvaluator:: GetEnemyRack(){
+    return this->enemyrack_;
+}
