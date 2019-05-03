@@ -38,19 +38,19 @@ int main(){
 
 	Tile RackTiles[7];          //A simple array to carry the rack's letters
 
-	RackTiles[0].SetLetter('q');
+	RackTiles[0].SetLetter('r');
 	RackTiles[0].SetScore(1);
-	RackTiles[1].SetLetter('t');
+	RackTiles[1].SetLetter('a');
 	RackTiles[1].SetScore(4);
-	RackTiles[2].SetLetter('e');
+	RackTiles[2].SetLetter('v');
 	RackTiles[2].SetScore(3);
-	RackTiles[3].SetLetter('f');
+	RackTiles[3].SetLetter('e');
 	RackTiles[3].SetScore(2);
-	RackTiles[4].SetLetter('v');
+	RackTiles[4].SetLetter('p');
 	RackTiles[4].SetScore(1);
 	RackTiles[5].SetLetter('a');
 	RackTiles[5].SetScore(4);
-	RackTiles[6].SetLetter('g');
+	RackTiles[6].SetLetter('m');
 	RackTiles[6].SetScore(3);
 	
 
@@ -93,13 +93,15 @@ int main(){
 				moves = movGen.Generate(&rack, board, board.GetCount()==0);
 				auto  end = chrono::high_resolution_clock::now();
 
-				int BagSize = (int)bag.GetRemainingTiles().size();
+				int numTilesByOpponent =3;
+
+				int BagSize = (int)bag.GetRemainigLetters().size();
 				if (BagSize > 9){//MidGame
-					chosenMove = AI_Agent.MidGame(moves, syn2, worth,&movGen); //should return best move
+					chosenMove = AI_Agent.MidGame(moves, syn2, worth,&movGen, numTilesByOpponent); //should return best move
 					
 				}
 				else if (BagSize > 0 && BagSize <=9){
-					chosenMove = AI_Agent.PreEndGame(syn2,worth,&movGen,moves); //should return best move
+					chosenMove = AI_Agent.PreEndGame(syn2,worth,&movGen,moves, numTilesByOpponent); //should return best move
 	
 				}
 				else if (BagSize == 0){

@@ -12,13 +12,13 @@ double PreendgameEvaluator::Evaluate(Move * move)
     return this->ComputeBestMove().GetScore();
 }
 
-PreendgameEvaluator::PreendgameEvaluator(map<string, double> *rackLeave,Board* board, MoveGenerator * movGen,vector<Move> possibleMoves, vector <char> remLetters){
+PreendgameEvaluator::PreendgameEvaluator(map<string, double> *rackLeave,Board* board, MoveGenerator * movGen,vector<Move> possibleMoves, vector <char> remLetters, int numTilesByOpponent){
     this->doubleValued_ = rackLeave;
     this->board_ = board;
     this->movegenerator_ = movGen;
     this->possiblemoves_ = possibleMoves;
     this->remainingletters_ = remLetters; 
-    this->numTilesByOpponent_ = 3; //for testing only
+    this->numTilesByOpponent_ = numTilesByOpponent;
 }
 
 double PreendgameEvaluator::CalculateLeave(string rack)
@@ -234,9 +234,14 @@ Move PreendgameEvaluator::OpponentBestMove(){
     
 }
 
-Move PreendgameEvaluator::ComputeBestMove()
+Move PreendgameEvaluator::ComputeBestMove(Rack* opponentRack)
 {
-    this->OpponentRackEstimation();
+    if (opponentRack == NULL) //Agent mode
+        this->OpponentRackEstimation();
+    else{
+        this->enemyrack_ = *opponentRack;  
+    }
+        
     Move opponentMove = this->OpponentBestMove();
     int opponentRow = opponentMove.GetPlay()->GetRow();
     int opponentColumn = opponentMove.GetPlay()->GetColumn();
@@ -320,8 +325,9 @@ return *bestMove;
 }
 
 
-vector<Move> * PreendgameEvaluator::Evaluate()
+vector<Move> * PreendgameEvaluator::EvaluateGame(Rack* opponentRack)
 {
+    ComputeBestMove(opponentRack);
     vector<Move> * weReturn = new vector<Move>();
     std::sort(possiblemoves_.begin(), possiblemoves_.end());
     int maxSize = (int)possiblemoves_.size() >= 25 ? 25 : possiblemoves_.size();
@@ -330,4 +336,12 @@ vector<Move> * PreendgameEvaluator::Evaluate()
         weReturn->push_back(possiblemoves_.at(i));
     }
     return weReturn;
+}
+
+vector<Move> * PreendgameEvaluator::Evaluate(){
+    return NULL;
+}
+
+Rack PreendgameEvaluator:: GetEnemyRack(){
+    return this->enemyrack_;
 }
