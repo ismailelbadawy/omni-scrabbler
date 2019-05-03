@@ -158,6 +158,25 @@ void Bag::swapRack(Rack&rack_, vector<int> swappedLoc)
 
 }
 
+void Bag::generateRandomRack(Rack&rack_)
+{
+	srand(time(NULL));
+	for (int i = 0; i<7; i++)
+	{
+		int randomNo = rand() % bag_.size();
+		std::map<Tile, int>::iterator it = std::next(bag_.begin(), randomNo);
+		while ((it)->second == 0)
+		{
+			randomNo = rand() % bag_.size();
+			it = std::next(bag_.begin(), randomNo);
+		}
+		Tile T = (it)->first;
+		int val = int(it->second);
+		it->second = val - 1;
+		rack_.SetTile(T.GetLetter(), i);
+	}
+}
+
 Bag::~Bag()
 {
 }
