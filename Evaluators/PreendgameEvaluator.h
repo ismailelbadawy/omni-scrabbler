@@ -20,8 +20,9 @@ class PreendgameEvaluator : public Evaluator {
     double CalculateLeave(string); //temporary
     int GetBonus(int rowIterator, int columnIterator, Board board);
     double CalculatePenalty(Move * move, Board board);
-    Move ComputeBestMove();
+    Move ComputeBestMove(Rack* opponentRack = NULL);
     void Combination(int start, int size, string &rem, string &rackleave, double &MaxScore, string &BestRackLeave);
+    
    
 public:
     void OpponentRackEstimation(); //public for testing only, should be private later
@@ -29,6 +30,7 @@ public:
     PreendgameEvaluator(map<string, double> *,Board* board, MoveGenerator * movGen,vector<Move> possibleMoves, vector <char> remLetters);
     Move OpponentBestMove();
     double Evaluate(Move * move);
+    vector<Move>* EvaluateGame(Rack* opponentRack = NULL);
     vector<Move>* Evaluate();
     ~PreendgameEvaluator();    
 };

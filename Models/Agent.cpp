@@ -28,7 +28,7 @@ Move Agent::PreEndGame(map<string, double> * syn2,map<char, double>* worth, Move
     vector <char> remLetters= bag_->GetRemainigLetters();
     PreendgameEvaluator* PreEval = NULL;
     PreEval = new PreendgameEvaluator(syn2,board_,movGen,moves, remLetters);
-    vector<Move> * EvaluatorMoves = PreEval->Evaluate();
+    vector<Move> * EvaluatorMoves = PreEval->EvaluateGame();
     MonteCarlo Simulator(*this->board_,*EvaluatorMoves,*rack_, *rack_,*this->bag_,movGen,syn2,worth,false); //bool false
     //send EvaluatorMoves to simulator 
     this->chosenMove_ =&(*EvaluatorMoves)[Simulator.Simulation()];

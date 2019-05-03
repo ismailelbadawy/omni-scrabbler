@@ -234,9 +234,14 @@ Move PreendgameEvaluator::OpponentBestMove(){
     
 }
 
-Move PreendgameEvaluator::ComputeBestMove()
+Move PreendgameEvaluator::ComputeBestMove(Rack* opponentRack = NULL)
 {
-    this->OpponentRackEstimation();
+    if (opponentRack == NULL) //Agent mode
+        this->OpponentRackEstimation();
+    else{
+        this->enemyrack_ = *opponentRack;  
+    }
+        
     Move opponentMove = this->OpponentBestMove();
     int opponentRow = opponentMove.GetPlay()->GetRow();
     int opponentColumn = opponentMove.GetPlay()->GetColumn();
@@ -320,8 +325,9 @@ return *bestMove;
 }
 
 
-vector<Move> * PreendgameEvaluator::Evaluate()
+vector<Move> * PreendgameEvaluator::EvaluateGame(Rack* opponentRack = NULL)
 {
+    ComputeBestMove(opponentRack);
     vector<Move> * weReturn = new vector<Move>();
     std::sort(possiblemoves_.begin(), possiblemoves_.end());
     int maxSize = (int)possiblemoves_.size() >= 25 ? 25 : possiblemoves_.size();
@@ -331,3 +337,5 @@ vector<Move> * PreendgameEvaluator::Evaluate()
     }
     return weReturn;
 }
+
+vector<Move> * PreendgameEvaluator::Evaluate(){}
