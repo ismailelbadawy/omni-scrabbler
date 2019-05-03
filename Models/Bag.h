@@ -28,5 +28,6 @@ class Bag
     vector <char> GetRemainigLetters();
     void swapRack(Rack&rack_,vector<int> swappedLoc);
     Tile getTileByLetter(char c);
+    void generateRandomRack(Rack&rack_)
     ~Bag();
 };
