@@ -8,7 +8,7 @@ Bag::Bag()
 Bag::Bag(string InputPath)
 {
     ifstream InputFile;
-
+    remainingTiles_=0;
     InputFile.open(InputPath);
     if (InputFile.is_open())
     {
@@ -17,6 +17,7 @@ Bag::Bag(string InputPath)
         while (getline(InputFile, Line, ' '))
         {
             char letter = Line[0];
+            letter = tolower(letter);
             getline(InputFile, Line, ' ');
             int occurence = stoi(Line);
             getline(InputFile, Line, '\n');
@@ -24,6 +25,8 @@ Bag::Bag(string InputPath)
             Tile t;
             t.SetParams(letter, -1, -1, score, 1);
             bag_.insert(pair<Tile, int>(t, occurence));
+              remainingTiles_+=occurence;
+          
         }
     }
 }
@@ -62,8 +65,20 @@ void Bag::TakeLetter(Tile tile)
     }
 }
 
-void Bag::TakeLetter(char letter)
+void Bag::TakeLetter(const char letter)
 {
+    vector<Tile> remTiles;
+    map<Tile, int>::iterator it;
+    for (it = bag_.begin(); it != bag_.end(); it++)
+    {
+        Tile t = it->first;
+        if (t.GetLetter()==letter )
+        {
+            it->second--; 
+            this->remainingTiles_--;   
+        }
+    }
+
 }
 
 
