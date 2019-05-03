@@ -91,6 +91,7 @@ int main(){
 	if (Human == 0){//Agent Mode
 		Agent AI_Agent(&board, &bag, &rack);
 		Move pass = AI_Agent.GetPassMove();
+		Move chosenMove;
 		bool GameOver= false; //should be over when all 100 tiles are played or when we pass and opponent pass 
 		while(!GameOver){
 			bool MyTurn= true;
@@ -101,11 +102,11 @@ int main(){
 
 				int BagSize = (int)bag.GetRemainingTiles().size();
 				if (BagSize > 9){//MidGame
-					AI_Agent.MidGame(moves, syn2, worth,&movGen); //should return best move
+					chosenMove = AI_Agent.MidGame(moves, syn2, worth,&movGen); //should return best move
 					
 				}
 				else if (BagSize > 0 && BagSize <=9){
-					AI_Agent.PreEndGame(syn2,worth,&movGen,moves); //should return best move
+					chosenMove = AI_Agent.PreEndGame(syn2,worth,&movGen,moves); //should return best move
 	
 				}
 				else if (BagSize == 0){

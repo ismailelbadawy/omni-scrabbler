@@ -6,24 +6,34 @@ Agent::Agent(Board *board, Bag* bag, Rack* rack){
     rack_ = rack;
 }
 
-void Agent::MidGame(vector <Move> moves, map<string, double> * syn2, map<char, double> * worth, MoveGenerator * movGen){
+Move Agent::MidGame(vector <Move> moves, map<string, double> * syn2, map<char, double> * worth, MoveGenerator * movGen){
     MidgameEvaluator* evaluator = NULL;
     evaluator = new MidgameEvaluator(&moves, board_, syn2, worth);
 	vector<Move> * evaluatedMoves = evaluator->Evaluate();
-    MonteCarlo Simulator(*this->board_,*evaluatedMoves,*rack_, *rack_,*this->bag_,movGen,syn2,worth); //bool true
-
+    if (this->bag_->GetRemainigLetters().size()<30)
+    {
+        MonteCarlo Simulator(*this->board_,*evaluatedMoves,*rack_, *rack_,*this->bag_,movGen,syn2,worth,true); //bool true
+        
+        this->chosenMove_ = &(*evaluatedMoves)[Simulator.Simulation()];
+    }
+    else{
     //return best move
-    Move BestMove= (*evaluatedMoves)[0];
+    this->chosenMove_ = &(*evaluatedMoves)[0];
+    }
+    return *this->chosenMove_;
+
 }
 
-void Agent::PreEndGame(map<string, double> * syn2,map<char, double>* worth, MoveGenerator * movGen, vector <Move> moves){
+Move Agent::PreEndGame(map<string, double> * syn2,map<char, double>* worth, MoveGenerator * movGen, vector <Move> moves){
     vector <char> remLetters= bag_->GetRemainigLetters();
     PreendgameEvaluator* PreEval = NULL;
     PreEval = new PreendgameEvaluator(syn2,board_,movGen,moves, remLetters);
     vector<Move> * EvaluatorMoves = PreEval->Evaluate();
-    MonteCarlo Simulator(*this->board_,*EvaluatorMoves,*rack_, *rack_,*this->bag_,movGen,syn2,worth); //bool false
+    MonteCarlo Simulator(*this->board_,*EvaluatorMoves,*rack_, *rack_,*this->bag_,movGen,syn2,worth,false); //bool false
     //send EvaluatorMoves to simulator 
+    this->chosenMove_ =&(*EvaluatorMoves)[Simulator.Simulation()];
     //return best move by simulation
+    return *this->chosenMove_;
 }
 
 Move Agent::GetPassMove(){
@@ -36,6 +46,31 @@ Move Agent::GetPassMove(){
     passMove.SetHeuristic();
     passMove.CalculateScore();
     return passMove;
+}
+
+Move Agent::GetChosenMove(){
+    int rowIterator = this->chosenMove_->GetPlay()->GetRow();
+    int columnIerator = this->chosenMove_->GetPlay()->GetColumn();
+    Tile* boardTiles[15][15];
+    this->board_->GetTiles(boardTiles);
+    Play* filteredPlay = NULL;
+    for (int i = 0; i < (int)this->chosenMove_->GetPlay()->GetLetters().size(); i++)
+    {
+        if (this->chosenMove_->GetPlay()->GetLetters()[i] != boardTiles[rowIterator][columnIerator]->GetLetter() ){
+            // create a tile
+            // add the tile to the pointer to play
+            // create a move to return it with the letters actually played on the board.
+        }
+        if (this->chosenMove_->GetPlay()->GetIsHorizontal()){
+            columnIerator++;
+        }
+        else{
+            rowIterator++;
+        }
+    }
+    return *this->chosenMove_;
+    
+
 }
 
 void Agent::EndGame(vector<Move> moves){
