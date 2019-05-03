@@ -27,18 +27,18 @@ void MoveGenerator::GenerateRackWords(bool boardEmpty){
 			{
 
 				for (int k = (int)rackpossibilities_[i].GetWord().length(); k>0;k-- ){
-				Play* pHorizontal = new Play(rackpossibilities_[i].GetWord(),7,7-k>0?7-k:0,true);
-				CalculatePlayScore(pHorizontal,0);
-				Play* pVertical = new Play(rackpossibilities_[i].GetWord(),7-k>0?7-k:0,7,false);
-				CalculatePlayScore(pVertical,0);
-				Move moveH;
-				Move moveV;
-				moveH.SetPlay(pHorizontal);
-				moveH.SetRack(rackpossibilities_[i].GetRemainingRacks()[0]);
-				moveV.SetPlay(pVertical);
-				moveV.SetRack(rackpossibilities_[i].GetRemainingRacks()[0]);
-				moves_.push_back(moveH);
-				moves_.push_back(moveV);
+					Play* pHorizontal = new Play(rackpossibilities_[i].GetWord(),7,7-k>0?7-k:0,true);
+					CalculatePlayScore(pHorizontal,0);
+					Play* pVertical = new Play(rackpossibilities_[i].GetWord(),7-k>0?7-k:0,7,false);
+					CalculatePlayScore(pVertical,0);
+					Move moveH;
+					Move moveV;
+					moveH.SetPlay(pHorizontal);
+					moveH.SetRack(rackpossibilities_[i].GetRemainingRacks()[0]);
+					moveV.SetPlay(pVertical);
+					moveV.SetRack(rackpossibilities_[i].GetRemainingRacks()[0]);
+					moves_.push_back(moveH);
+					moves_.push_back(moveV);
 				}
 			}
 		}
