@@ -26,7 +26,7 @@ Bag::Bag(string InputPath)
             t.SetParams(letter, -1, -1, score, 1);
             bag_.insert(pair<Tile, int>(t, occurence));
               remainingTiles_+=occurence;
-          
+
         }
     }
     this->remainingTiles_ = 100;
@@ -76,8 +76,8 @@ void Bag::TakeLetter(const char letter)
         Tile t = it->first;
         if (t.GetLetter()==letter )
         {
-            it->second--; 
-            this->remainingTiles_--;   
+            it->second--;
+            this->remainingTiles_--;
         }
     }
 
@@ -110,6 +110,74 @@ vector <char> Bag::GetRemainigLetters(){
     }
     this->remainingTiles_ = RemainingLetters.size();
     return RemainingLetters;
+}
+
+Tile Bag::getTileByLetter(char c)
+{
+	std::map<Tile, int>::iterator it = bag_.begin();
+
+	while (it++ != bag_.end())
+	{
+		Tile T =it->first;
+		if (T.GetLetter() == c)
+		{
+			return T;
+		}
+	}
+	Tile T;
+	return T;		//return empty tile
+}
+
+void Bag::swapRack(Rack&rack_, vector<int> swappedLoc)
+{
+  std::vector<char> rackVal;
+
+  for (int i=0;i<swappedLoc.size();i++)
+  {
+	  Tile T = getTileByLetter(rack_.GetTile(swappedLoc[i]).GetLetter());
+	  std::map<Tile, int>::iterator it = bag_.find(T);
+	  int val = int(it->second);
+	  it->second=val+1;
+  }
+
+ srand(time(NULL));
+
+
+
+ for (int i=0;i<swappedLoc.size();i++)
+ {
+     int randomNo=rand()%bag_.size();
+     std::map<Tile,int>::iterator it=std::next(bag_.begin(),randomNo);
+     while ((it)->second==0)
+     {
+        randomNo=rand()%bag_.size();
+        it=std::next(bag_.begin(),randomNo);
+     }
+     Tile T= (it)->first;
+	 int val = int(it->second);
+	 it->second = val - 1;
+     rack_.SetTile(T.GetLetter(),swappedLoc[i]);
+ }
+
+}
+
+void Bag::generateRandomRack(Rack&rack_)
+{
+	srand(time(NULL));
+	for (int i = 0; i<7; i++)
+	{
+		int randomNo = rand() % bag_.size();
+		std::map<Tile, int>::iterator it = std::next(bag_.begin(), randomNo);
+		while ((it)->second == 0)
+		{
+			randomNo = rand() % bag_.size();
+			it = std::next(bag_.begin(), randomNo);
+		}
+		Tile T = (it)->first;
+		int val = int(it->second);
+		it->second = val - 1;
+		rack_.SetTile(T.GetLetter(), i);
+	}
 }
 
 Bag::~Bag()
