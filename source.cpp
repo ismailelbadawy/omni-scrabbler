@@ -90,22 +90,22 @@ int main(){
 	bool Human = 0; //should be received from server
 	if (Human == 0){//Agent Mode
 		Agent AI_Agent(&board, &bag, &rack);
-
+		Move pass = AI_Agent.GetPassMove();
 		bool GameOver= false; //should be over when all 100 tiles are played or when we pass and opponent pass 
 		while(!GameOver){
 			bool MyTurn= true;
 			if (MyTurn){
 				auto  start = chrono::high_resolution_clock::now();
-				moves = movGen.Generate(&rack,board, board.GetCount()==0);
+				moves = movGen.Generate(&rack, board, board.GetCount()==0);
 				auto  end = chrono::high_resolution_clock::now();
 
-				int BagSize = 40;
+				int BagSize = (int)bag.GetRemainingTiles().size();
 				if (BagSize > 9){//MidGame
-					AI_Agent.MidGame(moves, syn2, worth); //should return best move
+					AI_Agent.MidGame(moves, syn2, worth,&movGen); //should return best move
 					
 				}
 				else if (BagSize > 0 && BagSize <=9){
-					AI_Agent.PreEndGame(syn2,&movGen,moves); //should return best move
+					AI_Agent.PreEndGame(syn2,worth,&movGen,moves); //should return best move
 	
 				}
 				else if (BagSize == 0){

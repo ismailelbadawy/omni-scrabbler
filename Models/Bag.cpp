@@ -91,6 +91,7 @@ vector <char> Bag::GetRemainigLetters(){
             RemainingLetters.push_back(letter);
         }
     }
+    return RemainingLetters;
 }
 
 Bag::~Bag()
