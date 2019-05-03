@@ -1133,6 +1133,7 @@ bool MoveGenerator::IsValidMove(Play& play, string enemyRack){
 		return false;
 	}
 	CalculatePlayScore(&play,additionalScore);
+	return true;
 }
 
 MoveGenerator::~MoveGenerator(){
