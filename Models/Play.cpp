@@ -92,6 +92,20 @@ Tile Play::GetTile(int index){
 	return tiles_[index];
 }
 
+void Play::SetTiles(vector<Tile> tiles){
+
+this->tiles_.clear();
+for (int i = 0; i < (int)tiles.size(); i++)
+{
+	this->tiles_.push_back(tiles[i]);
+}
+
+
+
+
+
+}
+
 Play::~Play()
 {
 }

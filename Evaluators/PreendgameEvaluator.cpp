@@ -324,7 +324,8 @@ vector<Move> * PreendgameEvaluator::Evaluate()
 {
     vector<Move> * weReturn = new vector<Move>();
     std::sort(possiblemoves_.begin(), possiblemoves_.end());
-    for(int i = 0; i < possiblemoves_.size(); i++)
+    int maxSize = (int)possiblemoves_.size() >= 25 ? 25 : possiblemoves_.size();
+    for(int i = 0; i < maxSize; i++)
     {
         weReturn->push_back(possiblemoves_.at(i));
     }

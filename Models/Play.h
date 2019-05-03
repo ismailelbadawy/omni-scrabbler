@@ -28,6 +28,7 @@ public:
 	void UpdateTile(int index, int score);
 	void SetTileBonus(int index,int bonus);
 	vector<Tile> GetTiles();
+	void SetTiles(vector<Tile>);
 	~Play();
 };
 

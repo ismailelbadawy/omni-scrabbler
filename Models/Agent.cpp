@@ -10,7 +10,7 @@ Move Agent::MidGame(vector <Move> moves, map<string, double> * syn2, map<char, d
     MidgameEvaluator* evaluator = NULL;
     evaluator = new MidgameEvaluator(&moves, board_, syn2, worth);
 	vector<Move> * evaluatedMoves = evaluator->Evaluate();
-    if (this->bag_->GetRemainigLetters().size()<30)
+    if (this->bag_->GetRemainigLetters().size()<300)
     {
         MonteCarlo Simulator(*this->board_,*evaluatedMoves,*rack_, *rack_,*this->bag_,movGen,syn2,worth,true); //bool true
         
@@ -20,7 +20,7 @@ Move Agent::MidGame(vector <Move> moves, map<string, double> * syn2, map<char, d
     //return best move
     this->chosenMove_ = &(*evaluatedMoves)[0];
     }
-    return *this->chosenMove_;
+    return GetChosenMove();
 
 }
 
@@ -33,7 +33,7 @@ Move Agent::PreEndGame(map<string, double> * syn2,map<char, double>* worth, Move
     //send EvaluatorMoves to simulator 
     this->chosenMove_ =&(*EvaluatorMoves)[Simulator.Simulation()];
     //return best move by simulation
-    return *this->chosenMove_;
+    return GetChosenMove();
 }
 
 Move Agent::GetPassMove(){
@@ -53,13 +53,16 @@ Move Agent::GetChosenMove(){
     int columnIerator = this->chosenMove_->GetPlay()->GetColumn();
     Tile* boardTiles[15][15];
     this->board_->GetTiles(boardTiles);
-    Play* filteredPlay = NULL;
-    for (int i = 0; i < (int)this->chosenMove_->GetPlay()->GetLetters().size(); i++)
-    {
-        if (this->chosenMove_->GetPlay()->GetLetters()[i] != boardTiles[rowIterator][columnIerator]->GetLetter() ){
-            // create a tile
+    // create a tile
             // add the tile to the pointer to play
             // create a move to return it with the letters actually played on the board.
+    vector <Tile> FinalTiles= this->chosenMove_->GetPlay()->GetTiles();
+    for (int i=0; i< (int)FinalTiles.size(); i++){
+        FinalTiles[i].GetIndex(rowIterator, columnIerator);
+        if (!board_->IsPositionEmpty(rowIterator, columnIerator)){ //tile already exists on board
+            FinalTiles.erase(FinalTiles.begin() + i);
+            i--;
+    
         }
         if (this->chosenMove_->GetPlay()->GetIsHorizontal()){
             columnIerator++;
@@ -68,6 +71,7 @@ Move Agent::GetChosenMove(){
             rowIterator++;
         }
     }
+    this->chosenMove_->GetPlay()->SetTiles(FinalTiles);
     return *this->chosenMove_;
     
 
