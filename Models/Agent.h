@@ -6,6 +6,8 @@
 #include "../Evaluators/Evaluator.h"
 #include "../Evaluators/MidgameEvaluator.h"
 #include "../Evaluators/PreendgameEvaluator.h"
+#include "../Evaluators/EndgameEvaluator.h"
+
 #include"../MonteCarlo/MonteCarlo.h"
 
 
@@ -24,7 +26,7 @@ class Agent{
     
     Move MidGame(vector<Move>, map<string, double> * rackLeave, map<char, double> * charValue, MoveGenerator * movGen, int numTilesByOpponent);
     Move PreEndGame(map<string, double> * syn2,map<char, double>* worth, MoveGenerator * movGen, vector <Move> moves, int numTilesByOpponent);
-    void EndGame(vector<Move>);
+    void EndGame(vector<Move> moves, map<string, double> * syn2, map<char, double> * worth);
     Move GetChosenMove(); // Returns the proper move format to be sent (removes letters already on the board from the Play)
     Move GetPassMove();
 };
