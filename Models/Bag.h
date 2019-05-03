@@ -26,5 +26,7 @@ class Bag
     void GiveTiles(vector<Tile> tiles);
     map<Tile,int> getBag();
     vector <char> GetRemainigLetters();
+    void swapRack(Rack&rack_,vector<int> swappedLoc);
+    Tile getTileByLetter(char c);
     ~Bag();
 };
