@@ -177,7 +177,12 @@ void MonteCarlo::firstLevel()
 	        evaluatedMoves = evaluator->Evaluate();
         }else{
             PreendgameEvaluator* PreEval = new PreendgameEvaluator(syn2,&tempLevel1Board,this->movGen,nextMoves, this->Root->currentBag.GetRemainigLetters(), this->numTilesByOpponent_);
-            evaluatedMoves = PreEval->Evaluate();
+            if (this->numTilesByOpponent_ == -1) //Human Mode
+                evaluatedMoves = PreEval->EvaluateGame(&oponentRack);
+        
+            else {
+                evaluatedMoves = PreEval->EvaluateGame();
+            }
         }
 		
         //reverse all the moves
@@ -331,7 +336,12 @@ void MonteCarlo::Expand(NodeMC *node)
                 evaluatedMoves = evaluator->Evaluate();
             }else{
                 PreendgameEvaluator* PreEval = new PreendgameEvaluator(syn2,&tempBoard,this->movGen,nextMoves, this->Root->currentBag.GetRemainigLetters(), this->numTilesByOpponent_);
-                evaluatedMoves = PreEval->Evaluate();
+                if (this->numTilesByOpponent_ == -1) //Human Mode
+                    evaluatedMoves = PreEval->EvaluateGame(&oponentRack);
+        
+                else {
+                    evaluatedMoves = PreEval->EvaluateGame();
+                }
             }
             Bag bagRem;
 

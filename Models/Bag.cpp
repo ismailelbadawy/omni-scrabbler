@@ -26,6 +26,7 @@ Bag::Bag(string InputPath)
             bag_.insert(pair<Tile, int>(t, occurence));
         }
     }
+    this->remainingTiles_ = 100;
 }
 int Bag::GetOccurences(char letter)
 {
@@ -38,32 +39,32 @@ int Bag::GetOccurences(Tile tile)
 {
     return bag_.at(tile);
 }
-vector<Tile> Bag::GetRemainingTiles()
+vector<Tile> Bag::GetRemainingTiles() //return actual tiles, if occ of one tile is 2, it's returned 2 times
 {
     vector<Tile> remTiles;
     map<Tile, int>::iterator it;
 
     for (it = bag_.begin(); it != bag_.end(); it++)
     {
-        if (it->second > 0)
+        for (int k=0; k < it->second; k++) 
         {
             remTiles.push_back(it->first);
         }
     }
+    this->remainingTiles_ = remTiles.size();
     return remTiles;
 }
 
 void Bag::TakeLetter(Tile tile)
 {
     //if the occurences > 0 then we can draw it.
-    if (bag_.at(tile) > 0)
-    {
+    if (bag_.at(tile) > 0){
         bag_.at(tile) -= 1;
+        this->remainingTiles_ --;
     }
 }
 
-void Bag::TakeLetter(char letter)
-{
+void Bag::TakeLetter(char letter){
 }
 
 
@@ -91,6 +92,7 @@ vector <char> Bag::GetRemainigLetters(){
             RemainingLetters.push_back(letter);
         }
     }
+    this->remainingTiles_ = RemainingLetters.size();
     return RemainingLetters;
 }
 

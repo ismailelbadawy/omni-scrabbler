@@ -17,5 +17,7 @@ public:
 	void SetTile(char c, int loc);
 	char GetLetter(int loc);
 	void generateRanRack(Rack rack);
+	vector <Tile> GetRackTiles();
+	void SetRackTiles(vector<Tile> Tiles);
 };
 

@@ -43,3 +43,11 @@ int Rack::GetLength(){
 void Rack::generateRanRack(Rack rack){
     
 }
+
+vector <Tile> Rack::GetRackTiles(){
+    return tiles_;
+}
+
+void Rack::SetRackTiles(vector<Tile> Tiles){
+    this->tiles_ = Tiles;
+}

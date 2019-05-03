@@ -11,6 +11,7 @@
 #include"Models/Tile.h"
 #include"Models/Bag.h"
 #include"Models/Agent.h"
+#include"Models/HumanMode.h"
 #include"GADDAG/GADDAG.h"
 #include "Evaluators/MidgameEvaluator.h"
 
@@ -31,9 +32,9 @@ int main(){
 	Bag bag(BAG_PATH);
 
 
-	board.Probe('c',7,2,3);		//Inserting letters 'e' and 't' to the empty board
-	board.Probe('a',7,3,1);
-	board.Probe('t',7,4,1);
+	//board.Probe('c',7,2,3);		//Inserting letters 'e' and 't' to the empty board
+	//board.Probe('a',7,3,1);
+	//board.Probe('t',7,4,1);
 	
 
 	Tile RackTiles[7];          //A simple array to carry the rack's letters
@@ -80,7 +81,7 @@ int main(){
 	//PreEval.OpponentRackEstimation();
 
 	//char c = 'y';
-	bool Human = 0; //should be received from server
+	bool Human = 1; //should be received from GUI
 	if (Human == 0){//Agent Mode
 		Agent AI_Agent(&board, &bag, &rack);
 		Move pass = AI_Agent.GetPassMove();
@@ -145,6 +146,42 @@ int main(){
 		//delete evaluatedMoves;
 	}
 	else { //Human Mode
+		bool MyTurn = true;
+		HumanMode Human(&board, &bag);
+		//Human Mode has pointers to the board and bag to detect any changes
+
+		Rack MyRack;
+		Rack OpponentRack;
+
+		Move chosenMove;
+
+		bool GameOver = false;
+		while (!GameOver){
+			Human.SetMyRack(MyRack);
+			Human.SetOpponentRack(OpponentRack);
+			if (MyTurn){
+				int BagSize = (int)bag.GetRemainigLetters().size();
+				moves = movGen.Generate(&MyRack, board, board.GetCount()==0);
+				if (BagSize > 9){//MidGame
+					chosenMove = Human.MidGame(moves, syn2, worth,&movGen); //should return best move
+					
+				}
+				else if (BagSize > 0 && BagSize <=9){
+					chosenMove = Human.PreEndGame(syn2,worth,&movGen,moves); //should return best move
+	
+				}
+				else if (BagSize == 0){
+					//AI_Agent.EndGame(moves); //should return best move
+				}
+				MyTurn = false;
+			}
+			else {
+				moves = movGen.Generate(&OpponentRack, board, board.GetCount()==0);
+				//wait for opponent actual move from GUI
+				MyTurn= true;
+			}
+		}
+		
 
 	}
 }
