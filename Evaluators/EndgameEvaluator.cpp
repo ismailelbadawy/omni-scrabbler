@@ -215,7 +215,7 @@ vector<Move> *EndgameEvaluator::Evaluate()
 
       
 
-    for(int i=0;i<possibleMoves_.size();i++)
+    for(int i=0;i< (int) possibleMoves_.size();i++)
 {
     possibleMoves_[i].SetPenalty(this->CalculatePenalty(&possibleMoves_[i],*this->board_));
     possibleMoves_[i].SetRackLeave(this->CalculateLeave(possibleMoves_[i].GetRack()));

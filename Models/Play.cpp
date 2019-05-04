@@ -64,7 +64,7 @@ bool Play::GetIsHorizontal(){
 string Play::GetLetters()
 {
 	string returnedStr="";
-	for (int i=0;i<tiles_.size();i++)
+	for (int i=0;i<(int) tiles_.size();i++)
 	{
 	returnedStr+=tiles_.at(i).GetLetter();
 	}
