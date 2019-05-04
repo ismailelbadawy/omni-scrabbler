@@ -49,10 +49,10 @@ MonteCarlo::MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, R
 
     temp->nodeState.UCB = 0;
     temp->currentBag = bag;
-	for (size_t i = 0; i < oponentRack.GetLength(); i++)
-	{
-		temp->currentBag.TakeLetter(oponentRack.GetLetter(i));
-	}
+	// for (size_t i = 0; i < oponentRack.GetLength(); i++)
+	// {
+	// 	temp->currentBag.TakeLetter(oponentRack.GetLetter(i));
+	// }
 	
     vector<NodeMC *> children;
     temp->children = children;
@@ -307,7 +307,22 @@ void MonteCarlo::Expand(NodeMC *node)
         if (node->nodeState.treeDepth == 1)
         {
             //generate the first board state after my move.
-			Rack tempRack = GenerateRack(node->oldRack, node);
+            Rack tempRack;
+            if(node->currentBag.GetRemainigLetters().size()>0)
+            {
+			    tempRack = GenerateRack(node->oldRack, node);
+            }else{
+                Rack tempNewRack;
+                for (size_t i = 0; i < node->oldRack.GetLength(); i++)
+                {
+                     if (node->oldRack.tiles_.at(i).GetLetter() != '*')
+                     {
+                        tempNewRack.tiles_.push_back(node->oldRack.tiles_.at(i));
+                     }
+                     
+                }
+                tempRack = tempNewRack;
+            }
             tempBoard.SimulateMove(&(node->nodeState.possibleActions[i]));
 
             double reward = calculateMoveReward(node->nodeState.possibleActions[i]);
