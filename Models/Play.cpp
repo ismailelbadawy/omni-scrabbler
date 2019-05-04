@@ -64,7 +64,7 @@ bool Play::GetIsHorizontal(){
 string Play::GetLetters()
 {
 	string returnedStr="";
-	for (int i=0;i<size_;i++)
+	for (int i=0;i<(int) tiles_.size();i++)
 	{
 	returnedStr+=tiles_.at(i).GetLetter();
 	}
@@ -90,6 +90,42 @@ void Play::UpdateTile(int index,int score){
 
 Tile Play::GetTile(int index){
 	return tiles_[index];
+}
+
+void Play::SetTiles(vector<Tile> tiles){
+
+this->tiles_.clear();
+for (int i = 0; i < (int)tiles.size(); i++)
+{
+	this->tiles_.push_back(tiles[i]);
+}
+
+
+
+
+
+}
+
+void Play::SetStartPos(int row, int col){
+	this->row_ = row;
+	this->column_= col;
+}
+void Play::SetHorizontal(bool hor){
+	this->isHorizontal_= hor;
+}
+
+bool Play::CheckLetterInPlay(char letter)
+{
+	
+    bool found= false;
+    for(int i=0;i<tiles_.size();i++)
+    {
+    
+        if(tiles_[i].GetLetter()==letter)
+        found=true;
+    }
+    return found;
+
 }
 
 Play::~Play()

@@ -14,10 +14,9 @@ int Tile::GetScore()
 {
 	return score_;
 }
-
 char Tile::GetLetter()
 {
-	return letter_;
+	return this->letter_;
 }
 void Tile::SetLetter(char c)
 {
@@ -57,3 +56,7 @@ Tile::~Tile()
 {
 }
 
+void Tile::setPosition(int row, int col){
+	this->row_ = row;
+	this->column_ = col;
+}

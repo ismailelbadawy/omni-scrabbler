@@ -181,7 +181,8 @@ vector<Move>* MidgameEvaluator::Evaluate()
     vector<Move> * weReturn = new vector<Move>();
     // So it's safe to sort the moves.
     std::sort(possibleMoves_->begin(), possibleMoves_->end());
-    for(int i = 0; i < 25; i++)
+    int maxSize = (int)possibleMoves_->size() >= 25 ? 25 : possibleMoves_->size();
+    for(int i = 0; i < maxSize ; i++)
     {
         weReturn->push_back(possibleMoves_->at(i));
     }

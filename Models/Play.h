@@ -28,6 +28,11 @@ public:
 	void UpdateTile(int index, int score);
 	void SetTileBonus(int index,int bonus);
 	vector<Tile> GetTiles();
+	void SetTiles(vector<Tile>);
+
+	void SetStartPos(int row, int col);
+	void SetHorizontal(bool hor);
+	bool CheckLetterInPlay(char letter);
 	~Play();
 };
 

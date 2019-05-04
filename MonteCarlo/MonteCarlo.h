@@ -52,6 +52,7 @@ class MonteCarlo
 {
 
 private:
+    int numTilesByOpponent_;
     //function to populate the first level.
     void firstLevel();
 	  MoveGenerator* movGen;
@@ -79,7 +80,7 @@ public:
 	map<char, double>* worth;
     bool MidGame;
     //constructor.
-    MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, Rack oponentRack, Bag bag, MoveGenerator *movGen, map<string, double>* syn2, map<char, double>* worth,bool MidGame);
+    MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, Rack oponentRack, Bag bag, MoveGenerator *movGen, map<string, double>* syn2, map<char, double>* worth,bool MidGame, int numTilesByOpponent);
 	Rack GenerateRack(Rack r, NodeMC* node);
     //adding new node to the tree.
     NodeMC *newNode(Board boardState, vector<Move> Moves, Rack currentRack , Rack oldRack, Bag bag, NodeMC *parent, int level,double reward);

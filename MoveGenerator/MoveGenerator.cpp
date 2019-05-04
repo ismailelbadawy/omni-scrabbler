@@ -1116,6 +1116,40 @@ void MoveGenerator::CalculatePlayScore(Play *p, int addedScore){
 	
 }
 
+
+bool MoveGenerator::IsValidMove(Play& play, string enemyRack){
+	string word = play.GetLetters();
+	if (!dag_->CheckWordInDict(word)){
+		return false;
+	}
+	int additionalScore = 0;
+
+	bool wordOnBoard = false;
+	vector <Tile> playTiles = play.GetTiles();
+	for (int i=0; i< (int)playTiles.size(); i++){
+		int row, col;
+		playTiles[i].GetIndex(row, col);
+		if (boardTiles_[row][col]->GetLetter() != '0'){ //tile already on board 
+			wordOnBoard = true;
+			break;
+		}
+	}
+
+	if (!wordOnBoard){
+		if (!WordIsTouching(word,play.GetRow(),play.GetColumn(),play.GetIsHorizontal())){
+			return false;
+		}
+	}
+	
+
+	if(!CheckOtherDimension(word,play.GetRow(),play.GetColumn(), play.GetIsHorizontal(),additionalScore))
+	{
+		return false;
+	}
+	CalculatePlayScore(&play,additionalScore);
+	return true;
+}
+
 MoveGenerator::~MoveGenerator(){
 	
 }

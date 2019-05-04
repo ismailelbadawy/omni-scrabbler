@@ -11,8 +11,10 @@
 #include"Models/Tile.h"
 #include"Models/Bag.h"
 #include"Models/Agent.h"
+#include"Models/HumanMode.h"
 #include"GADDAG/GADDAG.h"
 #include "Evaluators/MidgameEvaluator.h"
+
 
 #include "Evaluators/PreendgameEvaluator.h"
 #include "Strategy/SuperLeaveLoader.h"
@@ -30,34 +32,27 @@ Rack  	RACK;
 int main(){
 	Bag bag(BAG_PATH);
 
-	board.Probe('c',7,2,3);		//Inserting letters 'e' and 't' to the empty board
-	board.Probe('a',7,3,1);
-	board.Probe('t',7,4,1);
-	board.Probe('a',7,5,1);
-	board.Probe('s',7,6,1);
-	board.Probe('t',7,7,1);
-	board.Probe('r',7,8,1);
-	board.Probe('o',7,9,1);
-	board.Probe('p',7,10,3);
-	board.Probe('h',7,11,4);
-	board.Probe('i',7,12,1);
-	board.Probe('c',7,13,3);
+
+	//board.Probe('c',7,2,3);		//Inserting letters 'e' and 't' to the empty board
+	//board.Probe('a',7,3,1);
+	//board.Probe('t',7,4,1);
+	
 
 	Tile RackTiles[7];          //A simple array to carry the rack's letters
 
-	RackTiles[0].SetLetter('a');
+	RackTiles[0].SetLetter('r');
 	RackTiles[0].SetScore(1);
-	RackTiles[1].SetLetter('w');
+	RackTiles[1].SetLetter('a');
 	RackTiles[1].SetScore(4);
-	RackTiles[2].SetLetter('c');
+	RackTiles[2].SetLetter('v');
 	RackTiles[2].SetScore(3);
-	RackTiles[3].SetLetter('d');
+	RackTiles[3].SetLetter('e');
 	RackTiles[3].SetScore(2);
-	RackTiles[4].SetLetter('e');
+	RackTiles[4].SetLetter('p');
 	RackTiles[4].SetScore(1);
-	RackTiles[5].SetLetter('h');
+	RackTiles[5].SetLetter('a');
 	RackTiles[5].SetScore(4);
-	RackTiles[6].SetLetter('p');
+	RackTiles[6].SetLetter('m');
 	RackTiles[6].SetScore(3);
 	
 
@@ -87,10 +82,11 @@ int main(){
 	//PreEval.OpponentRackEstimation();
 
 	//char c = 'y';
-	bool Human = 0; //should be received from server
+	bool Human = 1; //should be received from GUI
 	if (Human == 0){//Agent Mode
 		Agent AI_Agent(&board, &bag, &rack);
 		Move pass = AI_Agent.GetPassMove();
+		Move chosenMove;
 		bool GameOver= false; //should be over when all 100 tiles are played or when we pass and opponent pass 
 		while(!GameOver){
 			bool MyTurn= true;
@@ -99,17 +95,19 @@ int main(){
 				moves = movGen.Generate(&rack, board, board.GetCount()==0);
 				auto  end = chrono::high_resolution_clock::now();
 
-				int BagSize = (int)bag.GetRemainingTiles().size();
+				int numTilesByOpponent =3;
+
+				int BagSize = (int)bag.GetRemainigLetters().size();
 				if (BagSize > 9){//MidGame
-					AI_Agent.MidGame(moves, syn2, worth,&movGen); //should return best move
+					chosenMove = AI_Agent.MidGame(moves, syn2, worth,&movGen, numTilesByOpponent); //should return best move
 					
 				}
 				else if (BagSize > 0 && BagSize <=9){
-					AI_Agent.PreEndGame(syn2,worth,&movGen,moves); //should return best move
+					chosenMove = AI_Agent.PreEndGame(syn2,worth,&movGen,moves, numTilesByOpponent); //should return best move
 	
 				}
 				else if (BagSize == 0){
-					AI_Agent.EndGame(moves); //should return best move
+					//AI_Agent.EndGame(moves); //should return best move
 				}
 				moves.clear();
 			}
@@ -149,6 +147,188 @@ int main(){
 		//delete evaluatedMoves;
 	}
 	else { //Human Mode
+		bool MyTurn = true;
+		HumanMode Human(&board, &bag);
+		//Human Mode has pointers to the board and bag to detect any changes
 
+		Rack MyRack;
+		Rack OpponentRack;
+
+		Move chosenMove;
+
+		//bool GameOver = false;
+
+		Human.SetMyRack(MyRack);
+		Human.SetOpponentRack(OpponentRack);
+
+		bool MyMoves= true;
+		bool OppMoves = true;
+
+		Tile* boardTiles [15][15];
+		board.GetTiles(boardTiles);
+
+		//GameOver is (MyPass == true && OppPass== true) || (board.GetCount() == 100)
+		while (!Human.CheckGameOver(MyMoves, OppMoves)){ //while !GameOver
+			if (MyTurn){
+				int BagSize = (int)bag.GetRemainigLetters().size();
+				moves = movGen.Generate(&MyRack, board, board.GetCount()==0);
+				if (BagSize > 9){//MidGame
+					chosenMove = Human.MidGame(moves, syn2, worth,&movGen); //should return best move
+				}
+				else if (BagSize > 0 && BagSize <=9){
+					chosenMove = Human.PreEndGame(syn2,worth,&movGen,moves); //should return best move
+				}
+				else if (BagSize == 0){
+					//Human.EndGame(moves); //should return best move
+				}
+
+				Move PassMove = Human.GetPassMove();
+
+				if (moves.size() == 0){ //no chosen word was found
+					//send GUI PASS
+					MyMoves = false;
+					continue;
+				}
+				if (chosenMove.GetScore() < PassMove.GetScore()){ //pass was better than best move, but there are moves
+					//send GUI PASS
+					MyMoves = true;
+					continue;
+				}
+				MyMoves= true;
+				OppMoves = true;
+
+				//send chosen move to GUI
+
+				//add word to board, remove letter from rack
+				Human.UpdateBoardAndRack(*chosenMove.GetPlay(),  MyRack);
+
+				Human.SetMyRack(MyRack);
+				moves.clear();
+				MyTurn = false;
+			}
+			else {
+				if (moves.empty()){
+					moves = movGen.Generate(&OpponentRack, board, board.GetCount()==0);
+					for (int i = 0; i < (int)moves.size(); i++)
+					{
+						moves[i].SetPenalty(0);
+						moves[i].SetRackLeave(0);
+						moves[i].CalculateScore();
+					}
+					
+					std::sort(moves.begin(), moves.end());
+				}
+				
+				int chosenMoveScore;
+				if (moves.size() ==  0){ //no chosen word was found
+					chosenMoveScore = 0;
+					OppMoves = false;
+				}
+				else{
+					chosenMove = moves[0];
+					chosenMoveScore =  chosenMove.GetPlay()->GetScore();
+					OppMoves = true;
+				}
+		
+				//wait for opponent 0->actual move/1->pass/2->hint/3-exchange from GUI 
+				int response = 0;
+				
+				if (response == 0){ //actual move
+					//receive from GUI vector of WordGUI that has row, col, letter or each new letter on board
+					vector<WordGUI> wordVector;
+
+					WordGUI newWord;
+					newWord.row = 7;
+					newWord.col = 9;
+					newWord.letter = 'a';
+					wordVector.push_back(newWord);
+
+					//newWord.row = 7;
+					//newWord.col = 11;
+					//newWord.letter = 'a';
+					//wordVector.push_back(newWord);
+					
+					Rack NewOpponent = OpponentRack;
+					Play ActualPlay = Human.GetOpponentPlay(wordVector, NewOpponent, boardTiles);
+					if (ActualPlay.GetRow() == -1 && ActualPlay.GetColumn() == -1){
+						//send to GUI that word is not vertical or horizontal, or there are gaps between new tiles
+						//Still Opponent turn..
+						continue;
+					}
+				
+					string EnemyRack = OpponentRack.RackToString();
+
+					if (board.GetCount() == 0){//first move, word should touch pos 7,7
+						bool found = false;
+						vector <Tile> tilesVector= ActualPlay.GetTiles();
+						for (int i=0; i< (int) tilesVector.size(); i++){
+							int row, col;
+							tilesVector[i].GetIndex(row, col);
+							if (row == 7 && col ==7){
+								found = true;
+							}
+						}
+						if (!found){
+							//send to GUI that move should include pos 7,7
+							//still opponent trun..
+							continue;
+						}
+					}
+
+					if (!movGen.IsValidMove(ActualPlay, EnemyRack)){
+						//send to GUI invalid move
+						//still opponent turn..
+						continue;
+					}
+				
+					//Move is valid-> then calculate its score, take tiles from rack, put them on board
+					int OpponentScore = ActualPlay.GetScore();
+					OpponentRack = NewOpponent;
+					Human.AddPlayToBoard(ActualPlay, boardTiles);
+
+					if (chosenMoveScore > OpponentScore){
+						//send opponent a feedback through the GUI: you didnt choose best move, best move was
+					}
+					else if (chosenMoveScore == OpponentScore){
+						//send opponent a feedback through the GUI: you chose the best move
+					}
+					else if (chosenMoveScore < OpponentScore){
+						//send opponent a feedback through the GUI: you chose a better move than the evaluated
+					}
+					MyMoves = true;
+					OppMoves= true;
+					Human.SetOpponentRack(OpponentRack);
+					MyTurn= true;
+					moves.clear();
+				}
+				else if (response == 1){//pass
+					MyTurn = true;
+					moves.clear();
+					continue;
+				}
+				else if (response == 2){//hint
+					//send best move to GUI and wait for opponent to play, if oppMoves = false, send no possible moves
+					
+					MyTurn = false;
+					//no clear moves
+				}
+				else if (response == 3) { // Exchange tiles
+					vector<char> toBeExchanged = { 'p','i'};
+					vector<int> toBeExchangedLocations;
+					Rack OpRack2(OpponentRack);
+					for (int i = 0; i < (int)toBeExchanged.size(); i++)
+					{
+						/* code */
+						toBeExchangedLocations.push_back(OpRack2.GetPosition(toBeExchanged[i]));
+					}
+					bag.swapRack(OpponentRack,toBeExchangedLocations);
+					moves.clear();
+					MyTurn = true;
+				}
+			/// Put the rack in the appropriate container to be sent to the user.
+				
+			}
+		}
+		//send to GUI game is over
 	}
 }
