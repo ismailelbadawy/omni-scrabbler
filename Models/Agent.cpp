@@ -159,11 +159,11 @@ Move Agent::GetChosenMove(){
 
 }
 
-void Agent::EndGame(vector<Move> moves, map<string, double> * syn2, map<char, double> * worth){
+void Agent::EndGame(vector<Move> moves, map<string, double> * syn2, map<char, double> * worth, MoveGenerator * movGen){
 
        vector <char> remLetters= bag_->GetRemainigLetters();
        EndgameEvaluator* Eval = NULL;
-       Eval = new EndgameEvaluator(moves,board_,syn2,worth);
+       Eval = new EndgameEvaluator(moves,board_,syn2,worth,movGen);
        vector<Move> * evaluatedMoves = Eval->Evaluate();
     
    // MonteCarlo Simulator(*this->board_,*EvaluatorMoves,*rack_, oponentRack,*this->bag_,movGen,syn2,worth,false,numTilesByOpponent); //bool false

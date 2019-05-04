@@ -2,6 +2,7 @@
 #include "Evaluator.h"
 #include"../Models/Move.h"
 #include"../Models/Board.h"
+#include"../MoveGenerator/MoveGenerator.h"
 #include <map>
 #include <string.h>
 
@@ -17,16 +18,18 @@ class EndgameEvaluator : public Evaluator
 	map<char, double> * singleValued_;
     Rack myRack;
     Rack oppRack;
+    MoveGenerator *movegenerator_;
 
 
     double CalculateLeave(string);
     int GetBonus(int rowIterator, int columnIterator, Board board);
     double CalculatePenalty(Move * move, Board board);
      Rack EvaluateRack();
+     double Qsticking();
 
     public:    
         EndgameEvaluator(){}
-        EndgameEvaluator(vector<Move> moves, Board *board, map<string, double> * rackLeave, map<char, double> * charValue);
+        EndgameEvaluator(vector<Move> moves, Board *board, map<string, double> * rackLeave, map<char, double> * charValue, MoveGenerator * movGen);
         ~EndgameEvaluator();
         double Evaluate(Move * move) override;
         vector<Move> * Evaluate() override;

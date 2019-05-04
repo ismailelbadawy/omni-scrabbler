@@ -114,6 +114,20 @@ void Play::SetHorizontal(bool hor){
 	this->isHorizontal_= hor;
 }
 
+bool Play::CheckLetterInPlay(char letter)
+{
+	
+    bool found= false;
+    for(int i=0;i<tiles_.size();i++)
+    {
+    
+        if(tiles_[i].GetLetter()==letter)
+        found=true;
+    }
+    return found;
+
+}
+
 Play::~Play()
 {
 }

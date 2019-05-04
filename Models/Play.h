@@ -32,6 +32,7 @@ public:
 
 	void SetStartPos(int row, int col);
 	void SetHorizontal(bool hor);
+	bool CheckLetterInPlay(char letter);
 	~Play();
 };
 

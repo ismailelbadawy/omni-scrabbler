@@ -94,7 +94,25 @@ double EndgameEvaluator::CalculatePenalty(Move *move, Board board)
          return 0.0;
     }
    
+double EndgameEvaluator::Qsticking()
+{
+    // vector<Move> moves = movGen.Generate(&OppRack, board_, board_.GetCount()==0);
+       // for(int i=0;i<mov)
 
+   // OppRack = EvaluateRack();
+   // bool ifinrack=MyRack.CheckLetterInRack('q'); //checks if q is found in MyRack
+    // if(ifinrack)
+    // {
+       
+       
+    // }
+    // else
+    // {
+        
+    // }
+    return 0.0;
+    
+}
 double EndgameEvaluator::CalculateLeave(string rack)
 {
     double rackLeave = 0.0;
@@ -161,15 +179,13 @@ Rack EndgameEvaluator::EvaluateRack()
         for (int j = 0; j < 15; j++)
         {
             if (Tiles[i][j]->GetLetter() != '0')
-            {
                 Alphabet[Tiles[i][j]->GetLetter() - 97]--;
-            }
+            
         }
     }
     for (int i = 0; i < myRack.GetLength(); i++)
-    {
-        Alphabet[myRack.GetLetter(i) - 97]--;
-    }
+         Alphabet[myRack.GetLetter(i) - 97]--;
+    
     string RemainingLetters;
     int counter = 0;
 
@@ -194,13 +210,13 @@ Rack EndgameEvaluator::EvaluateRack()
 }
 
 
-EndgameEvaluator::EndgameEvaluator(vector<Move> moves, Board *board, map<string, double> * rackLeave, map<char, double> * charValue)
+EndgameEvaluator::EndgameEvaluator(vector<Move> moves, Board *board, map<string, double> * rackLeave, map<char, double> * charValue,MoveGenerator * movGen)
 {
     this->board_ = board;
     this->possibleMoves_ = moves;
     this->doubleValued_ = rackLeave;
 	this->singleValued_ = charValue;
- 
+     this->movegenerator_ = movGen;
 	
 }
 EndgameEvaluator::~EndgameEvaluator()
@@ -217,9 +233,12 @@ vector<Move> *EndgameEvaluator::Evaluate()
 
     for(int i=0;i<possibleMoves_.size();i++)
 {
+    int qfound=0;
+    if(possibleMoves_[i].GetPlay()->CheckLetterInPlay('q'))
+        qfound=1000;
     possibleMoves_[i].SetPenalty(this->CalculatePenalty(&possibleMoves_[i],*this->board_));
     possibleMoves_[i].SetRackLeave(this->CalculateLeave(possibleMoves_[i].GetRack()));
-    possibleMoves_[i].GetPlay()->SetScore(possibleMoves_[i].GetPlay()->GetScore()+(1778*possibleMoves_[i].GetRack().length()));
+    possibleMoves_[i].GetPlay()->SetScore(possibleMoves_[i].GetPlay()->GetScore()+(50*possibleMoves_[i].GetRack().length())+qfound);
     possibleMoves_[i].CalculateScore();
 }
 // Should be called only after instantiation.
