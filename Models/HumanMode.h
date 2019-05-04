@@ -1,3 +1,4 @@
+#pragma once
 #include "Board.h"
 #include "Bag.h"
 #include "Rack.h"
@@ -8,7 +9,6 @@
 #include "../Evaluators/PreendgameEvaluator.h"
 #include"../MonteCarlo/MonteCarlo.h"
 
-
 class HumanMode{
     Board *board_;
     Bag *bag_;
@@ -16,6 +16,8 @@ class HumanMode{
     Rack *opponentRack_;
 
     Move *chosenMove_;
+
+    TileScoreCalculator tilescorecalculator_;
 
     public:
     HumanMode(Board *, Bag*);

@@ -78,7 +78,7 @@ Move HumanMode::MidGame(vector <Move> moves, map<string, double> * syn2, map<cha
             if (board_->GetCount() == 0){//first move --> no bingo
                 while (chosenMove_->GetRack().length() == 0){//bingo
                     index++;
-                    if (index < (*evaluatedMoves).size()){
+                    if (index <(int)  (*evaluatedMoves).size()){
                         this->chosenMove_ = &(*evaluatedMoves)[index];
                     }
                     
@@ -160,11 +160,22 @@ Play HumanMode::GetOpponentPlay(bool Horizontal, int row, int col, char *Wordarr
     int inc=0;
 	int ArrayIndex=0;
     vector<Tile> ActualPlay;
+    //Get letters that are on the board before the word
+    while( (row>0 && col>0) && boardTiles[row][col]->GetLetter()!='0'){
+
+        if (Horizontal){
+            col--;
+        }
+        else{
+            row--;
+        }
+    }
     while (1){
 		if (Horizontal){
-			if (boardTiles[row][col+inc]->GetLetter() == '0' && ArrayIndex < size){//board is empty at this position, draw from array
+			if (boardTiles[row][col]->GetLetter() == '0' && ArrayIndex < size){//board is empty at this position, draw from array
 				int prevSize= OpponentRack.GetLength();
                 Tile t= OpponentRack.RemoveAndReturnTile(Wordarr[ArrayIndex]);
+                t.SetParams(Wordarr[ArrayIndex],row,col,tilescorecalculator_.GetTileScore(Wordarr[ArrayIndex]),1);
                 int newSize = OpponentRack.GetLength();
                 if (newSize == prevSize){ //tiles was not found in rack, search for blank
                     Tile t= OpponentRack.RemoveAndReturnTile(Wordarr['?']);
@@ -176,36 +187,22 @@ Play HumanMode::GetOpponentPlay(bool Horizontal, int row, int col, char *Wordarr
                 
 				ArrayIndex++;
 			}
-			else if (boardTiles[row][col+inc]->GetLetter() != '0' && ArrayIndex < size){ //word on board
-				ActualPlay.push_back(*boardTiles[row][col+inc]);
+			else if (boardTiles[row][col]->GetLetter() != '0'){ //word on board
+				ActualPlay.push_back(*boardTiles[row][col]);
 			}
 			else {
 				break;
 			}
 		}
-		else{//vertical
-			if (boardTiles[row+inc][col]->GetLetter() == '0' && ArrayIndex < size){//board is empty at this position, draw from array
-				int prevSize= OpponentRack.GetLength();
-                Tile t= OpponentRack.RemoveAndReturnTile(Wordarr[ArrayIndex]);
-                int newSize = OpponentRack.GetLength();
-                if (newSize == prevSize){ //tiles was not found in rack, search for blank
-                    Tile t= OpponentRack.RemoveAndReturnTile(Wordarr['?']);
-                    t.SetLetter(Wordarr[ArrayIndex]);
-                }
-                else{
-                    ActualPlay.push_back(t);
-                }
-				ArrayIndex++;
-			}
-			else if (boardTiles[row+inc][col]->GetLetter() != '0' && ArrayIndex < size){ //word on board
-				ActualPlay.push_back(*boardTiles[row][col+inc]);
-			}
-			else {
-				break;
-            }    
-		
-	    }
-        inc++;
+        if(Horizontal){
+            col++;
+        }
+        else{
+            row++;
+        }
+        if (col>14 || row> 14){
+            break;
+        }
     }
     Play p;
     p.SetTiles(ActualPlay);
@@ -218,7 +215,7 @@ void HumanMode::AddPlayToBoard(Play p, Tile* boardTiles[15][15]){
     int row = p.GetRow();
     int col= p.GetColumn();
 
-    for (int i=0; i< tiles.size(); i++){
+    for (int i=0; i< (int) tiles.size(); i++){
         char letter= tiles[i].GetLetter();
         int score= tiles[i].GetScore();
         if (Horizontal){
@@ -239,12 +236,12 @@ void HumanMode::AddPlayToBoard(Play p, Tile* boardTiles[15][15]){
 //NOTE: this fn doesn't need to check on the board as the chosen move is already filtred
 void HumanMode::UpdateBoardAndRack(Play p, Rack &rack){
     vector <Tile> tiles = p.GetTiles();
-
-    for (int i=0; i< tiles.size(); i++){
+    int row = p.GetRow();
+    int col = p.GetColumn();
+    for (int i=0; i< (int) tiles.size(); i++){
         char letter= tiles[i].GetLetter();
         int score= tiles[i].GetScore();
-        int row, col;
-        tiles[i].GetIndex(row, col);
+        
 
         board_->Probe(letter, row, col, score);
 
@@ -253,6 +250,12 @@ void HumanMode::UpdateBoardAndRack(Play p, Rack &rack){
         int Newsize= rack.GetLength();
         if (Newsize == Prevsize){ //letter wasn't found, search for blank
         rack.RemoveTile('?');
+        }
+        if (p.GetIsHorizontal()){
+            col++;
+        }
+        else{
+            row++;
         }
     }
 }
