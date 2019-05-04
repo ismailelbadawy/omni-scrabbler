@@ -19,5 +19,10 @@ public:
 	void generateRanRack(Rack rack);
 	vector <Tile> GetRackTiles();
 	void SetRackTiles(vector<Tile> Tiles);
+	void RemoveTile(Tile tile);
+	void RemoveTile(char letter);
+	Tile RemoveAndReturnTile(char letter);
+	string RackToString();
+	Tile GetTile(int pos);
 };
 

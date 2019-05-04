@@ -29,6 +29,9 @@ public:
 	void SetTileBonus(int index,int bonus);
 	vector<Tile> GetTiles();
 	void SetTiles(vector<Tile>);
+
+	void SetStartPos(int row, int col);
+	void SetHorizontal(bool hor);
 	~Play();
 };
 

@@ -64,7 +64,7 @@ bool Play::GetIsHorizontal(){
 string Play::GetLetters()
 {
 	string returnedStr="";
-	for (int i=0;i<size_;i++)
+	for (int i=0;i<tiles_.size();i++)
 	{
 	returnedStr+=tiles_.at(i).GetLetter();
 	}
@@ -104,6 +104,14 @@ for (int i = 0; i < (int)tiles.size(); i++)
 
 
 
+}
+
+void Play::SetStartPos(int row, int col){
+	this->row_ = row;
+	this->column_= col;
+}
+void Play::SetHorizontal(bool hor){
+	this->isHorizontal_= hor;
 }
 
 Play::~Play()

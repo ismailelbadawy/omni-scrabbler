@@ -11,3 +11,8 @@ can
 pan
 fan
 red
+oilk
+oilj
+coil
+boil
+oila

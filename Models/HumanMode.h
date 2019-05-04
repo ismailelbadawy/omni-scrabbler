@@ -27,6 +27,11 @@ class HumanMode{
     void SetMyRack(Rack &rack);
 
     Rack GetOpponentRack();
-   
-   Move GetChosenMove(); // Returns the proper move format to be sent (removes letters already on the board from the Play)
+
+    Play GetOpponentPlay(bool horizontal, int row, int col, char *arr, int size, Rack &newoppRack, Tile* boardTiles[15][15]);
+    void AddPlayToBoard(Play p, Tile* boardTiles[15][15]);
+
+    void UpdateBoardAndRack(Play p, Rack &rack);
+
+    Move GetChosenMove(); // Returns the proper move format to be sent (removes letters already on the board from the Play)
 };

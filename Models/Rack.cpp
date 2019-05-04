@@ -51,3 +51,43 @@ vector <Tile> Rack::GetRackTiles(){
 void Rack::SetRackTiles(vector<Tile> Tiles){
     this->tiles_ = Tiles;
 }
+
+void Rack::RemoveTile(Tile tile){
+    for (int i=0; i < tiles_.size(); i++){
+        if (tiles_[i].GetLetter() == tile.GetLetter()){
+            tiles_.erase(tiles_.begin()+i);
+            break;
+        }
+    }
+}
+
+void Rack::RemoveTile(char letter){
+    for (int i=0; i < tiles_.size(); i++){
+        if (tiles_[i].GetLetter() == letter){
+            tiles_.erase(tiles_.begin()+i);
+            break;
+        }
+    }
+}
+
+Tile Rack::RemoveAndReturnTile(char letter){
+    for (int i=0; i < tiles_.size(); i++){
+        if (tiles_[i].GetLetter() == letter){
+            Tile t= tiles_[i];
+            tiles_.erase(tiles_.begin()+i);
+            return t;
+        }
+    }
+}
+
+string Rack::RackToString(){
+    string RackString ="";
+    for (int i=0; i< tiles_.size(); i++){
+        RackString += tiles_[i].GetLetter();
+    }
+    return RackString;
+}
+
+Tile Rack::GetTile(int pos){
+    return tiles_[pos];
+}

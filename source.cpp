@@ -106,7 +106,7 @@ int main(){
 	
 				}
 				else if (BagSize == 0){
-					AI_Agent.EndGame(moves); //should return best move
+					//AI_Agent.EndGame(moves); //should return best move
 				}
 				moves.clear();
 			}
@@ -155,33 +155,122 @@ int main(){
 
 		Move chosenMove;
 
-		bool GameOver = false;
-		while (!GameOver){
-			Human.SetMyRack(MyRack);
-			Human.SetOpponentRack(OpponentRack);
+		//bool GameOver = false;
+
+		Human.SetMyRack(MyRack);
+		Human.SetOpponentRack(OpponentRack);
+
+		bool MyPass= false;
+		bool OppPass = false;
+
+		Tile* boardTiles [15][15];
+		board.GetTiles(boardTiles);
+
+		//GameOver is (MyPass == true && OppPass== true) || (board.GetCount() == 100)
+		while (!((MyPass == true && OppPass== true) || (board.GetCount() == 100))){ //while !GameOver
 			if (MyTurn){
 				int BagSize = (int)bag.GetRemainigLetters().size();
 				moves = movGen.Generate(&MyRack, board, board.GetCount()==0);
 				if (BagSize > 9){//MidGame
 					chosenMove = Human.MidGame(moves, syn2, worth,&movGen); //should return best move
-					
 				}
 				else if (BagSize > 0 && BagSize <=9){
 					chosenMove = Human.PreEndGame(syn2,worth,&movGen,moves); //should return best move
-	
 				}
 				else if (BagSize == 0){
-					//AI_Agent.EndGame(moves); //should return best move
+					//Human.EndGame(moves); //should return best move
 				}
+				//Tile t= chosenMove.GetPlay()->GetTiles()[0];
+				if (chosenMove.GetPlay()->GetTiles().size()== 0 && chosenMove.GetRack().length()==0){ //no chosen word was found
+					//send GUI PASS
+					MyPass = true;
+					continue;
+				}
+				MyPass= false;
+				OppPass = false;
+				//send chosen move to GUI
+
+				//add word to board, remove letter from rack
+				Human.UpdateBoardAndRack(*chosenMove.GetPlay(),  MyRack);
+
+				Human.SetMyRack(MyRack);
+				moves.clear();
 				MyTurn = false;
 			}
 			else {
-				moves = movGen.Generate(&OpponentRack, board, board.GetCount()==0);
-				//wait for opponent actual move from GUI
-				MyTurn= true;
+				if (moves.empty()){
+					moves = movGen.Generate(&OpponentRack, board, board.GetCount()==0);
+					std::sort(moves.begin(), moves.end());
+				}
+				
+				int chosenMoveScore;
+				if (moves.size() ==  0){ //no chosen word was found
+					chosenMoveScore = 0;
+				}
+				else{
+					chosenMove = moves[0];
+					chosenMoveScore =  chosenMove.GetPlay()->GetScore();
+				}
+		
+				//wait for opponent 0->actual move/1->pass/2->hint/3-exchange from GUI 
+				int response = 0;
+				
+				if (response == 0){ //actual move
+					//receive from GUI horizontal, row, col and array of char and its size
+					bool Horizontal= true;
+					int row = 7;
+					int col = 6;
+					char Wordarr[1] ={'a'};
+					int size= 1;
+
+					Rack NewOpponent = OpponentRack;
+
+					Play ActualPlay = Human.GetOpponentPlay(Horizontal, row, col, Wordarr, size, NewOpponent, boardTiles);
+					ActualPlay.SetStartPos(row, col);
+					ActualPlay.SetHorizontal(Horizontal);
+
+					string EnemyRack = OpponentRack.RackToString();
+
+					if (!movGen.IsValidMove(ActualPlay, EnemyRack)){
+						//send to GUI invalid move
+						//still opponent turn..
+						continue;
+					}
+				
+					//Move is valid-> then calculate its score, take tiles from rack, put them on board
+					int OpponentScore = ActualPlay.GetScore();
+					OpponentRack = NewOpponent;
+					Human.AddPlayToBoard(ActualPlay, boardTiles);
+
+					if (chosenMoveScore > OpponentScore){
+						//send opponent a feedback through the GUI: you didnt choose best move, best move was
+					}
+					else if (chosenMoveScore == OpponentScore){
+						//send opponent a feedback through the GUI: you chose the best move
+					}
+					else if (chosenMoveScore < OpponentScore){
+						//send opponent a feedback through the GUI: you chose a better move than the evaluated
+					}
+					MyPass = false;
+					OppPass= false;
+					Human.SetOpponentRack(OpponentRack);
+					MyTurn= true;
+					moves.clear();
+				}
+				else if (response == 1){//pass
+					OppPass = true;
+					MyTurn = true;
+					moves.clear();
+					continue;
+				}
+				else if (response == 2){//hint
+					//send best move to GUI and wait for opponent to play
+					MyTurn = false;
+					//no clear moves
+				}
+				
 			}
 		}
-		
-
+		//send to GUI game is over
 	}
 }
