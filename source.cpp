@@ -221,7 +221,7 @@ int main(){
 				}
 		
 				//wait for opponent 0->actual move/1->pass/2->hint/3-exchange from GUI 
-				int response = 0;
+				int response = 3;
 				
 				if (response == 0){ //actual move
 					//receive from GUI vector of WordGUI that has row, col, letter or each new letter on board
@@ -302,6 +302,18 @@ int main(){
 					MyTurn = false;
 					//no clear moves
 				}
+				else if (response == 3) { // Exchange tiles
+					vector<char> toBeExchanged = { 'p','i'};
+					vector<int> toBeExchangedLocations;
+					Rack OpRack2(OpponentRack);
+					for (int i = 0; i < (int)toBeExchanged.size(); i++)
+					{
+						/* code */
+						toBeExchangedLocations.push_back(OpRack2.GetPosition(toBeExchanged[i]));
+					}
+					bag.swapRack(OpponentRack,toBeExchangedLocations);
+				}
+			/// Put the rack in the appropriate container to be sent to the user.
 				
 			}
 		}
