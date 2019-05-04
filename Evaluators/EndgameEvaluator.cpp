@@ -111,7 +111,7 @@ vector<Move>  EndgameEvaluator::Qsticking()
      
             vector<Move> OppNewMoves = movegenerator_->Generate(&OppRack, board_, board_.GetCount()==0);
            
-            for(int i=0;i<OppNewMoves.size();i++)
+            for(int i=0;i<(int)OppNewMoves.size();i++)
             {
                 if(OppNewMoves[i].GetPlay()->CheckLetterInPlay('q'))
                     MoveswithQ.push_back(OppNewMoves[i]);
@@ -249,7 +249,7 @@ vector<Move> *EndgameEvaluator::Evaluate()
 
     
     vector<Move> OppMovesWithQ= Qsticking();
-    for(int i=0;i<possibleMoves_.size();i++)
+    for(int i=0;i<(int)possibleMoves_.size();i++)
 {
     int qfound=0;
     int qstickingrowcol=0;
@@ -257,7 +257,7 @@ vector<Move> *EndgameEvaluator::Evaluate()
     if(possibleMoves_[i].GetPlay()->CheckLetterInPlay('q'))
         qfound=1000;
         //vector<Move> OppMovesWithQ= Qsticking();
-    for(int j=0;j<OppMovesWithQ.size();j++)
+    for(int j=0;j<(int)OppMovesWithQ.size();j++)
     {
         
        // OppMovesWithQ[j]

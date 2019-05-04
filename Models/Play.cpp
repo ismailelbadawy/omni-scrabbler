@@ -118,7 +118,7 @@ bool Play::CheckLetterInPlay(char letter)
 {
 	
     bool found= false;
-    for(int i=0;i<tiles_.size();i++)
+    for(int i=0;i<(int)tiles_.size();i++)
     {
     
         if(tiles_[i].GetLetter()==letter)

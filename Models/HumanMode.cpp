@@ -13,6 +13,7 @@ void HumanMode::SetOpponentRack(Rack &rack){
     
     for (int i=0; i< 7-RackSize; i++){
         if (bagRemLetters.size() > 0){
+            srand((int)time(NULL));
             int randomIndex = rand() % bagRemLetters.size();
 		    OpponentRack.push_back(bagRemLetters[randomIndex]);
             bag_->TakeLetter(bagRemLetters[randomIndex]);	
@@ -34,6 +35,7 @@ void HumanMode::SetMyRack(Rack &rack){
     
     for (int i=0; i< 7-RackSize; i++){
         if (bagRemLetters.size() > 0){
+             srand((int)time(NULL));
             int randomIndex = rand() % bagRemLetters.size();
 		    MyRack.push_back(bagRemLetters[randomIndex]);	
             bag_->TakeLetter(bagRemLetters[randomIndex]);
@@ -388,4 +390,22 @@ double HumanMode::CalculateLeave(string rack)
         }
     }
 	return rackLeave;
+}
+Move HumanMode::EndGame(vector<Move> moves, map<string, double> * syn2, map<char, double> * worth, MoveGenerator * movGen,Rack MyRack, int numTilesByOpponent)
+{
+
+       vector <char> remLetters= this->bag_->GetRemainigLetters();
+       EndgameEvaluator* Eval = NULL;
+       Eval = new EndgameEvaluator(moves,*board_,syn2,worth,movGen,MyRack);
+       
+       vector<Move> * evaluatedMoves = Eval->Evaluate();
+   
+		SimulationEndGame * s =new SimulationEndGame(*movGen,*board_);
+		 int scoreMy=100;
+		 int scoreop=120;
+         Rack Rackopp=Eval->GetOppRack();
+        //s->LookAhead(3,0,MyRack,Rackopp,*this->board_,0,0,Eval);
+		 Move *m= s->LookAhead(3,0,MyRack,Rackopp,*board_,scoreMy,scoreop,Eval);
+        return *m;
+
 }

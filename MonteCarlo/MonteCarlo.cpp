@@ -321,7 +321,7 @@ void MonteCarlo::Expand(NodeMC *node)
 			    tempRack = GenerateRack(node->oldRack, node);
             }else{
                 Rack tempNewRack;
-                for (size_t i = 0; i < node->oldRack.GetLength(); i++)
+                for (size_t i = 0; i < (int)node->oldRack.GetLength(); i++)
                 {
                      if (node->oldRack.tiles_.at(i).GetLetter() != '*')
                      {

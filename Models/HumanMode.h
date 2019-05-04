@@ -1,4 +1,5 @@
 #pragma once
+#include<ctime>
 #include "Board.h"
 #include "Bag.h"
 #include "Rack.h"
@@ -7,6 +8,8 @@
 #include "../Evaluators/Evaluator.h"
 #include "../Evaluators/MidgameEvaluator.h"
 #include "../Evaluators/PreendgameEvaluator.h"
+#include"../Evaluators/EndgameEvaluator.h"
+#include"../EndGameSimulation/EndGameSim.h"
 #include"../MonteCarlo/MonteCarlo.h"
 
 struct WordGUI{
@@ -39,7 +42,8 @@ class HumanMode{
     HumanMode(Board *, Bag*);
     Move MidGame(vector<Move>, map<string, double> * rackLeave, map<char, double> * charValue, MoveGenerator * movGen);
     Move PreEndGame(map<string, double> * syn2,map<char, double>* worth, MoveGenerator * movGen, vector <Move> moves);
-    void EndGame(vector<Move>);
+    Move EndGame(vector<Move> moves, map<string, double> * syn2, map<char, double> * worth, MoveGenerator * movGen,Rack MyRack, int numTilesByOpponent);
+   
 
     void SetOpponentRack(Rack &rack);
     void SetMyRack(Rack &rack);

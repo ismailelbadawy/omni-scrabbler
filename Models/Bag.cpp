@@ -141,7 +141,7 @@ void Bag::swapRack(Rack&rack_, vector<int> swappedLoc)
 	  it->second=val+1;
   }
 
- //srand(time(NULL));
+ srand(time(NULL));
 
 
 

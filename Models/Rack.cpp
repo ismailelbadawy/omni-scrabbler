@@ -78,6 +78,7 @@ Tile Rack::RemoveAndReturnTile(char letter){
             return t;
         }
     }
+    return this->tiles_[0];
 }
 int Rack::GetPosition(char letter){
     for (int i =0 ;i<(int)this->tiles_.size();i++){
@@ -86,6 +87,7 @@ int Rack::GetPosition(char letter){
             return i;
         }
     }
+    return 0;
 }
 
 string Rack::RackToString(){
@@ -103,7 +105,7 @@ Tile Rack::GetTile(int pos){
 bool Rack::CheckLetterInRack(char letter)
 {
       bool found= false;
-    for(int i=0;i<tiles_.size();i++)
+    for(int i=0;i<(int)tiles_.size();i++)
     {
     
         if(tiles_[i].GetLetter()==letter)
