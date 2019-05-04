@@ -41,5 +41,8 @@ class HumanMode{
 
     void UpdateBoardAndRack(Play p, Rack &rack);
 
+    bool CheckGameOver(bool MyMoves, bool OppMoves);
+    Move GetPassMove();
+
     Move GetChosenMove(); // Returns the proper move format to be sent (removes letters already on the board from the Play)
 };

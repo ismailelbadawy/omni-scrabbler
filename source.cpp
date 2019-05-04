@@ -161,14 +161,14 @@ int main(){
 		Human.SetMyRack(MyRack);
 		Human.SetOpponentRack(OpponentRack);
 
-		bool MyPass= false;
-		bool OppPass = false;
+		bool MyMoves= true;
+		bool OppMoves = true;
 
 		Tile* boardTiles [15][15];
 		board.GetTiles(boardTiles);
 
 		//GameOver is (MyPass == true && OppPass== true) || (board.GetCount() == 100)
-		while (!((MyPass == true && OppPass== true) || (board.GetCount() == 100))){ //while !GameOver
+		while (!Human.CheckGameOver(MyMoves, OppMoves)){ //while !GameOver
 			if (MyTurn){
 				int BagSize = (int)bag.GetRemainigLetters().size();
 				moves = movGen.Generate(&MyRack, board, board.GetCount()==0);
@@ -181,14 +181,22 @@ int main(){
 				else if (BagSize == 0){
 					//Human.EndGame(moves); //should return best move
 				}
-				//Tile t= chosenMove.GetPlay()->GetTiles()[0];
-				if (chosenMove.GetPlay()->GetTiles().size()== 0 && chosenMove.GetRack().length()==0){ //no chosen word was found
+
+				Move PassMove = Human.GetPassMove();
+
+				if (moves.size() == 0){ //no chosen word was found
 					//send GUI PASS
-					MyPass = true;
+					MyMoves = false;
 					continue;
 				}
-				MyPass= false;
-				OppPass = false;
+				if (chosenMove.GetScore() < PassMove.GetScore()){ //pass was better than best move, but there are moves
+					//send GUI PASS
+					MyMoves = true;
+					continue;
+				}
+				MyMoves= true;
+				OppMoves = true;
+
 				//send chosen move to GUI
 
 				//add word to board, remove letter from rack
@@ -214,14 +222,16 @@ int main(){
 				int chosenMoveScore;
 				if (moves.size() ==  0){ //no chosen word was found
 					chosenMoveScore = 0;
+					OppMoves = false;
 				}
 				else{
 					chosenMove = moves[0];
 					chosenMoveScore =  chosenMove.GetPlay()->GetScore();
+					OppMoves = true;
 				}
 		
 				//wait for opponent 0->actual move/1->pass/2->hint/3-exchange from GUI 
-				int response = 3;
+				int response = 0;
 				
 				if (response == 0){ //actual move
 					//receive from GUI vector of WordGUI that has row, col, letter or each new letter on board
@@ -285,20 +295,20 @@ int main(){
 					else if (chosenMoveScore < OpponentScore){
 						//send opponent a feedback through the GUI: you chose a better move than the evaluated
 					}
-					MyPass = false;
-					OppPass= false;
+					MyMoves = true;
+					OppMoves= true;
 					Human.SetOpponentRack(OpponentRack);
 					MyTurn= true;
 					moves.clear();
 				}
 				else if (response == 1){//pass
-					OppPass = true;
 					MyTurn = true;
 					moves.clear();
 					continue;
 				}
 				else if (response == 2){//hint
-					//send best move to GUI and wait for opponent to play
+					//send best move to GUI and wait for opponent to play, if oppMoves = false, send no possible moves
+					
 					MyTurn = false;
 					//no clear moves
 				}
@@ -312,6 +322,8 @@ int main(){
 						toBeExchangedLocations.push_back(OpRack2.GetPosition(toBeExchanged[i]));
 					}
 					bag.swapRack(OpponentRack,toBeExchangedLocations);
+					moves.clear();
+					MyTurn = true;
 				}
 			/// Put the rack in the appropriate container to be sent to the user.
 				

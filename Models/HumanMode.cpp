@@ -328,3 +328,25 @@ void HumanMode::UpdateBoardAndRack(Play p, Rack &rack){
         }
     }
 }
+
+ bool HumanMode::CheckGameOver(bool MyMoves, bool OppMoves){
+    if (board_->GetCount() == 100)
+        return true;
+
+    if (bag_->GetRemainigLetters().size() == 0 && MyMoves == 0 && OppMoves == 0){//end game
+        return true;
+    }    
+    return false;
+ }
+
+ Move HumanMode::GetPassMove(){
+    Play *passPlay = new Play("",0,0,false);
+    Move passMove;
+    passPlay->SetScore(0);
+    passMove.SetRack(*this->rack_);
+    passMove.SetPlay(passPlay);
+    passMove.SetPenalty(0);
+    passMove.SetHeuristic();
+    passMove.CalculateScore();
+    return passMove;
+}
