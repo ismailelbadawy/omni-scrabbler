@@ -50,7 +50,7 @@ MonteCarlo::MonteCarlo(Board boardState, vector<Move> Moves, Rack currentRack, R
 
     temp->nodeState.UCB = 0;
     temp->currentBag = bag;
-	for (size_t i = 0; i < oponentRack.GetLength(); i++)
+	for (size_t i = 0; i < (int)oponentRack.GetLength(); i++)
 	{
 		temp->currentBag.TakeLetter(oponentRack.GetLetter(i));
 	}
@@ -77,7 +77,7 @@ Rack MonteCarlo::GenerateRack(Rack r,NodeMC* node)
 {
 	Bag myBag= node->currentBag;
 	int c = 0;
-	for (size_t i = 0; i < r.GetLength(); i++)
+	for (size_t i = 0; i < (int) r.GetLength(); i++)
 	{
 		if (r.GetLetter(i)=='*')
 		{
@@ -86,10 +86,10 @@ Rack MonteCarlo::GenerateRack(Rack r,NodeMC* node)
 	}
 	vector<Tile>remTiles = myBag.GetRemainingTiles();
 	vector<Tile>takenTiles;
-	if (remTiles.size() >= c)
+	if ((int) remTiles.size() >= c)
 	{
 		//We can generate the remaning tiles to rack
-		for (size_t i = 0; i < c; i++)
+		for (int i = 0; i < c; i++)
 		{
 			//Get a random tile
 			std::random_device dev;
@@ -111,15 +111,15 @@ Rack MonteCarlo::GenerateRack(Rack r,NodeMC* node)
 		}
 	}
 	int k = 0;
-	for (size_t i = 0; i < r.GetLength(); i++)
+	for (size_t i = 0; i < (int) r.GetLength(); i++)
 	{
-		if (r.GetLetter(i)=='*' && k<takenTiles.size())
+		if (r.GetLetter(i)=='*' && k<(int) takenTiles.size())
 		{
 			r.SetTile(takenTiles[k].GetLetter(), i);
 			k++;
 		}
 	}
-	for (size_t i = 0; i < r.GetLength(); i++)
+	for (size_t i = 0; i < (int)  r.GetLength(); i++)
 	{
 		if (r.GetLetter(i)=='*')
 		{
@@ -136,7 +136,7 @@ void MonteCarlo::firstLevel()
     Board tempLevel1Board = this->Root->boardState;
 
     //loop over the number of possible actions to make in order to get all the possible states in the level.
-    for (int i = 0; i < this->Root->nodeState.possibleActions.size(); i++)
+    for (int i = 0; i < (int) this->Root->nodeState.possibleActions.size(); i++)
     {
 		Rack tempRack = this->mainRack;
 		Bag tempBag = Root->currentBag;
@@ -158,7 +158,7 @@ void MonteCarlo::firstLevel()
 				moveTiles[i].SetLetter(toupper(moveTiles[i].GetLetter()));
 			}
 			tempBag.TakeLetter(moveTiles[i]);
-			for (size_t j = 0; j < tempRack.GetLength(); j++)
+			for (size_t j = 0; j <(int)  tempRack.GetLength(); j++)
 			{
 				if (tempRack.GetLetter(j)==letter || tempRack.GetLetter(j)==tolower(letter))
 				{
@@ -243,7 +243,7 @@ void MonteCarlo::LevelOrderTraversal(NodeMC *root)
                 cout << endl;
             }
             cout << "child end ..." << endl;
-            for (int i = 0; i < p->children.size(); i++)
+            for (int i = 0; i < (int)  p->children.size(); i++)
                 q.push(p->children[i]);
             n--;
         }
@@ -270,7 +270,7 @@ NodeMC *MonteCarlo::promisingNode(NodeMC *root)
     //Promising node's reward is calculated here
     //UCB is calculated on rollout
     NodeMC *Max = root->children.at(0);
-    for (int i = 0; i < root->children.size(); i++)
+    for (int i = 0; i < (int) root->children.size(); i++)
     {
         if (root->children.at(i)->nodeState.UCB > Max->nodeState.UCB)
         {
@@ -305,7 +305,7 @@ void MonteCarlo::Expand(NodeMC *node)
 
     Board tempBoard = node->boardState;
     
-    for (int i = 0; i < node->nodeState.possibleActions.size(); i++)
+    for (int i = 0; i < (int) node->nodeState.possibleActions.size(); i++)
     {
 
         tempBoard = node->boardState;

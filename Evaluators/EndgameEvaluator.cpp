@@ -231,7 +231,7 @@ vector<Move> *EndgameEvaluator::Evaluate()
 
       
 
-    for(int i=0;i<possibleMoves_.size();i++)
+    for(int i=0;i< (int) possibleMoves_.size();i++)
 {
     int qfound=0;
     if(possibleMoves_[i].GetPlay()->CheckLetterInPlay('q'))

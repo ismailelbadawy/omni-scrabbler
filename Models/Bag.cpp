@@ -1,5 +1,6 @@
 #include "Bag.h"
 #include "Tile.h"
+#include<ctime>
 
 Bag::Bag()
 {
@@ -132,7 +133,7 @@ void Bag::swapRack(Rack&rack_, vector<int> swappedLoc)
 {
   std::vector<char> rackVal;
 
-  for (int i=0;i<swappedLoc.size();i++)
+  for (int i=0;i< (int) swappedLoc.size();i++)
   {
 	  Tile T = getTileByLetter(rack_.GetTile(swappedLoc[i]).GetLetter());
 	  std::map<Tile, int>::iterator it = bag_.find(T);
@@ -140,11 +141,11 @@ void Bag::swapRack(Rack&rack_, vector<int> swappedLoc)
 	  it->second=val+1;
   }
 
- srand(time(NULL));
+ //srand(time(NULL));
 
 
 
- for (int i=0;i<swappedLoc.size();i++)
+ for (int i=0;i<(int) swappedLoc.size();i++)
  {
      int randomNo=rand()%bag_.size();
      std::map<Tile,int>::iterator it=std::next(bag_.begin(),randomNo);
@@ -163,7 +164,7 @@ void Bag::swapRack(Rack&rack_, vector<int> swappedLoc)
 
 void Bag::generateRandomRack(Rack&rack_)
 {
-	srand(time(NULL));
+	//srand(time(NULL));
 	for (int i = 0; i<7; i++)
 	{
 		int randomNo = rand() % bag_.size();
