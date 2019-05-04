@@ -91,3 +91,15 @@ string Rack::RackToString(){
 Tile Rack::GetTile(int pos){
     return tiles_[pos];
 }
+
+bool Rack::CheckLetterInRack(char letter)
+{
+      bool found= false;
+    for(int i=0;i<tiles_.size();i++)
+    {
+    
+        if(tiles_[i].GetLetter()==letter)
+        found=true;
+    }
+    return found;
+}

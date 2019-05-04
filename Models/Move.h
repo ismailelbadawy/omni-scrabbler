@@ -23,6 +23,7 @@ public:
 	string GetRack();
 	double  GetScore();
 	void SetScore(double score);
+	Rack Getwholerack();
 	void CalculateScore();
 	void SetPenalty(double penalty);
 	void SetRackLeave(double leave);

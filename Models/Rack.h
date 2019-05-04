@@ -24,5 +24,6 @@ public:
 	Tile RemoveAndReturnTile(char letter);
 	string RackToString();
 	Tile GetTile(int pos);
+	bool CheckLetterInRack(char letter);
 };
 

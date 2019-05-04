@@ -1,3 +1,5 @@
+
+
 #include "EndgameEvaluator.h"
 #include <algorithm>
 
@@ -94,23 +96,37 @@ double EndgameEvaluator::CalculatePenalty(Move *move, Board board)
          return 0.0;
     }
    
-double EndgameEvaluator::Qsticking()
+vector<Move>  EndgameEvaluator::Qsticking()
 {
-    // vector<Move> moves = movGen.Generate(&OppRack, board_, board_.GetCount()==0);
-       // for(int i=0;i<mov)
+    
+    if(!OppRackEvaluated)
+   { OppRack = EvaluateRack();
+    OppRackEvaluated=true;
+   }
+   vector<Move> MoveswithQ;
+           
+   
+    if(OppRack.CheckLetterInRack('q'))
+    {
+     
+            vector<Move> OppNewMoves = movegenerator_->Generate(&OppRack, board_, board_.GetCount()==0);
+           
+            for(int i=0;i<OppNewMoves.size();i++)
+            {
+                if(OppNewMoves[i].GetPlay()->CheckLetterInPlay('q'))
+                    MoveswithQ.push_back(OppNewMoves[i]);
+                
+            }
 
-   // OppRack = EvaluateRack();
-   // bool ifinrack=MyRack.CheckLetterInRack('q'); //checks if q is found in MyRack
-    // if(ifinrack)
-    // {
-       
-       
-    // }
-    // else
-    // {
+
+
         
-    // }
-    return 0.0;
+        return MoveswithQ;
+        
+    }
+
+
+    return MoveswithQ;
     
 }
 double EndgameEvaluator::CalculateLeave(string rack)
@@ -170,10 +186,10 @@ int EndgameEvaluator::GetBonus(int rowIterator, int columnIterator, Board board)
 }
 
 Rack EndgameEvaluator::EvaluateRack()
-{
+{                    // A  B  C  D  E   F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  U  V  W  X  Y  Z
     int Alphabet[27] = {9, 2, 2, 4, 12, 3, 3, 2, 9, 1, 1, 4, 2, 6, 8, 2, 1, 6, 5, 6, 4, 2, 2, 1, 2, 1};
     Tile *Tiles[15][15];
-    board_->GetTiles(Tiles);
+    board_.GetTiles(Tiles);
     for (int i = 0; i < 15; i++)
     {
         for (int j = 0; j < 15; j++)
@@ -183,8 +199,8 @@ Rack EndgameEvaluator::EvaluateRack()
             
         }
     }
-    for (int i = 0; i < myRack.GetLength(); i++)
-         Alphabet[myRack.GetLetter(i) - 97]--;
+    for (int i = 0; i < MyRack.GetLength(); i++)
+         Alphabet[MyRack.GetLetter(i) - 97]--;
     
     string RemainingLetters;
     int counter = 0;
@@ -205,18 +221,20 @@ Rack EndgameEvaluator::EvaluateRack()
         }
     }
     vector<Tile> rackTiles(RackTiles, RackTiles + sizeof RackTiles / sizeof RackTiles[0]);
-    Rack red(rackTiles);
-    return red;
+    Rack OPP(rackTiles);
+    return OPP;
 }
 
 
-EndgameEvaluator::EndgameEvaluator(vector<Move> moves, Board *board, map<string, double> * rackLeave, map<char, double> * charValue,MoveGenerator * movGen)
+EndgameEvaluator::EndgameEvaluator(vector<Move> moves, Board board, map<string, double> * rackLeave, map<char, double> * charValue,MoveGenerator * movGen,Rack MyRack)
 {
     this->board_ = board;
     this->possibleMoves_ = moves;
     this->doubleValued_ = rackLeave;
 	this->singleValued_ = charValue;
-     this->movegenerator_ = movGen;
+    this->movegenerator_ = movGen;
+    this->MyRack=MyRack;
+    OppRackEvaluated=false;
 	
 }
 EndgameEvaluator::~EndgameEvaluator()
@@ -229,16 +247,34 @@ double EndgameEvaluator::Evaluate(Move *move)
 vector<Move> *EndgameEvaluator::Evaluate()
 {
 
-      
-
-    for(int i=0;i< (int) possibleMoves_.size();i++)
+    
+    vector<Move> OppMovesWithQ= Qsticking();
+    for(int i=0;i<possibleMoves_.size();i++)
 {
     int qfound=0;
+    int qstickingrowcol=0;
+    
     if(possibleMoves_[i].GetPlay()->CheckLetterInPlay('q'))
         qfound=1000;
-    possibleMoves_[i].SetPenalty(this->CalculatePenalty(&possibleMoves_[i],*this->board_));
+        //vector<Move> OppMovesWithQ= Qsticking();
+    for(int j=0;j<OppMovesWithQ.size();j++)
+    {
+        
+       // OppMovesWithQ[j]
+        int numberofletters=OppMovesWithQ[j].GetPlay()->GetLetters().size();
+        
+        for(int k=0;k<numberofletters;k++)
+        {
+            int row=0;
+            int column=0;
+            OppMovesWithQ[j].GetPlay()->GetTiles()[k].GetIndex(row,column);
+            if(possibleMoves_[i].GetPlay()->GetRow()== row && possibleMoves_[i].GetPlay()->GetColumn()==column)
+            qstickingrowcol+=700;
+        }
+    }
+    possibleMoves_[i].SetPenalty(this->CalculatePenalty(&possibleMoves_[i],this->board_));
     possibleMoves_[i].SetRackLeave(this->CalculateLeave(possibleMoves_[i].GetRack()));
-    possibleMoves_[i].GetPlay()->SetScore(possibleMoves_[i].GetPlay()->GetScore()+(50*possibleMoves_[i].GetRack().length())+qfound);
+    possibleMoves_[i].GetPlay()->SetScore(possibleMoves_[i].GetPlay()->GetScore()+(100*possibleMoves_[i].GetRack().length())+qfound+qstickingrowcol);
     possibleMoves_[i].CalculateScore();
 }
 // Should be called only after instantiation.
@@ -252,4 +288,12 @@ vector<Move> *EndgameEvaluator::Evaluate()
     return weReturn;
 
 
+}
+
+void EndgameEvaluator::SetAttributes(vector<Move> moves,Board board,Rack MyRack,Rack OppRack)
+{
+    this->board_=board;
+    this->possibleMoves_=moves;
+    this->MyRack=MyRack;
+    this->OppRack=OppRack;
 }
