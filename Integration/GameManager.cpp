@@ -14,8 +14,6 @@ GameManager::GameManager()
 int GameManager::InitGame()
 {
     // get mode , if AI init server
-
-    agent = new Agent();
     Comm::GetGame().Score = 0;
     Comm::GetGame().Opponent_Score = 0;
     // gui = new GUI();
@@ -47,7 +45,7 @@ void GameManager::PlayAI(bool &ended)
         std::cin >> Comm::agentmove;
         if (Comm::agentmove == "PLAY")
         {
-            Play mover;
+            ServerPlay mover;
             int y;
             std::cout << "enter column" << std::endl;
             std::cin >> y;
@@ -300,7 +298,7 @@ vector<string> GameManager::Split(string passed)
 
 void GameManager::ConvertStringToMove(vector<string> tiles)
 {
-    for (int i;i<tiles.size();i++){
+    for (int i=0;i<(int)tiles.size();i++){
         WordGUI word;
         string tile=tiles[i];
         word.letter=tile[0];

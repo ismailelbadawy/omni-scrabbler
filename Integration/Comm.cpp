@@ -17,7 +17,7 @@ using namespace std;
 TilesStruct Comm::exchanged;
 bool Comm::StartAction;
 bool Comm::ActionFinished;
-Play Comm::play;
+ServerPlay Comm::play;
 Comm::States Comm::mystate;
 ChallengeReject Comm::rejected;
 GameState Comm::game;
@@ -63,11 +63,11 @@ void Comm::ConnectServer(){
 	}
 }
 
-void Comm::SetPlay(Play agentplay){
+void Comm::SetPlay(ServerPlay agentplay){
      play.Column=agentplay.Column;
 	 play.Row=agentplay.Row;
 	 play.Direction=agentplay.Direction;
-	 //play.Tiles=agentplay.Tiles;
+	 //ServerPlay.Tiles=agentplay.Tiles;
 	 for (int i=0;i<7;i++){
 		 play.Tiles[i]=agentplay.Tiles[i];
 	 }
@@ -82,7 +82,7 @@ void Comm::SetExchanged(TilesStruct tiles){
 		 exchanged.Tiles[i]=tiles.Tiles[i];
 	 }
 }
-Play Comm::GetPlay(){
+ServerPlay Comm::GetPlay(){
 	return play;
 }
 TilesStruct Comm::GetExchangedTiles(){  // tiles to be exchanged
@@ -113,7 +113,7 @@ string Comm::GetMove(){
 	return agentmove;
 }
 
-std::vector<uint8_t> Comm::PlayToBuffer(Play Move)
+std::vector<uint8_t> Comm::PlayToBuffer(ServerPlay Move)
 {
 	std::vector<uint8_t> buffer(0);
 	buffer.push_back(static_cast<uint8_t>(4));
