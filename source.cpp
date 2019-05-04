@@ -15,6 +15,7 @@
 #include"GADDAG/GADDAG.h"
 #include "Evaluators/MidgameEvaluator.h"
 
+
 #include "Evaluators/PreendgameEvaluator.h"
 #include "Strategy/SuperLeaveLoader.h"
 #include <time.h>
@@ -200,6 +201,13 @@ int main(){
 			else {
 				if (moves.empty()){
 					moves = movGen.Generate(&OpponentRack, board, board.GetCount()==0);
+					for (int i = 0; i < (int)moves.size(); i++)
+					{
+						moves[i].SetPenalty(0);
+						moves[i].SetRackLeave(0);
+						moves[i].CalculateScore();
+					}
+					
 					std::sort(moves.begin(), moves.end());
 				}
 				
@@ -220,11 +228,10 @@ int main(){
 					bool Horizontal= true;
 					int row = 7;
 					int col = 6;
-					char Wordarr[1] ={'a'};
-					int size= 1;
+					char Wordarr[2] ={'p','t'};
+					int size= 2;
 
 					Rack NewOpponent = OpponentRack;
-
 					Play ActualPlay = Human.GetOpponentPlay(Horizontal, row, col, Wordarr, size, NewOpponent, boardTiles);
 					ActualPlay.SetStartPos(row, col);
 					ActualPlay.SetHorizontal(Horizontal);
@@ -234,7 +241,7 @@ int main(){
 					if (board.GetCount() == 0){//first move, word should touch pos 7,7
 						bool found = false;
 						vector <Tile> tilesVector= ActualPlay.GetTiles();
-						for (int i=0; i< tilesVector.size(); i++){
+						for (int i=0; i< (int) tilesVector.size(); i++){
 							int row, col;
 							tilesVector[i].GetIndex(row, col);
 							if (row == 7 && col ==7){
