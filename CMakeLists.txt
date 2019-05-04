@@ -21,6 +21,8 @@ ${PROJECT_SOURCE_DIR}/MonteCarlo/*.h
 ${PROJECT_SOURCE_DIR}/MonteCarlo/*.cpp
 ${PROJECT_SOURCE_DIR}/EndGameSimulation/*.h
 ${PROJECT_SOURCE_DIR}/EndGameSimulation/*.cpp
+${PROJECT_SOURCE_DIR}/Integration/*.h
+${PROJECT_SOURCE_DIR}/Integration/*.cpp
 ${PROJECT_SOURCE_DIR}/source.cpp)
 
 add_executable(
