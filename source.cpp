@@ -231,6 +231,23 @@ int main(){
 
 					string EnemyRack = OpponentRack.RackToString();
 
+					if (board.GetCount() == 0){//first move, word should touch pos 7,7
+						bool found = false;
+						vector <Tile> tilesVector= ActualPlay.GetTiles();
+						for (int i=0; i< tilesVector.size(); i++){
+							int row, col;
+							tilesVector[i].GetIndex(row, col);
+							if (row == 7 && col ==7){
+								found = true;
+							}
+						}
+						if (!found){
+							//send to GUI that move should include pos 7,7
+							//still opponent trun..
+							continue;
+						}
+					}
+
 					if (!movGen.IsValidMove(ActualPlay, EnemyRack)){
 						//send to GUI invalid move
 						//still opponent turn..

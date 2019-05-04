@@ -73,7 +73,18 @@ Move HumanMode::MidGame(vector <Move> moves, map<string, double> * syn2, map<cha
     else{
     //return best move
         if((*evaluatedMoves).size() > 0){
+            int index=0;
             this->chosenMove_ = &(*evaluatedMoves)[0];
+            if (board_->GetCount() == 0){//first move --> no bingo
+                while (chosenMove_->GetRack().length() == 0){//bingo
+                    index++;
+                    if (index < (*evaluatedMoves).size()){
+                        this->chosenMove_ = &(*evaluatedMoves)[index];
+                    }
+                    
+                }
+                return GetChosenMove(); //if bingo is the only available move, play it, or return first none bingo move 
+            }   
             return GetChosenMove();
         }
         else{
