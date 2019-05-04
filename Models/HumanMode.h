@@ -9,6 +9,12 @@
 #include "../Evaluators/PreendgameEvaluator.h"
 #include"../MonteCarlo/MonteCarlo.h"
 
+struct WordGUI{
+    int row;
+    int col;
+    string letter; 
+};
+
 class HumanMode{
     Board *board_;
     Bag *bag_;
@@ -30,7 +36,7 @@ class HumanMode{
 
     Rack GetOpponentRack();
 
-    Play GetOpponentPlay(bool horizontal, int row, int col, char *arr, int size, Rack &newoppRack, Tile* boardTiles[15][15]);
+    Play GetOpponentPlay(vector <WordGUI> newWord, Rack &newoppRack, Tile* boardTiles[15][15]);
     void AddPlayToBoard(Play p, Tile* boardTiles[15][15]);
 
     void UpdateBoardAndRack(Play p, Rack &rack);

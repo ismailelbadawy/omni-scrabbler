@@ -224,18 +224,28 @@ int main(){
 				int response = 0;
 				
 				if (response == 0){ //actual move
-					//receive from GUI horizontal, row, col and array of char and its size
-					bool Horizontal= true;
-					int row = 7;
-					int col = 6;
-					char Wordarr[2] ={'p','t'};
-					int size= 2;
+					//receive from GUI vector of WordGUI that has row, col, letter or each new letter on board
+					vector<WordGUI> wordVector;
 
+					WordGUI newWord;
+					newWord.row = 7;
+					newWord.col = 9;
+					newWord.letter = 'a';
+					wordVector.push_back(newWord);
+
+					//newWord.row = 7;
+					//newWord.col = 11;
+					//newWord.letter = 'a';
+					//wordVector.push_back(newWord);
+					
 					Rack NewOpponent = OpponentRack;
-					Play ActualPlay = Human.GetOpponentPlay(Horizontal, row, col, Wordarr, size, NewOpponent, boardTiles);
-					ActualPlay.SetStartPos(row, col);
-					ActualPlay.SetHorizontal(Horizontal);
-
+					Play ActualPlay = Human.GetOpponentPlay(wordVector, NewOpponent, boardTiles);
+					if (ActualPlay.GetRow() == -1 && ActualPlay.GetColumn() == -1){
+						//send to GUI that word is not vertical or horizontal, or there are gaps between new tiles
+						//Still Opponent turn..
+						continue;
+					}
+				
 					string EnemyRack = OpponentRack.RackToString();
 
 					if (board.GetCount() == 0){//first move, word should touch pos 7,7
