@@ -134,6 +134,7 @@ Move HumanMode::GetChosenMove(){
     int columnIerator = this->chosenMove_->GetPlay()->GetColumn();
     Tile* boardTiles[15][15];
     this->board_->GetTiles(boardTiles);
+    return *chosenMove_;
     // create a tile
             // add the tile to the pointer to play
             // create a move to return it with the letters actually played on the board.
@@ -327,4 +328,20 @@ void HumanMode::UpdateBoardAndRack(Play p, Rack &rack){
             row++;
         }
     }
+}
+
+AgentMove HumanMode::MoveToGui(Move move){
+
+    string moveToGui="";
+    for (int i = 0; i < (int)move.GetPlay()->GetLetters().size(); i++)
+    {
+        moveToGui+=move.GetPlay()->GetLetters()[i];
+    }
+    AgentMove aMove;
+    aMove.tiles = moveToGui;
+    aMove.col=move.GetPlay()->GetColumn();
+    aMove.row = move.GetPlay()->GetRow();
+    aMove.score = move.GetPlay()->GetScore();
+    aMove.dir = move.GetPlay()->GetIsHorizontal();
+
 }

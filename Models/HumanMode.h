@@ -15,6 +15,14 @@ struct WordGUI{
     string letter; 
 };
 
+struct AgentMove {
+    string tiles;
+    int row;
+    int col;
+    int dir;
+    int score;
+};
+
 class HumanMode{
     Board *board_;
     Bag *bag_;
@@ -41,5 +49,9 @@ class HumanMode{
 
     void UpdateBoardAndRack(Play p, Rack &rack);
 
+    AgentMove MoveToGui(Move move);
+
     Move GetChosenMove(); // Returns the proper move format to be sent (removes letters already on the board from the Play)
 };
+
+
