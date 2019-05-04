@@ -17,6 +17,7 @@ public:
 	void CalculateTotalScore();
 	void SetScore(int score);
 	void SetBonus(int  bonus);
+	void setPosition(int row, int col);
 	bool operator< (const Tile& tile) const{
 		 
         return  tile.letter_ > letter_;

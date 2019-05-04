@@ -56,3 +56,7 @@ Tile::~Tile()
 {
 }
 
+void Tile::setPosition(int row, int col){
+	this->row_ = row;
+	this->column_ = col;
+}

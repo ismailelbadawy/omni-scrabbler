@@ -1123,10 +1123,24 @@ bool MoveGenerator::IsValidMove(Play& play, string enemyRack){
 		return false;
 	}
 	int additionalScore = 0;
-	if (!WordIsTouching(word,play.GetRow(),play.GetColumn(),play.GetIsHorizontal()))
-	{
-		return false;
+
+	bool wordOnBoard = false;
+	vector <Tile> playTiles = play.GetTiles();
+	for (int i=0; i< (int)playTiles.size(); i++){
+		int row, col;
+		playTiles[i].GetIndex(row, col);
+		if (boardTiles_[row][col]->GetLetter() != '0'){ //tile already on board 
+			wordOnBoard = true;
+			break;
+		}
 	}
+
+	if (!wordOnBoard){
+		if (!WordIsTouching(word,play.GetRow(),play.GetColumn(),play.GetIsHorizontal())){
+			return false;
+		}
+	}
+	
 
 	if(!CheckOtherDimension(word,play.GetRow(),play.GetColumn(), play.GetIsHorizontal(),additionalScore))
 	{

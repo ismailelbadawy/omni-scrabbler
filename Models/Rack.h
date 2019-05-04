@@ -13,6 +13,7 @@ public:
 	Rack(vector<Tile> tiles);
 	Rack(string rack);
 	int GetLength();
+	int GetPosition(char letter);
 	~Rack();
 	void SetTile(char c, int loc);
 	char GetLetter(int loc);

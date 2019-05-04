@@ -9,6 +9,12 @@
 #include "../Evaluators/PreendgameEvaluator.h"
 #include"../MonteCarlo/MonteCarlo.h"
 
+struct WordGUI{
+    int row;
+    int col;
+    string letter; 
+};
+
 class HumanMode{
     Board *board_;
     Bag *bag_;
@@ -30,10 +36,13 @@ class HumanMode{
 
     Rack GetOpponentRack();
 
-    Play GetOpponentPlay(bool horizontal, int row, int col, char *arr, int size, Rack &newoppRack, Tile* boardTiles[15][15]);
+    Play GetOpponentPlay(vector <WordGUI> newWord, Rack &newoppRack, Tile* boardTiles[15][15]);
     void AddPlayToBoard(Play p, Tile* boardTiles[15][15]);
 
     void UpdateBoardAndRack(Play p, Rack &rack);
+
+    bool CheckGameOver(bool MyMoves, bool OppMoves);
+    Move GetPassMove();
 
     Move GetChosenMove(); // Returns the proper move format to be sent (removes letters already on the board from the Play)
 };

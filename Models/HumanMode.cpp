@@ -156,13 +156,56 @@ Move HumanMode::GetChosenMove(){
     return *this->chosenMove_;
 }
 
-Play HumanMode::GetOpponentPlay(bool Horizontal, int row, int col, char *Wordarr, int size, Rack &OpponentRack, Tile* boardTiles[15][15]){
-    int inc=0;
-	int ArrayIndex=0;
-    vector<Tile> ActualPlay;
-    //Get letters that are on the board before the word
-    while( (row>0 && col>0) && boardTiles[row][col]->GetLetter()!='0'){
+Play HumanMode::GetOpponentPlay(vector<WordGUI> wordVector, Rack &OpponentRack, Tile* boardTiles[15][15]){
+    bool Horizontal;
+    bool valid= true;
 
+    int row = wordVector[0].row;
+    int col = wordVector[0].col;
+    //check horizontal
+    for (int i=1; i <(int)wordVector.size(); i++){
+        if (wordVector[i].row != row){
+            valid = false; 
+        }
+    }
+
+    //word wasn't horizontal, check vertical
+    if (!valid){
+        valid = true;
+        for (int i=1; i <(int)wordVector.size(); i++){
+            if (wordVector[i].row != row){
+                valid = false; 
+            }
+        }
+
+        if (!valid){ //word is not horizontal neither vertical, return NULL Play noted by play with pos = -1, -1
+            Play p;
+            p.SetStartPos(-1, -1);
+            return p;
+        }
+        else{
+            Horizontal = false;
+        }
+    }else{
+        Horizontal = true;
+    }
+    
+    //by here, word is on the same col or same row
+
+    //get Start Position
+    //Get letters that are on the board before the word
+    int rowDec;
+    int colDec;
+    if (Horizontal) {
+        rowDec=0;
+        colDec = -1;
+    }else{
+        rowDec=-1;
+        colDec = 0;
+    }
+
+    //row =7, col=7 -> if horizontal check 7,6, but don't change col value unless you are sure there is a tile on board at pos 7,6
+    while( ((row + rowDec) >0 && (col + colDec) >0) && boardTiles[row + rowDec][col + colDec]->GetLetter()!='0'){
         if (Horizontal){
             col--;
         }
@@ -170,30 +213,43 @@ Play HumanMode::GetOpponentPlay(bool Horizontal, int row, int col, char *Wordarr
             row--;
         }
     }
+
+	int ArrayIndex=0;
+    vector<Tile> ActualPlay;
+    valid = true;
+
+    //by here, we have the start pos in row, col, whether it's not the board or it's a new letter
     while (1){
-		if (Horizontal){
-			if (boardTiles[row][col]->GetLetter() == '0' && ArrayIndex < size){//board is empty at this position, draw from array
-				int prevSize= OpponentRack.GetLength();
-                Tile t= OpponentRack.RemoveAndReturnTile(Wordarr[ArrayIndex]);
-                t.SetParams(Wordarr[ArrayIndex],row,col,tilescorecalculator_.GetTileScore(Wordarr[ArrayIndex]),1);
-                int newSize = OpponentRack.GetLength();
-                if (newSize == prevSize){ //tiles was not found in rack, search for blank
-                    Tile t= OpponentRack.RemoveAndReturnTile(Wordarr['?']);
-                    t.SetLetter(Wordarr[ArrayIndex]);
-                }
-                else{
-                    ActualPlay.push_back(t);
-                }
-                
-				ArrayIndex++;
-			}
-			else if (boardTiles[row][col]->GetLetter() != '0'){ //word on board
-				ActualPlay.push_back(*boardTiles[row][col]);
-			}
-			else {
-				break;
-			}
+		if (boardTiles[row][col]->GetLetter() == '0' && ArrayIndex < (int)wordVector.size() && wordVector[ArrayIndex].row== row && wordVector[ArrayIndex].col == col){
+            //board is empty at this position, there are still new tiles, and this tile is at pos row, col, then draw it from array
+			int prevSize= OpponentRack.GetLength();
+            Tile t= OpponentRack.RemoveAndReturnTile(wordVector[ArrayIndex].letter[0]);
+            t.setPosition(row, col);
+            //t.SetParams(wordVector[ArrayIndex].letter[0],row,col,tilescorecalculator_.GetTileScore(wordVector[ArrayIndex].letter[0]),1);
+            int newSize = OpponentRack.GetLength();
+            if (newSize == prevSize){ //tiles was not found in rack, search for blank
+                Tile t= OpponentRack.RemoveAndReturnTile('?');
+                t.SetLetter(wordVector[ArrayIndex].letter[0]);
+                t.setPosition(row, col);
+                ActualPlay.push_back(t);
+            }
+            else{
+                ActualPlay.push_back(t);
+            }
+            
+			ArrayIndex++;
 		}
+		else if (boardTiles[row][col]->GetLetter() != '0'){ //letter on board, take it 
+			ActualPlay.push_back(*boardTiles[row][col]);
+		}
+		else if (ArrayIndex >= (int)wordVector.size()) //new letters are drawn and board is empty 
+			break;
+		
+        else { //there are still new tiles, but an empty tile was left between existing tiles (gap was found)
+            valid = false;
+            break;
+        }
+		
         if(Horizontal){
             col++;
         }
@@ -201,11 +257,24 @@ Play HumanMode::GetOpponentPlay(bool Horizontal, int row, int col, char *Wordarr
             row++;
         }
         if (col>14 || row> 14){
+            if (ArrayIndex < (int)wordVector.size()){ //if there are still new tiles
+                valid= false;
+            }
             break;
         }
     }
+    
+    if (!valid){
+        Play p;
+        p.SetStartPos(-1, -1);
+        return p;
+    }
+
     Play p;
     p.SetTiles(ActualPlay);
+    ActualPlay[0].GetIndex(row, col);
+    p.SetStartPos(row, col);
+    p.SetHorizontal(Horizontal);
     return p;
 }
 
@@ -258,4 +327,26 @@ void HumanMode::UpdateBoardAndRack(Play p, Rack &rack){
             row++;
         }
     }
+}
+
+ bool HumanMode::CheckGameOver(bool MyMoves, bool OppMoves){
+    if (board_->GetCount() == 100)
+        return true;
+
+    if (bag_->GetRemainigLetters().size() == 0 && MyMoves == 0 && OppMoves == 0){//end game
+        return true;
+    }    
+    return false;
+ }
+
+ Move HumanMode::GetPassMove(){
+    Play *passPlay = new Play("",0,0,false);
+    Move passMove;
+    passPlay->SetScore(0);
+    passMove.SetRack(*this->rack_);
+    passMove.SetPlay(passPlay);
+    passMove.SetPenalty(0);
+    passMove.SetHeuristic();
+    passMove.CalculateScore();
+    return passMove;
 }

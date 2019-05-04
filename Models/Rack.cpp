@@ -41,7 +41,7 @@ int Rack::GetLength(){
 }
 
 void Rack::generateRanRack(Rack rack){
-    
+    this->tiles_ = rack.tiles_;
 }
 
 vector <Tile> Rack::GetRackTiles(){
@@ -76,6 +76,14 @@ Tile Rack::RemoveAndReturnTile(char letter){
             Tile t= tiles_[i];
             tiles_.erase(tiles_.begin()+i);
             return t;
+        }
+    }
+}
+int Rack::GetPosition(char letter){
+    for (int i =0 ;i<(int)this->tiles_.size();i++){
+        if (this->tiles_[i].GetLetter()==letter){
+            //tiles_.erase(tiles_.begin()+i);
+            return i;
         }
     }
 }
