@@ -48,15 +48,23 @@ struct Play
 	int Score;
 };
 
-struct StrMove
+struct AgentMove
 {
-	vector<string> tiles;
-	int Row;
-	int Col;
-	int Dir;
+	string tiles;
+	int row;
+	int col;
+	int dir;
+	int score;
+};
+
+struct WordGUI{
+	string letter;
+	int row;
+	int col;
 };
 
 
+ 
 
 
 struct OpponentPlayState

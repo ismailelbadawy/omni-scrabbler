@@ -178,6 +178,8 @@ void GameManager::PlayHuman()
     InterpretMessage(HumanMove);
     // check the move and respond to it , send him his new rack,score and the best move, and a message
     gui->Send(ConvertMessageHuman(5));
+    gui->Receive();
+    InterpretMessage(HumanMove);
     // simulate my play
     gui->Send(ConvertMessageHuman(2));  // send my play to the gui with its score
     }
@@ -222,18 +224,22 @@ char *GameManager::ConvertMessageHuman(int type) // TO SEND THE MESSAGE TO GUI
     string tempmessage = "\0";
     if (type == 1)
     { // send the rack and the scores only in case of game init or game exchhange
-        tempmessage = "1,0:00," + to_string(Score) + "," + to_string(OpponentScore) + "," + ConvertVecRackToString(HumanRack) + ",";
+        tempmessage = "1,0:00," + to_string(Score) + "," + to_string(agentmove.score) + "," +HumanRack + ",";
     }
     else if (type==2){
-        tempmessage = "2,0:00" + to_string(Score) + "," + to_string(OpponentScore) + "," + ConvertVecRackToString(HumanRack) + ",";
-        tempmessage = tempmessage + ConvertVecRackToString(AgentMove.tiles) + "," + to_string(AgentMove.Row) + "," + to_string(AgentMove.Col) + "," + to_string(AgentMove.Dir) + ",";
+        tempmessage = "2,0:00" + to_string(Score) + "," + to_string(agentmove.score) + "," + HumanRack + ",";
+        tempmessage = tempmessage +agentmove.tiles + "," + to_string(agentmove.row) + "," + to_string(agentmove.col) + "," + to_string(agentmove.dir) + ",";
     }
     else if (type==4){
         tempmessage = "-1";
     }
     else if (type==5){
-        tempmessage = "5,0:00" + to_string(Score) + "," + to_string(OpponentScore) + "," + ConvertVecRackToString(HumanRack) + ",";
-        tempmessage = tempmessage + ConvertVecRackToString(HintMove.tiles) + "," + to_string(HintMove.Row) + "," + to_string(HintMove.Col) + "," + to_string(AgentMove.Dir) + ","+FbMessage+",";
+        tempmessage = "5,0:00" + to_string(Score) + "," + to_string(agentmove.score) + "," + HumanRack + ",";
+        tempmessage = tempmessage + hintmove.tiles + "," + to_string(hintmove.row) + "," + to_string(hintmove.col) + "," + to_string(hintmove.dir) + ","+FbMessage+","+Best+",";
+    }
+    while (tempmessage.size() != 39)
+    {
+        tempmessage = tempmessage + "0";
     }
     tempmessage = tempmessage + ",\0";
     message = const_cast<char *>(tempmessage.c_str());
@@ -244,22 +250,23 @@ void GameManager::InterpretMessage(char *message)
     string passed(message);
     vector<string> Parameters = Split(passed);
     if (Parameters[0] == "0")
-    {
-        MoveType="PLAY";
-        ConvertStringToMove(Parameters[1], Parameters[2], Parameters[3], Parameters[4]);
+    {     
+        //play
+       MoveType=0;
+        Parameters.erase(Parameters.begin());
+        ConvertStringToMove(Parameters);
     }
     else if (Parameters[0] == "1")
     {  //exchange
-         MoveType="EXCHANGE";
+        MoveType=3;
         ConvertStringToVector(Parameters[1]);  
     }
     else if (Parameters[0]=="2")
     {
-        MoveType="PASS";
-        //pass
+         MoveType=1;
     }
     else{
-         MoveType="HINT";
+          MoveType=2;
     }
 }
 
@@ -291,15 +298,15 @@ vector<string> GameManager::Split(string passed)
     return parameters;
 }
 
-void GameManager::ConvertStringToMove(string word, string row, string column, string direction)
+void GameManager::ConvertStringToMove(vector<string> tiles)
 {
-    HumanMove.Row = stoi(row);
-    HumanMove.Col = stoi(column);
-    HumanMove.Dir = stoi(direction);
-    for (int i = 0; i < word.size(); i++)
-    {
-        string temp(1,word[i]);
-        HumanMove.tiles.push_back(temp);
+    for (int i;i<tiles.size();i++){
+        WordGUI word;
+        string tile=tiles[i];
+        word.letter=tile[0];
+        word.row=tile[1];
+        word.col=tile[2];
+        HumanMove.push_back(word);
     }
  
 }

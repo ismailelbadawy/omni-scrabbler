@@ -19,16 +19,17 @@ bool turn;  // true is our turn , false is their turn
 
 string mode;
 
-vector<string> MyRack;
-vector<string> HumanRack;
-StrMove HumanMove; /// Human Move 
-StrMove AgentMove;
-StrMove HintMove;
-string FbMessage;  // feedback message about the move
+string MyRack;
+string HumanRack;
+AgentMove agentmove;
+AgentMove hintmove;
+vector <WordGUI> HumanMove;
+string FbMessage;            // feedback message about the move
+string Best;
 vector<string> ToExchange;
 int Score;
 int OpponentScore;
-string MoveType;
+int MoveType;
 void ConvertStringToVector(string tiles);
 char*ConvertMessageAI(int type); //convert gamestate object to a string containing the message
 char*ConvertMessageHuman(int type);
@@ -37,7 +38,7 @@ string ConvertVecRackToString(vector<string>);
 string GetCorrespondigLetter(int number);
 void InterpretMessage(char*message); 
 vector<string>Split(string passed);
-void ConvertStringToMove(string rack,string row, string column,string direction);  // for human mode
+void ConvertStringToMove(vector<string>);  // for human mode
 
 public:
 GameManager();
