@@ -13,5 +13,6 @@ VOID GetAnswerToRequest(LPTSTR, LPTSTR, LPDWORD);
 GUI();
 int initConnection();
 int Send(char *);
+char* Receive();
 ~GUI();
 };

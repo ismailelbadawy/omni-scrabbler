@@ -12,7 +12,7 @@
 #include <algorithm>    // std::copy
 #include<map>
 #include <iostream>
-
+using namespace std;
 
 struct TilesStruct
 {
@@ -46,7 +46,14 @@ struct Play
 	uint8_t Direction;
 	uint8_t Tiles[7];
 	int Score;
+};
 
+struct StrMove
+{
+	vector<string> tiles;
+	int Row;
+	int Col;
+	int Dir;
 };
 
 
@@ -62,7 +69,7 @@ struct OpponentPlayState
 	int Challenge_Time;
 	int Player_Time;
 	int Total_Time;
-   int  MoveType; // 0 play , 1 exchange , 2 pass 
+    int  MoveType;   // 0 play , 1 exchange , 2 pass 
       
 
 };
@@ -78,8 +85,7 @@ struct GameState
 	int Total_Time;
 	int ExchangedTiles[7];
 	int NewTilesAfterPlay[7];
-
-	OpponentPlayState OpponentPlayedTiles;
+	OpponentPlayState OpponentMove;
 	int OpponentExchangeCount;
 
 };

@@ -43,9 +43,10 @@ bool ConnectNamedP=ConnectNamedPipe(hnamedPipe,NULL);
 
 int GUI::Send(char * Message)
 {
+    printf("%s",Message);
     DWORD cbResponse,cbWritten;
-    cbResponse = sizeof(Message);
-   
+   cbResponse = strlen(Message);
+ //  printf("%d",Message);
     if(!WriteFile(
     hnamedPipe,
     Message,
@@ -59,7 +60,23 @@ int GUI::Send(char * Message)
     printf("Send Bytes");
     return 0;
 }
+ 
+char* GUI::Receive(){
+TCHAR  chBuf[BUFSIZE];
+BOOL   fSuccess = FALSE; 
+DWORD  cbRead, cbToWrite, cbWritten, dwMode;
 
+ fSuccess = ReadFile( 
+        hnamedPipe,    // pipe handle 
+         chBuf,    // buffer to receive reply 
+         BUFSIZE*sizeof(TCHAR),  // size of buffer 
+         &cbRead,  // number of bytes read 
+         NULL);    // not overlapped 
+         
+printf("finished reading");
+char*message=TEXT(chBuf);
+return message;
+} 
 
 GUI::~GUI(){
     

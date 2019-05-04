@@ -13,24 +13,25 @@ using easywsclient::WebSocket;
 
 int main(){
     std::cout<<"hello"<<std::endl;
-  //  Comm* client=new Comm();
+   //Comm* client=new Comm();
+   GameManager manager;
+   manager.InitGame();
+   std::thread thread1(&Comm::ThinkingThread);
+   std::thread thread2(&Comm::ConnectServer);
+   bool ended=false;
+   while(!ended){
+     manager.PlayAI(ended);
+   }
   
-  // while(true)
-  // {
-  //  std::thread thread1(&Comm::ThinkingThread);
-
 	// while (Comm::ws->getReadyState() != WebSocket::CLOSED) {
 
 	// 	Comm::ws->poll();
 
 	// 	Comm::ws->dispatchBinary(&Comm::RecieveFromServer);
-
 	// }
-  // }
-GameManager manager;
-manager.InitGame();
-
-     return 0;
+// int x;
+//std::cin>>x;
+return 0;
 }
 
 

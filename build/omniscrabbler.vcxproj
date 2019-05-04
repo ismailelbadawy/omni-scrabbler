@@ -300,15 +300,14 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="C:\Users\user\Desktop\omni-scrabbler\omni-scrabbler-Communication-Testing\Test-Scrabble\AgentInerface.h" />
+    <ClCompile Include="C:\Users\user\Desktop\omni-scrabbler\omni-scrabbler-Communication-Testing\Test-Scrabble\Agent.cpp" />
+    <ClInclude Include="C:\Users\user\Desktop\omni-scrabbler\omni-scrabbler-Communication-Testing\Test-Scrabble\Agent.h" />
     <ClCompile Include="C:\Users\user\Desktop\omni-scrabbler\omni-scrabbler-Communication-Testing\Test-Scrabble\Comm.cpp" />
     <ClInclude Include="C:\Users\user\Desktop\omni-scrabbler\omni-scrabbler-Communication-Testing\Test-Scrabble\Comm.h" />
-    <ClCompile Include="C:\Users\user\Desktop\omni-scrabbler\omni-scrabbler-Communication-Testing\Test-Scrabble\CommInetrface.cpp" />
     <ClCompile Include="C:\Users\user\Desktop\omni-scrabbler\omni-scrabbler-Communication-Testing\Test-Scrabble\GUI.cpp" />
     <ClInclude Include="C:\Users\user\Desktop\omni-scrabbler\omni-scrabbler-Communication-Testing\Test-Scrabble\GUI.h" />
     <ClCompile Include="C:\Users\user\Desktop\omni-scrabbler\omni-scrabbler-Communication-Testing\Test-Scrabble\GameManager.cpp" />
     <ClInclude Include="C:\Users\user\Desktop\omni-scrabbler\omni-scrabbler-Communication-Testing\Test-Scrabble\GameManager.h" />
-    <ClCompile Include="C:\Users\user\Desktop\omni-scrabbler\omni-scrabbler-Communication-Testing\Test-Scrabble\MessageStruct.cpp" />
     <ClCompile Include="C:\Users\user\Desktop\omni-scrabbler\omni-scrabbler-Communication-Testing\Test-Scrabble\Structs.cpp" />
     <ClCompile Include="C:\Users\user\Desktop\omni-scrabbler\omni-scrabbler-Communication-Testing\Test-Scrabble\easywsclient.cpp" />
     <ClCompile Include="C:\Users\user\Desktop\omni-scrabbler\omni-scrabbler-Communication-Testing\Test-Scrabble\source.cpp" />
