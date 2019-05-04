@@ -1,5 +1,4 @@
 #include "Agent.h"
-
 Agent::Agent(Board *board, Bag* bag, Rack* rack){
     board_ = board;
     bag_ = bag;
@@ -159,17 +158,27 @@ Move Agent::GetChosenMove(){
 
 }
 
-void Agent::EndGame(vector<Move> moves, map<string, double> * syn2, map<char, double> * worth, MoveGenerator * movGen){
+Move Agent::EndGame(vector<Move> moves, map<string, double> * syn2, map<char, double> * worth, MoveGenerator * movGen,Rack MyRack, int numTilesByOpponent){
 
        vector <char> remLetters= bag_->GetRemainigLetters();
        EndgameEvaluator* Eval = NULL;
-       Eval = new EndgameEvaluator(moves,board_,syn2,worth,movGen);
+       Eval = new EndgameEvaluator(moves,*board_,syn2,worth,movGen,MyRack);
+       
        vector<Move> * evaluatedMoves = Eval->Evaluate();
+       
+    //     MonteCarlo Simulator(*this->board_,*evaluatedMoves,*rack_, Eval->GetOppRack(),*this->bag_,movGen,syn2,worth,false,numTilesByOpponent); //bool false
+    // //send EvaluatorMoves to simulator 
+    //     this->chosenMove_ =&(*evaluatedMoves)[Simulator.Simulation()];
+    // //return best move by simulation
+    //     return GetChosenMove();
     
-   // MonteCarlo Simulator(*this->board_,*EvaluatorMoves,*rack_, oponentRack,*this->bag_,movGen,syn2,worth,false,numTilesByOpponent); //bool false
-    //send EvaluatorMoves to simulator 
-    //this->chosenMove_ =&(*EvaluatorMoves)[Simulator.Simulation()];
-    //return best move by simulation
-    
+   
+		SimulationEndGame * s =new SimulationEndGame(*movGen,*board_);
+		 int scoreMy=100;
+		 int scoreop=120;
+         Rack Rackopp=Eval->GetOppRack();
+        //s->LookAhead(3,0,MyRack,Rackopp,*this->board_,0,0,Eval);
+		 Move *m= s->LookAhead(3,0,MyRack,Rackopp,*board_,scoreMy,scoreop,Eval);
+        return *m;
 
 }

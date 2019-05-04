@@ -119,6 +119,16 @@ void Board::SimulateMove(Move* move){
 	
 }
 
+void Board::SetwholeTiles(Tile * tiles[15][15])
+{
+	for(int i=0;i<15;i++)
+	{
+		for(int j=0;j<15;j++)
+		{
+			tiles_[i][j]=*tiles[i][j];
+		}
+	}
+}
 
 
 

@@ -13,11 +13,12 @@
 class EndgameEvaluator : public Evaluator
 {
     vector<Move> possibleMoves_;
-    Board* board_;
+    Board board_;
     map<string, double> * doubleValued_;
 	map<char, double> * singleValued_;
-    Rack myRack;
-    Rack oppRack;
+    Rack MyRack;
+    Rack OppRack;
+    bool OppRackEvaluated=false;
     MoveGenerator *movegenerator_;
 
 
@@ -25,12 +26,14 @@ class EndgameEvaluator : public Evaluator
     int GetBonus(int rowIterator, int columnIterator, Board board);
     double CalculatePenalty(Move * move, Board board);
      Rack EvaluateRack();
-     double Qsticking();
+    vector<Move> Qsticking();
 
     public:    
         EndgameEvaluator(){}
-        EndgameEvaluator(vector<Move> moves, Board *board, map<string, double> * rackLeave, map<char, double> * charValue, MoveGenerator * movGen);
+        EndgameEvaluator(vector<Move> moves, Board board, map<string, double> * rackLeave, map<char, double> * charValue, MoveGenerator * movGen,Rack MyRack);
         ~EndgameEvaluator();
+        void SetAttributes(vector<Move> possibleMoves_,Board board_,Rack MyRack,Rack OppRack);
+        Rack GetOppRack(){return OppRack;}
         double Evaluate(Move * move) override;
         vector<Move> * Evaluate() override;
        

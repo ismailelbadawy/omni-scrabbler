@@ -18,6 +18,7 @@ public:
 	void UpdateBoard(string word, int row, int column, bool horizontal);
 	void Probe(char c,int row,int col, int score);
 	void SimulateMove(Move* move);
+	void SetwholeTiles(Tile * tiles[15][15]);
 	~Board();
 };
 

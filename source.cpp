@@ -163,21 +163,21 @@ int main(){
 		Human.SetMyRack(MyRack);
 		Human.SetOpponentRack(OpponentRack);
 
-		bool MyPass= false;
-		bool OppPass = false;
+		bool MyMoves= true;
+		bool OppMoves = true;
 
 		Tile* boardTiles [15][15];
 		board.GetTiles(boardTiles);
 
 		//GameOver is (MyPass == true && OppPass== true) || (board.GetCount() == 100)
-		while (!((MyPass == true && OppPass== true) || (board.GetCount() == 100))){ //while !GameOver
+		while (!Human.CheckGameOver(MyMoves, OppMoves)){ //while !GameOver
 			if (MyTurn){
 				int BagSize = (int)bag.GetRemainigLetters().size();
 				moves = movGen.Generate(&MyRack, board, board.GetCount()==0);
 
 				if (moves.size() > 0){
 					if (BagSize > 9){//MidGame
-					chosenMove = Human.MidGame(moves, syn2, worth,&movGen); //should return best move
+						chosenMove = Human.MidGame(moves, syn2, worth,&movGen); //should return best move
 					
 					}
 					else if (BagSize > 0 && BagSize <=9){
@@ -195,13 +195,30 @@ int main(){
 					SentMove.score = -1;
 					SentMove.dir= -1;
 					SentMove.tiles = "";
-					MyPass = true;
+					MyMoves = false;
 					//Send to GUI SentMove which is pass
+					MyTurn = false;
 					continue;
 				}
-				
-				MyPass= false;
-				OppPass = false;
+				//by here, there are moves
+				Move PassMove = Human.GetPassMove();
+
+				if (chosenMove.GetScore() < PassMove.GetScore()){ //pass was better than best move, but there are moves
+					AgentMove SentMove;
+					SentMove.dir= -1;
+					SentMove.row = -1;
+					SentMove.col= -1;
+					SentMove.score = -1;
+					SentMove.dir= -1;
+					SentMove.tiles = "";
+					MyMoves = true;
+					//Send to GUI SentMove which is pass
+					MyTurn = false;
+					continue;
+				}
+				MyMoves= true;
+				OppMoves = true;
+
 				AgentMove agentMove = Human.MoveToGui(chosenMove);
 				//send agent move to GUI
 
@@ -213,7 +230,8 @@ int main(){
 				moves.clear();
 				MyTurn = false;
 			}
-			else {
+			else { //his turn
+				string FbMessage="";
 				if (moves.empty()){ //not  calculated before
 					moves = movGen.Generate(&OpponentRack, board, board.GetCount()==0);
 					for (int i = 0; i < (int)moves.size(); i++)
@@ -229,10 +247,12 @@ int main(){
 				int chosenMoveScore;
 				if (moves.size() ==  0){ //no chosen word was found
 					chosenMoveScore = 0;
+					OppMoves = false;
 				}
 				else{
 					chosenMove = moves[0];
 					chosenMoveScore =  chosenMove.GetPlay()->GetScore();
+					OppMoves = true;
 				}
 		
 				//wait for opponent 0->actual move/1->pass/2->hint/3-exchange from GUI 
@@ -240,7 +260,7 @@ int main(){
 				
 				if (response == 0){ //actual move
 					//receive from GUI vector of WordGUI that has row, col, letter or each new letter on board
-					vector<WordGUI> wordVector;
+					vector<WordGUI> wordVector; //= haga men GUI
 
 					WordGUI newWord;
 					newWord.row = 7;
@@ -256,6 +276,7 @@ int main(){
 					Rack NewOpponent = OpponentRack;
 					Play ActualPlay = Human.GetOpponentPlay(wordVector, NewOpponent, boardTiles);
 					if (ActualPlay.GetRow() == -1 && ActualPlay.GetColumn() == -1){
+						FbMessage = "NO";
 						//send to GUI that word is not vertical or horizontal, or there are gaps between new tiles
 						//Still Opponent turn..
 						continue;
@@ -274,20 +295,22 @@ int main(){
 							}
 						}
 						if (!found){
+							FbMessage = "NO";
 							//send to GUI that move should include pos 7,7
 							//still opponent trun..
 							continue;
 						}
 					}
-					string FbMessage="";
+					
 					if (!movGen.IsValidMove(ActualPlay, EnemyRack)){
 						//send to GUI invalid move
-						FbMessage = "YES";
+						FbMessage = "NO";
 						//still opponent turn..
 						continue;
 					}
 					else{
-						FbMessage ="NO";
+						FbMessage ="YES";
+						//send to GUI valid
 					}
 				
 					//Move is valid-> then calculate its score, take tiles from rack, put them on board
@@ -297,30 +320,36 @@ int main(){
 
 					if (chosenMoveScore > OpponentScore){
 						//send opponent a feedback through the GUI: you didnt choose best move, best move was
+						//send best move
+						AgentMove agentMove = Human.MoveToGui(chosenMove);
 					}
 					else if (chosenMoveScore == OpponentScore){
 						//send opponent a feedback through the GUI: you chose the best move
+						FbMessage = "Congratulations";
 					}
 					else if (chosenMoveScore < OpponentScore){
 						//send opponent a feedback through the GUI: you chose a better move than the evaluated
+						FbMessage = "Better";
 					}
-					MyPass = false;
-					OppPass= false;
+
+					MyMoves = true;
+					OppMoves= true;
 					Human.SetOpponentRack(OpponentRack);
 					MyTurn= true;
 					moves.clear();
 				}
 				else if (response == 1){//pass
-					OppPass = true;
 					MyTurn = true;
 					moves.clear();
 					continue;
 				}
 				else if (response == 2){//hint
-					//send best move to GUI and wait for opponent to play
+					//send best move to GUI and wait for opponent to play, if oppMoves = false, send no possible moves
+					
 					MyTurn = false;
 					AgentMove agentMove = Human.MoveToGui(chosenMove);
 					//no clear moves
+					continue;
 				}
 				else if (response == 3) { // Exchange tiles
 					vector<char> toBeExchanged = { 'p','i'};
@@ -333,11 +362,13 @@ int main(){
 					}
 					bag.swapRack(OpponentRack,toBeExchangedLocations);
 					string opponentRackToGui="";
-					for (int i = 0; i < OpponentRack.GetLength(); i++)
+					for (int i = 0; i < (int)OpponentRack.GetLength(); i++)
 					{
 						opponentRackToGui+=OpponentRack.GetRackTiles()[i].GetLetter();
 					}
 					
+					moves.clear();
+					MyTurn = true;
 				}
 			/// Put the rack in the appropriate container to be sent to the user.
 				

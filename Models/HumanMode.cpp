@@ -48,6 +48,7 @@ void HumanMode::SetMyRack(Rack &rack){
 }
 
 Move HumanMode::MidGame(vector <Move> moves, map<string, double> * syn2, map<char, double> * worth, MoveGenerator * movGen){
+    this->doubleValued_ = syn2;
     MidgameEvaluator* evaluator = NULL;
     evaluator = new MidgameEvaluator(&moves, board_, syn2, worth);
 	vector<Move> * evaluatedMoves = evaluator->Evaluate();
@@ -343,5 +344,48 @@ AgentMove HumanMode::MoveToGui(Move move){
     aMove.row = move.GetPlay()->GetRow();
     aMove.score = move.GetPlay()->GetScore();
     aMove.dir = move.GetPlay()->GetIsHorizontal();
+    return aMove;
+}
 
+ bool HumanMode::CheckGameOver(bool MyMoves, bool OppMoves){
+    if (board_->GetCount() == 100)
+        return true;
+
+    if (bag_->GetRemainigLetters().size() == 0 && MyMoves == 0 && OppMoves == 0){//end game
+        return true;
+    }    
+    return false;
+ }
+
+ Move HumanMode::GetPassMove(){
+    Play *passPlay = new Play("",0,0,false);
+    Move passMove;
+    passPlay->SetScore(0);
+    passMove.SetRack(*this->rack_);
+    passMove.SetPlay(passPlay);
+    passMove.SetPenalty(0);
+    passMove.SetRackLeave(CalculateLeave(passMove.GetRack()));
+    passMove.SetHeuristic();
+    passMove.CalculateScore();
+    return passMove;
+}
+
+double HumanMode::CalculateLeave(string rack)
+{
+	double rackLeave = 0.0;
+    for(int i = 0; i < (int)rack.length(); i++)
+    {
+        for(int j = i + 1; j < (int)rack.length(); j++)
+        {
+            // Rack
+            if(i != j)
+            {
+				char leaveValue[] = { rack[i] == '?' ? '?' : (rack[i] - 32), rack[j] == '?' ? '?' : (rack[j] - 32)};
+				string leave(leaveValue);
+				leave = leave.substr(0, 2);
+				rackLeave += (*doubleValued_)[leave];
+            }
+        }
+    }
+	return rackLeave;
 }

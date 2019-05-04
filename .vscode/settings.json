@@ -6,7 +6,8 @@
         "string": "cpp",
         "chrono": "cpp",
         "xlocale": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "map": "cpp"
     },
     "C_Cpp.intelliSenseEngineFallback": "Disabled"
 }

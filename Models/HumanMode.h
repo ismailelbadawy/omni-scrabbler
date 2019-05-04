@@ -32,6 +32,8 @@ class HumanMode{
     Move *chosenMove_;
 
     TileScoreCalculator tilescorecalculator_;
+    map<string, double> * doubleValued_; //temporary
+    double CalculateLeave(string); //temporary
 
     public:
     HumanMode(Board *, Bag*);
@@ -50,6 +52,9 @@ class HumanMode{
     void UpdateBoardAndRack(Play p, Rack &rack);
 
     AgentMove MoveToGui(Move move);
+
+    bool CheckGameOver(bool MyMoves, bool OppMoves);
+    Move GetPassMove();
 
     Move GetChosenMove(); // Returns the proper move format to be sent (removes letters already on the board from the Play)
 };
