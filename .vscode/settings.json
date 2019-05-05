@@ -9,7 +9,15 @@
         "random": "cpp",
         "map": "cpp",
         "deque": "cpp",
-        "list": "cpp"
+        "list": "cpp",
+        "queue": "cpp",
+        "xhash": "cpp",
+        "xtree": "cpp",
+        "xutility": "cpp",
+        "ios": "cpp",
+        "iosfwd": "cpp",
+        "type_traits": "cpp",
+        "system_error": "cpp"
     },
     "C_Cpp.intelliSenseEngineFallback": "Disabled"
 }

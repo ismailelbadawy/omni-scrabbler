@@ -40,7 +40,9 @@ int main(){
 	GameManager gameManager;
 	gameManager.InitGame();
 	string Mode = gameManager.GetMode();
-	
+
+	cout << "Mode = " << Mode << endl;
+
 	MoveGenerator movGen(board);
 
 	map<string, double>* syn2 = new map<string, double>();

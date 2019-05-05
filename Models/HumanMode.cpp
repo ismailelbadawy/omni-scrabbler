@@ -420,6 +420,6 @@ AgentMove HumanMode::PassMoveToGui(){
 	SentMove.col= -1;
 	SentMove.score = -1;
 	SentMove.dir= -1;
-	SentMove.tiles = "";
+	SentMove.tiles = "0000000";
     return SentMove;
 }

@@ -21,6 +21,7 @@ int GameManager::InitGame()
      gui = new GUI();
      gui->initConnection();
      char*mode= gui->Receive();
+     cout << "MODE " <<mode<<endl;
      string tempString(mode);
      Mode= tempString;
     //char *message = "0,0:00,RedArmy,Youssef,0000000000000000,\0";
@@ -177,9 +178,11 @@ char *GameManager::ConvertMessageAI(int type)
 }
 
 void GameManager::PlayHuman(Board *board, Bag *bag, MoveGenerator *movGen,  map<string, double>* syn2, map<char, double>* worth)
-{
+{  
         vector<Move> moves;	
         moves.clear();
+
+        cout << "moves cleared";
 
 		bool MyTurn = false;
 		HumanMode Human(board, bag);
@@ -199,22 +202,224 @@ void GameManager::PlayHuman(Board *board, Bag *bag, MoveGenerator *movGen,  map<
         // take the rack from the agent
         this->HumanRack = OpponentRack.RackToString();
         this->MyRack = AgentRack.RackToString();
+
+        cout << "his rack " << this->HumanRack;
         gui->Send(ConvertMessageHuman(1)); //send to GUI opponent rack
 
         while(!Human.CheckGameOver(MyMoves, OppMoves)){
-            // char *Move=gui->Receive();//receive from GUI
+            char *Move=gui->Receive();//receive from GUI
 
-            // if(Move[0]=='-'&& Move[1]=='1'&& Move[2]==','){
-            //     char*x="n,1234567891234567891234567S4567891,\0";
-            //     gui->Send(x);
-            // }
-            // else{
-            // InterpretMessage(Move);
-            // // send the move to agent
-            // gui->Send(ConvertMessageHuman(5));
-            // gui->Receive();
-            // //play
-            // gui->Send(ConvertMessageHuman(2));
+            if(Move[0]=='-'&& Move[1]=='1'&& Move[2]==','){
+                char*x="n,1234567891234567891234567S4567891,\0";
+                gui->Send(x);
+            }
+            else{
+                InterpretMessage(Move);
+                //string FbMessage="";
+                int chosenMoveScore =0;
+                if (MoveType == 0 || MoveType == 2 || MoveType == 3){ //opponent played or asked for hint, get best move
+                    if (moves.empty()){ //not  calculated before
+					moves = movGen->Generate(&OpponentRack, *board, board->GetCount()==0);
+					for (int i = 0; i < (int)moves.size(); i++)
+					{
+						moves[i].SetPenalty(0);
+						moves[i].SetRackLeave(0);
+						moves[i].CalculateScore();
+					}
+					
+					std::sort(moves.begin(), moves.end());
+				    }
+
+                    
+				    if (moves.size() ==  0){ //no chosen word was found
+				    	chosenMoveScore = 0;
+				    	OppMoves = false;
+				    }
+				    else{
+				    	chosenMove = moves[0];
+				    	chosenMoveScore =  chosenMove.GetPlay()->GetScore();
+				    	OppMoves = true;
+				    }
+
+                }
+				
+				
+				//wait for opponent 0->actual move/1->pass/2->hint/3-exchange from GUI 
+				//which is received in MoveType
+
+                if (MoveType == 0){ //actual move
+					//receive from GUI vector of WordGUI that has row, col, letter or each new letter on board
+					//vector<WordGUI> wordVector; //= haga men GUI HumanMove
+					
+					Rack NewOpponent = OpponentRack;
+					Play ActualPlay = Human.GetOpponentPlay(HumanMove, NewOpponent, boardTiles);
+					if (ActualPlay.GetRow() == -1 && ActualPlay.GetColumn() == -1){
+						FbMessage = "NO";
+						//send to GUI that word is not vertical or horizontal, or there are gaps between new tiles
+						//Still Opponent turn..
+                        gui->Send(ConvertMessageHuman(5));
+						continue;
+					}
+				
+					string EnemyRack = OpponentRack.RackToString();
+
+					if (board->GetCount() == 0){//first move, word should touch pos 7,7
+						bool found = false;
+						vector <Tile> tilesVector= ActualPlay.GetTiles();
+						for (int i=0; i< (int) tilesVector.size(); i++){
+							int row, col;
+							tilesVector[i].GetIndex(row, col);
+							if (row == 7 && col ==7){
+								found = true;
+							}
+						}
+						if (!found){
+							FbMessage = "NO";
+							//send to GUI that move should include pos 7,7
+							//still opponent trun..
+                            gui->Send(ConvertMessageHuman(5));
+							continue;
+						}
+					}
+					
+					if (!movGen->IsValidMove(ActualPlay, EnemyRack)){
+						//send to GUI invalid move
+						FbMessage = "NO";
+						//still opponent turn..
+                        gui->Send(ConvertMessageHuman(5));
+						continue;
+					}
+					else{
+						FbMessage ="YES";
+						//send to GUI valid
+					}
+				
+					//Move is valid-> then calculate its score, take tiles from rack, put them on board
+					int OpponentScore = ActualPlay.GetScore();
+					OpponentRack = NewOpponent;
+					Human.AddPlayToBoard(ActualPlay, boardTiles);
+
+					if (chosenMoveScore > OpponentScore){
+						//send opponent a feedback through the GUI: you didnt choose best move, best move was
+						//send best move
+                        Best = "Less";
+						hintmove = Human.MoveToGui(chosenMove);
+					}
+					else if (chosenMoveScore == OpponentScore){
+						//send opponent a feedback through the GUI: you chose the best move
+						Best = "Congratulations";
+					}
+					else if (chosenMoveScore < OpponentScore){
+						//send opponent a feedback through the GUI: you chose a better move than the evaluated
+						Best = "Better";
+					}    
+
+					MyMoves = true;
+					OppMoves= true;
+					Human.SetOpponentRack(OpponentRack);
+                    this->HumanRack = OpponentRack.RackToString();
+					MyTurn= true;
+					moves.clear();
+                    gui->Send(ConvertMessageHuman(5));
+				}
+				else if (MoveType == 1){//pass
+					MyTurn = true;
+					moves.clear();
+					//continue;
+				}
+				else if (MoveType == 2){//hint
+					//send best move to GUI and wait for opponent to play, if oppMoves = false, send no possible moves
+					
+					MyTurn = false;
+				    hintmove = Human.MoveToGui(chosenMove);
+                    gui->Send(ConvertMessageHuman(5));
+					//no clear moves
+					continue;
+				}
+				else if (MoveType == 3) { // Exchange tiles
+					vector<char> toBeExchanged = { 'p','i'};
+					vector<int> toBeExchangedLocations;
+					Rack OpRack2(OpponentRack);
+					for (int i = 0; i < (int)toBeExchanged.size(); i++)
+					{
+						/* code */
+						toBeExchangedLocations.push_back(OpRack2.GetPosition(toBeExchanged[i]));
+					}
+					bag->swapRack(OpponentRack,toBeExchangedLocations);
+					string opponentRackToGui="";
+					for (int i = 0; i < (int)OpponentRack.GetLength(); i++)
+					{
+						opponentRackToGui+=OpponentRack.GetRackTiles()[i].GetLetter();
+					}
+					HumanRack = opponentRackToGui;
+                    hintmove = Human.MoveToGui(chosenMove);
+                    gui->Send(ConvertMessageHuman(5));
+					moves.clear();
+					MyTurn = true;
+				}
+
+
+
+
+
+            // send the move to agent
+            //gui->Send(ConvertMessageHuman(5));
+            gui->Receive();
+//MY TURNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+
+                int BagSize = (int)bag->GetRemainigLetters().size();
+				moves = movGen->Generate(&AgentRack, *board, board->GetCount()==0);
+
+				if (moves.size() > 0){
+					if (BagSize > 9){//MidGame
+						chosenMove = Human.MidGame(moves, syn2, worth, movGen); //should return best move
+					
+					}
+					else if (BagSize > 0 && BagSize <=9){
+						chosenMove = Human.PreEndGame(syn2,worth, movGen,moves); //should return best move
+					}
+					else if (BagSize == 0){
+						chosenMove = Human.EndGame(moves, syn2, worth, movGen, AgentRack, -1); //should return best move
+					}
+				}
+				else{
+					AgentMove SentMove = Human.PassMoveToGui(); //set -1 paramters
+					MyMoves = false;
+					//Send to GUI SentMove which is pass
+                    agentmove = SentMove;
+                    gui->Send(ConvertMessageHuman(2));
+					MyTurn = false;
+					continue;
+				}
+				//by here, there are moves
+				Move PassMove = Human.GetPassMove();
+
+				if (chosenMove.GetScore() < PassMove.GetScore()){ //pass was better than best move, but there are moves
+					AgentMove SentMove= Human.PassMoveToGui(); //send O
+					MyMoves = true;
+					//Send to GUI SentMove which is pass
+                    agentmove = SentMove;
+                    gui->Send(ConvertMessageHuman(2));
+					MyTurn = false;
+					continue;
+				}
+				MyMoves= true;
+				OppMoves = true;
+
+				agentmove = Human.MoveToGui(chosenMove);
+				//send agent move to GUI
+				//add word to board, remove letter from rack
+				Human.UpdateBoardAndRack(*chosenMove.GetPlay(),  AgentRack);
+
+				Human.SetMyRack(AgentRack);
+                gui->Send(ConvertMessageHuman(2));
+				moves.clear();
+				MyTurn = false;
+
+
+            //play
+           
+            }
         }
     
     gui->Send(ConvertMessageHuman(4));  //terminate connection
