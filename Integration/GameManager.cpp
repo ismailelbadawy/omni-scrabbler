@@ -204,18 +204,19 @@ void GameManager::PlayHuman(Board *board, Bag *bag, MoveGenerator *movGen,  map<
         this->MyRack = AgentRack.RackToString();
 
         cout << "his rack " << this->HumanRack;
+        
         toCapital(HumanRack);
         gui->Send(ConvertMessageHuman(1)); //send to GUI opponent rack
 
         while(!Human.CheckGameOver(MyMoves, OppMoves)){
-            char *Move=gui->Receive();//receive from GUI
+            char *move=gui->Receive();//receive from GUI
 
-            if(Move[0]=='-'&& Move[1]=='1'&& Move[2]==','){
+            if(move[0]=='-'&& move[1]=='1'&& move[2]==','){
                 char*x="n,1234567891234567891234567S4567891,\0";
                 gui->Send(x);
             }
             else{
-                InterpretMessage(Move);
+                InterpretMessage(move);
                 //string FbMessage="";
                 int chosenMoveScore =0;
                 if (MoveType == 0 || MoveType == 2 || MoveType == 3){ //opponent played or asked for hint, get best move
@@ -253,7 +254,7 @@ void GameManager::PlayHuman(Board *board, Bag *bag, MoveGenerator *movGen,  map<
 					//vector<WordGUI> wordVector; //= haga men GUI HumanMove
 					
 					Rack NewOpponent = OpponentRack;
-                    for (int i=0; (int) i < HumanMove.size(); i++){
+                    for (int i=0;  i <  (int) HumanMove.size(); i++){
                         toSmall((HumanMove[i].letter));
                     }
 					Play ActualPlay = Human.GetOpponentPlay(HumanMove, NewOpponent, boardTiles);
@@ -454,7 +455,7 @@ string GameManager::ConvertVecRackToString(vector<string> srack)
 {   //converts the rack to a single string to send it
     // to the gui
     string rack = srack[0];
-    for (int i = 1; i < srack.size(); i++)
+    for (int i = 1; i < (int)srack.size(); i++)
     {
         rack = rack + srack[i];
     }
@@ -537,7 +538,7 @@ vector<string> GameManager::Split(string passed)
 {
     vector<string> parameters;
     string temp = "";
-    for (int i = 0; i <passed.size(); i++)
+    for (int i = 0; i < (int)passed.size(); i++)
     {
         if (passed[i] != ',')
         {
@@ -566,7 +567,7 @@ void GameManager::ConvertStringToMove(vector<string> tiles)
 }
 
 void GameManager::toCapital(string &word){
-    for (int i=0; (int)i<word.size(); i++){
+    for (int i=0; i<(int)word.size(); i++){
         if (word[i] != '?'){
             word[i] -= 32;
         }
@@ -574,7 +575,7 @@ void GameManager::toCapital(string &word){
 }
 
 void GameManager:: toSmall(string &word){
-    for (int i=0; (int)i<word.size(); i++){
+    for (int i=0; i<(int)word.size(); i++){
         if (word[i] != '?'){
             word[i] += 32;
         }
@@ -582,7 +583,7 @@ void GameManager:: toSmall(string &word){
 }
 
 void GameManager::toCapital(AgentMove &word){
-    for (int i=0; (int)i<word.tiles.size(); i++){
+    for (int i=0; i<(int)word.tiles.size(); i++){
         if (word.tiles[i] != '?'){
             word.tiles[i] -= 32;
         }
@@ -590,7 +591,7 @@ void GameManager::toCapital(AgentMove &word){
 }
 
 void GameManager:: toSmall(AgentMove &word){
-    for (int i=0; (int)i<word.tiles.size(); i++){
+    for (int i=0; i<(int)word.tiles.size(); i++){
         if (word.tiles[i] != '?'){
             word.tiles[i] += 32;
         }
