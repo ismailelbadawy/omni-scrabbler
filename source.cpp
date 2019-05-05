@@ -51,7 +51,7 @@ int main(){
 	cout << "Loaded the rack leave map with count " << syn2->size() << endl;
 
 
-	if (Mode != "HumanMode"){         //AI Mode
+	if (Mode == "AIMODE"){         //AI Mode
 	 	vector<Move> moves;
 		Rack rack;
 		Agent AI_Agent(&board, &bag, &rack);

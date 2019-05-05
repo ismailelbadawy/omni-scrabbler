@@ -156,19 +156,19 @@ char *GameManager::ConvertMessageAI(int type)
     else if (type == 2)
     {
         // send the rack with a move
-        tempmessage = "2,0:00" + to_string(Comm::GetGame().Score) + "," + to_string(Comm::GetGame().Opponent_Score) + "," + ConvertIntRackToString(Comm::GetGame().Tiles) + ",";
+        tempmessage = "2,0:00," + to_string(Comm::GetGame().Score) + "," + to_string(Comm::GetGame().Opponent_Score) + "," + ConvertIntRackToString(Comm::GetGame().Tiles) + ",";
         tempmessage = tempmessage + ConvertIntRackToString((int *)Comm::GetPlay().Tiles) + "," + to_string(Comm::GetPlay().Row) + "," + to_string(Comm::GetPlay().Column) + "," + to_string(Comm::GetPlay().Direction) + ",";
     }
     else if (type == 3)
     {   //send a rack with the opponent's move
-        tempmessage = "3,0:00" + to_string(Comm::GetGame().Score) + "," + to_string(Comm::GetGame().Opponent_Score) + "," + ConvertIntRackToString(Comm::GetGame().Tiles) + ",";
+        tempmessage = "3,0:00," + to_string(Comm::GetGame().Score) + "," + to_string(Comm::GetGame().Opponent_Score) + "," + ConvertIntRackToString(Comm::GetGame().Tiles) + ",";
         tempmessage = tempmessage + ConvertIntRackToString((int *)Comm::GetGame().OpponentMove.Tiles) + "," + to_string(Comm::GetGame().OpponentMove.Row) + "," + to_string(Comm::GetGame().OpponentMove.Column) + "," + to_string(Comm::GetGame().OpponentMove.Direction) + ",";
     }
     else if (type == 4)
     {   //terminate connection
         tempmessage = "-1";
     }
-    while (tempmessage.size() != 39)
+    while (tempmessage.size() != 49)
     {
         tempmessage = tempmessage + "0";
     }
@@ -210,13 +210,14 @@ void GameManager::PlayHuman(Board *board, Bag *bag, MoveGenerator *movGen,  map<
 
         while(!Human.CheckGameOver(MyMoves, OppMoves)){
             char *move=gui->Receive();//receive from GUI
-
-            if(move[0]=='-'&& move[1]=='1'&& move[2]==','){
-                char*x="n,1234567891234567891234567S4567891,\0";
+            if(move[0]!='-' && move[1]!='1' && move[2]!=',' ){
+                char*x="n,1234567891234567891234567S456789111111111111111,\0";
                 gui->Send(x);
             }
             else{
+                cout<<move<<endl;
                 InterpretMessage(move);
+                
                 //string FbMessage="";
                 int chosenMoveScore =0;
                 if (MoveType == 0 || MoveType == 2 || MoveType == 3){ //opponent played or asked for hint, get best move
@@ -230,9 +231,7 @@ void GameManager::PlayHuman(Board *board, Bag *bag, MoveGenerator *movGen,  map<
 					}
 					
 					std::sort(moves.begin(), moves.end());
-				    }
-
-                    
+				    } 
 				    if (moves.size() ==  0){ //no chosen word was found
 				    	chosenMoveScore = 0;
 				    	OppMoves = false;
@@ -474,29 +473,32 @@ string GameManager::GetCorrespondigLetter(int number)
 
 char *GameManager::ConvertMessageHuman(int type) // TO SEND THE MESSAGE TO GUI
 {
-    char *message;
     string tempmessage = "\0";
     if (type == 1)
     { // send the rack and the scores only in case of game init or game exchhange
         tempmessage = "1,0:00," + to_string(Score) + "," + to_string(agentmove.score) + "," +HumanRack + ",";
     }
     else if (type==2){
-        tempmessage = "2,0:00" + to_string(Score) + "," + to_string(agentmove.score) + "," + HumanRack + ",";
-        tempmessage = tempmessage +agentmove.tiles + "," + to_string(agentmove.row) + "," + to_string(agentmove.col) + "," + to_string(agentmove.dir) + ",";
+        tempmessage="2,00.02,123,898,HYRKOFK,FATMAKL,07,01,0,";
     }
     else if (type==4){
         tempmessage = "-1";
     }
     else if (type==5){
-        tempmessage = "5,0:00" + to_string(Score) + "," + to_string(agentmove.score) + "," + HumanRack + ",";
+        tempmessage = "5,0:00," + to_string(Score) + "," + to_string(agentmove.score) + "," + HumanRack + ",";
         tempmessage = tempmessage + hintmove.tiles + "," + to_string(hintmove.row) + "," + to_string(hintmove.col) + "," + to_string(hintmove.dir) + ","+FbMessage+","+Best+",";
     }
-    while (tempmessage.size() != 39)
+    while (tempmessage.size() != 49)
     {
         tempmessage = tempmessage + "0";
     }
     tempmessage = tempmessage + ",\0";
-    message = const_cast<char *>(tempmessage.c_str());
+    char* message = new char[50];
+    for (int i = 0; i < 50; i++)
+    {
+        message[i]=tempmessage[i];
+    }
+    
     return message;
 }
 void GameManager::InterpretMessage(char *message)
