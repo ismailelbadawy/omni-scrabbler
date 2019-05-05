@@ -7,7 +7,9 @@
         "chrono": "cpp",
         "xlocale": "cpp",
         "random": "cpp",
-        "map": "cpp"
+        "map": "cpp",
+        "deque": "cpp",
+        "list": "cpp"
     },
     "C_Cpp.intelliSenseEngineFallback": "Disabled"
 }

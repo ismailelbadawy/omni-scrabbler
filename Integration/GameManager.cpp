@@ -1,6 +1,8 @@
 #include "GameManager.h"
 #include <string>
 #include <vector>
+
+
 enum Opponent
 {
     Human,
@@ -14,15 +16,22 @@ GameManager::GameManager()
 int GameManager::InitGame()
 {
     // get mode , if AI init server
-    Comm::GetGame().Score = 0;
-    Comm::GetGame().Opponent_Score = 0;
-    // gui = new GUI();
-    //gui->initConnection();
+    //Comm::GetGame().Score = 0;
+    //Comm::GetGame().Opponent_Score = 0;
+     gui = new GUI();
+     gui->initConnection();
+     char*mode= gui->Receive();
+     string tempString(mode);
+     Mode= tempString;
     //char *message = "0,0:00,RedArmy,Youssef,0000000000000000,\0";
     //gui->Send(message);
-    client = new Comm();
-
+    if (Mode=="AI"){
+        client = new Comm();
+    }
     return 0;
+}
+string GameManager::GetMode(){
+    return Mode;
 }
 
 void GameManager::PlayAI(bool &ended)
@@ -167,20 +176,47 @@ char *GameManager::ConvertMessageAI(int type)
     return message;
 }
 
-void GameManager::PlayHuman()
+void GameManager::PlayHuman(Board *board, Bag *bag, MoveGenerator *movGen,  map<string, double>* syn2, map<char, double>* worth)
 {
-    // take the rack from the agent
-    gui->Send(ConvertMessageHuman(1));
-    while(MyRack.size()!=0 || HumanRack.size()!=0){
-    char *HumanMove = gui->Receive(); // receive the play of the retarded human as a string
-    InterpretMessage(HumanMove);
-    // check the move and respond to it , send him his new rack,score and the best move, and a message
-    gui->Send(ConvertMessageHuman(5));
-    gui->Receive();
-    InterpretMessage(HumanMove);
-    // simulate my play
-    gui->Send(ConvertMessageHuman(2));  // send my play to the gui with its score
-    }
+        vector<Move> moves;	
+        moves.clear();
+
+		bool MyTurn = false;
+		HumanMode Human(board, bag);
+		Rack AgentRack;
+		Rack OpponentRack;
+		Move chosenMove;
+
+        bool MyMoves= true;
+		bool OppMoves = true;
+
+		Tile* boardTiles [15][15];
+		board->GetTiles(boardTiles);
+	
+		Human.SetMyRack(AgentRack);
+		Human.SetOpponentRack(OpponentRack);
+  
+        // take the rack from the agent
+        this->HumanRack = OpponentRack.RackToString();
+        this->MyRack = AgentRack.RackToString();
+        gui->Send(ConvertMessageHuman(1)); //send to GUI opponent rack
+
+        while(!Human.CheckGameOver(MyMoves, OppMoves)){
+            // char *Move=gui->Receive();//receive from GUI
+
+            // if(Move[0]=='-'&& Move[1]=='1'&& Move[2]==','){
+            //     char*x="n,1234567891234567891234567S4567891,\0";
+            //     gui->Send(x);
+            // }
+            // else{
+            // InterpretMessage(Move);
+            // // send the move to agent
+            // gui->Send(ConvertMessageHuman(5));
+            // gui->Receive();
+            // //play
+            // gui->Send(ConvertMessageHuman(2));
+        }
+    
     gui->Send(ConvertMessageHuman(4));  //terminate connection
 }
 
@@ -257,7 +293,7 @@ void GameManager::InterpretMessage(char *message)
     else if (Parameters[0] == "1")
     {  //exchange
         MoveType=3;
-        ConvertStringToVector(Parameters[1]);  
+      ToExchange= Parameters[1];  
     }
     else if (Parameters[0]=="2")
     {
@@ -270,10 +306,10 @@ void GameManager::InterpretMessage(char *message)
 
 void GameManager::ConvertStringToVector(string tiles){
 
-    for (int i=0;i<tiles.size();i++){
-        string temp(1,tiles[i]);
-        ToExchange.push_back(temp);
-    }
+    // for (int i=0;i<tiles.size();i++){
+    //     string temp(1,tiles[i]);
+    //     ToExchange="";
+    // }
 
 }
 

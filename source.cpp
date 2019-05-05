@@ -15,6 +15,10 @@
 #include"GADDAG/GADDAG.h"
 #include "Evaluators/MidgameEvaluator.h"
 
+#include "Integration/GameManager.h"
+
+#include "Integration/Structs.cpp"
+
 
 #include "Evaluators/PreendgameEvaluator.h"
 #include "Strategy/SuperLeaveLoader.h"
@@ -33,57 +37,21 @@ int main(){
 	Bag bag(BAG_PATH);
 
 
-	//board.Probe('c',7,2,3);		//Inserting letters 'e' and 't' to the empty board
-	//board.Probe('a',7,3,1);
-	//board.Probe('t',7,4,1);
+	GameManager gameManager;
+	gameManager.InitGame();
+	string Mode = gameManager.GetMode();
 	
-
-	Tile RackTiles[7];          //A simple array to carry the rack's letters
-
-	RackTiles[0].SetLetter('r');
-	RackTiles[0].SetScore(1);
-	RackTiles[1].SetLetter('a');
-	RackTiles[1].SetScore(4);
-	RackTiles[2].SetLetter('v');
-	RackTiles[2].SetScore(3);
-	RackTiles[3].SetLetter('e');
-	RackTiles[3].SetScore(2);
-	RackTiles[4].SetLetter('p');
-	RackTiles[4].SetScore(1);
-	RackTiles[5].SetLetter('a');
-	RackTiles[5].SetScore(4);
-	RackTiles[6].SetLetter('m');
-	RackTiles[6].SetScore(3);
-	
-
-	vector<Tile> rackTiles(RackTiles, RackTiles + sizeof RackTiles / sizeof RackTiles[0]);
-	Rack rack(rackTiles);
-
-  vector<Move> moves;
-
-	cout << "Loading GADDAG...\n";
-	auto startDag = chrono::high_resolution_clock::now();
 	MoveGenerator movGen(board);
-	auto endDag = chrono::high_resolution_clock::now();
-	auto diff = endDag - startDag;
-	cout << "Time to load GADDAG: " << chrono::duration_cast<chrono::seconds>(diff).count() << " s" << endl;
 
-	MidgameEvaluator* evaluator = NULL;
-	
 	map<string, double>* syn2 = new map<string, double>();
 	map<char, double>* worth = new map<char, double>();
 	SuperLeaveLoader loader(syn2, worth, "assets/syn2", "assets/worths");
 	cout << "Loaded the rack leave map with count " << syn2->size() << endl;
-	
-	ofstream OutputFile;
-	OutputFile.open("results.txt");
 
-	//FOR TESTING OPPONENT RACK ONLY
-	//PreEval.OpponentRackEstimation();
 
-	//char c = 'y';
-	bool Human = 1; //should be received from GUI
-	if (Human == 0){//Agent Mode
+	if (Mode != "HumanMode"){         //AI Mode
+	 	vector<Move> moves;
+		Rack rack;
 		Agent AI_Agent(&board, &bag, &rack);
 		Move pass = AI_Agent.GetPassMove();
 		Move chosenMove;
@@ -113,41 +81,11 @@ int main(){
 			}
 			
 		}	
-
-		//PreendgameEvaluator PreEval = PreendgameEvaluator(syn2,&board,&movGen,moves);
-		//cout << &moves << endl;
-		//evaluator = new MidgameEvaluator(&moves, &board, syn2, worth);
-		//vector<Move> * evaluatedMoves = evaluator->Evaluate();
-		//Move * move = new Move();
-		//PreEval.Evaluate(move);
-		//cout << moves.size() << endl;
-
-		//for(int i = 0; i < (int)evaluatedMoves->size(); i++){
-			//Move * move = &(evaluatedMoves->at(i));
-			//cout << "Move (" << i << ") " << move->GetPlay()->GetLetters() << "\tLeaving " << move->GetRack() << "\tHeuristic : " << move->GetHeuristic() << std::endl;
-		//}
-
-		//for(int i = 0; i < (int)moves.size(); i++){
-			 /* code */
-			//OutputFile<< moves[i].GetPlay()->GetLetters()<< " " << moves[i].GetPlay()->GetRow() << " " << moves[i].GetPlay()->GetColumn() <<  " " << moves[i].GetPlay()->GetIsHorizontal() <<" " <<moves[i].GetPlay()->GetScore() <<endl;
-		 //}
-
-		 // board.SimulateMove(&moves[0]);
-
-		//  moves[0].GetPlay()->GetScore();
-
-		  //moves.clear();
-
-			//cout << "More moves?\n";
-
-			//cin >> c;
-
-
-
-		//delete evaluatedMoves;
 	}
 	else { //Human Mode
-		bool MyTurn = true;
+		gameManager.PlayHuman(&board, &bag, &movGen, syn2, worth);
+		vector<Move> moves;	
+		bool MyTurn = false;
 		HumanMode Human(&board, &bag);
 		//Human Mode has pointers to the board and bag to detect any changes
 
@@ -157,9 +95,7 @@ int main(){
 		Move chosenMove;
 
 		moves.clear();
-
-		//bool GameOver = false;
-
+		
 		Human.SetMyRack(MyRack);
 		Human.SetOpponentRack(OpponentRack);
 
@@ -188,13 +124,7 @@ int main(){
 					}
 				}
 				else{
-					AgentMove SentMove;
-					SentMove.dir= -1;
-					SentMove.row = -1;
-					SentMove.col= -1;
-					SentMove.score = -1;
-					SentMove.dir= -1;
-					SentMove.tiles = "";
+					AgentMove SentMove = Human.PassMoveToGui(); //set -1 paramters
 					MyMoves = false;
 					//Send to GUI SentMove which is pass
 					MyTurn = false;
@@ -204,13 +134,7 @@ int main(){
 				Move PassMove = Human.GetPassMove();
 
 				if (chosenMove.GetScore() < PassMove.GetScore()){ //pass was better than best move, but there are moves
-					AgentMove SentMove;
-					SentMove.dir= -1;
-					SentMove.row = -1;
-					SentMove.col= -1;
-					SentMove.score = -1;
-					SentMove.dir= -1;
-					SentMove.tiles = "";
+					AgentMove SentMove= Human.PassMoveToGui(); //send O
 					MyMoves = true;
 					//Send to GUI SentMove which is pass
 					MyTurn = false;
@@ -261,17 +185,6 @@ int main(){
 				if (response == 0){ //actual move
 					//receive from GUI vector of WordGUI that has row, col, letter or each new letter on board
 					vector<WordGUI> wordVector; //= haga men GUI
-
-					WordGUI newWord;
-					newWord.row = 7;
-					newWord.col = 9;
-					newWord.letter = 'a';
-					wordVector.push_back(newWord);
-
-					//newWord.row = 7;
-					//newWord.col = 11;
-					//newWord.letter = 'a';
-					//wordVector.push_back(newWord);
 					
 					Rack NewOpponent = OpponentRack;
 					Play ActualPlay = Human.GetOpponentPlay(wordVector, NewOpponent, boardTiles);

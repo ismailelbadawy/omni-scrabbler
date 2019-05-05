@@ -353,6 +353,9 @@ AgentMove HumanMode::MoveToGui(Move move){
     if (board_->GetCount() == 100)
         return true;
 
+    if (this->rack_->GetLength() == 0 || this->opponentRack_->GetLength() == 0)    
+        return true;
+
     if (bag_->GetRemainigLetters().size() == 0 && MyMoves == 0 && OppMoves == 0){//end game
         return true;
     }    
@@ -408,4 +411,15 @@ Move HumanMode::EndGame(vector<Move> moves, map<string, double> * syn2, map<char
 		 Move *m= s->LookAhead(3,0,MyRack,Rackopp,*board_,scoreMy,scoreop,Eval);
         return *m;
 
+}
+
+AgentMove HumanMode::PassMoveToGui(){
+    AgentMove SentMove;
+	SentMove.dir= -1;
+	SentMove.row = -1;
+	SentMove.col= -1;
+	SentMove.score = -1;
+	SentMove.dir= -1;
+	SentMove.tiles = "";
+    return SentMove;
 }

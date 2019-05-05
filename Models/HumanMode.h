@@ -11,20 +11,21 @@
 #include"../Evaluators/EndgameEvaluator.h"
 #include"../EndGameSimulation/EndGameSim.h"
 #include"../MonteCarlo/MonteCarlo.h"
+#include "../Integration/Structs.cpp"
 
-struct WordGUI{
-    int row;
-    int col;
-    string letter; 
-};
-
-struct AgentMove {
-    string tiles;
-    int row;
-    int col;
-    int dir;
-    int score;
-};
+//struct WordGUI{
+//    int row;
+//    int col;
+//    string letter; 
+//};
+//
+//struct AgentMove {
+//    string tiles;
+//    int row;
+//    int col;
+//    int dir;
+//    int score;
+//};
 
 class HumanMode{
     Board *board_;
@@ -59,6 +60,8 @@ class HumanMode{
 
     bool CheckGameOver(bool MyMoves, bool OppMoves);
     Move GetPassMove();
+
+    AgentMove PassMoveToGui();
 
     Move GetChosenMove(); // Returns the proper move format to be sent (removes letters already on the board from the Play)
 };

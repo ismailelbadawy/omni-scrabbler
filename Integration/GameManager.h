@@ -2,6 +2,7 @@
 #include<iostream>
 #include"Comm.h"
 #include"GUI.h"
+#include "../Models/HumanMode.h"
 using namespace std;
 
 class GameManager
@@ -14,7 +15,7 @@ int Opponent;
 bool Game;
 bool turn;  // true is our turn , false is their turn 
 
-string mode;
+string Mode;
 
 string MyRack;
 string HumanRack;
@@ -23,7 +24,7 @@ AgentMove hintmove;
 vector <WordGUI> HumanMove;
 string FbMessage;            // feedback message about the move
 string Best;
-vector<string> ToExchange;
+string ToExchange;
 int Score;
 int OpponentScore;
 int MoveType;
@@ -41,7 +42,8 @@ public:
 GameManager();
 int InitGame();
 void PlayAI(bool &ended);
-void PlayHuman();
+void PlayHuman(Board *board, Bag *bag, MoveGenerator *MovGen, map<string, double>* syn2, map<char, double>* worth);
+string GetMode();
 ~ GameManager();
 };
 
