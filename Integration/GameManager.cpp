@@ -204,6 +204,7 @@ void GameManager::PlayHuman(Board *board, Bag *bag, MoveGenerator *movGen,  map<
         this->MyRack = AgentRack.RackToString();
 
         cout << "his rack " << this->HumanRack;
+        toCapital(HumanRack);
         gui->Send(ConvertMessageHuman(1)); //send to GUI opponent rack
 
         while(!Human.CheckGameOver(MyMoves, OppMoves)){
@@ -252,6 +253,9 @@ void GameManager::PlayHuman(Board *board, Bag *bag, MoveGenerator *movGen,  map<
 					//vector<WordGUI> wordVector; //= haga men GUI HumanMove
 					
 					Rack NewOpponent = OpponentRack;
+                    for (int i=0; (int) i < HumanMove.size(); i++){
+                        toSmall((HumanMove[i].letter));
+                    }
 					Play ActualPlay = Human.GetOpponentPlay(HumanMove, NewOpponent, boardTiles);
 					if (ActualPlay.GetRow() == -1 && ActualPlay.GetColumn() == -1){
 						FbMessage = "NO";
@@ -304,6 +308,7 @@ void GameManager::PlayHuman(Board *board, Bag *bag, MoveGenerator *movGen,  map<
 						//send best move
                         Best = "Less";
 						hintmove = Human.MoveToGui(chosenMove);
+                        toCapital(hintmove);
 					}
 					else if (chosenMoveScore == OpponentScore){
 						//send opponent a feedback through the GUI: you chose the best move
@@ -318,6 +323,7 @@ void GameManager::PlayHuman(Board *board, Bag *bag, MoveGenerator *movGen,  map<
 					OppMoves= true;
 					Human.SetOpponentRack(OpponentRack);
                     this->HumanRack = OpponentRack.RackToString();
+                    toCapital(HumanRack);
 					MyTurn= true;
 					moves.clear();
                     gui->Send(ConvertMessageHuman(5));
@@ -332,6 +338,7 @@ void GameManager::PlayHuman(Board *board, Bag *bag, MoveGenerator *movGen,  map<
 					
 					MyTurn = false;
 				    hintmove = Human.MoveToGui(chosenMove);
+                    toCapital(hintmove);
                     gui->Send(ConvertMessageHuman(5));
 					//no clear moves
 					continue;
@@ -352,7 +359,9 @@ void GameManager::PlayHuman(Board *board, Bag *bag, MoveGenerator *movGen,  map<
 						opponentRackToGui+=OpponentRack.GetRackTiles()[i].GetLetter();
 					}
 					HumanRack = opponentRackToGui;
+                    toCapital(HumanRack);
                     hintmove = Human.MoveToGui(chosenMove);
+                    toCapital(hintmove);
                     gui->Send(ConvertMessageHuman(5));
 					moves.clear();
 					MyTurn = true;
@@ -387,6 +396,7 @@ void GameManager::PlayHuman(Board *board, Bag *bag, MoveGenerator *movGen,  map<
 					MyMoves = false;
 					//Send to GUI SentMove which is pass
                     agentmove = SentMove;
+                    toCapital(agentmove);
                     gui->Send(ConvertMessageHuman(2));
 					MyTurn = false;
 					continue;
@@ -399,6 +409,7 @@ void GameManager::PlayHuman(Board *board, Bag *bag, MoveGenerator *movGen,  map<
 					MyMoves = true;
 					//Send to GUI SentMove which is pass
                     agentmove = SentMove;
+                    toCapital(agentmove);
                     gui->Send(ConvertMessageHuman(2));
 					MyTurn = false;
 					continue;
@@ -407,11 +418,14 @@ void GameManager::PlayHuman(Board *board, Bag *bag, MoveGenerator *movGen,  map<
 				OppMoves = true;
 
 				agentmove = Human.MoveToGui(chosenMove);
+                toCapital(agentmove);
 				//send agent move to GUI
 				//add word to board, remove letter from rack
 				Human.UpdateBoardAndRack(*chosenMove.GetPlay(),  AgentRack);
 
 				Human.SetMyRack(AgentRack);
+                MyRack = AgentRack.RackToString();
+                toCapital(MyRack);
                 gui->Send(ConvertMessageHuman(2));
 				moves.clear();
 				MyTurn = false;
@@ -499,6 +513,7 @@ void GameManager::InterpretMessage(char *message)
     {  //exchange
         MoveType=3;
       ToExchange= Parameters[1];  
+      toSmall(ToExchange);
     }
     else if (Parameters[0]=="2")
     {
@@ -548,6 +563,38 @@ void GameManager::ConvertStringToMove(vector<string> tiles)
         HumanMove.push_back(word);
     }
  
+}
+
+void GameManager::toCapital(string &word){
+    for (int i=0; (int)i<word.size(); i++){
+        if (word[i] != '?'){
+            word[i] -= 32;
+        }
+    }
+}
+
+void GameManager:: toSmall(string &word){
+    for (int i=0; (int)i<word.size(); i++){
+        if (word[i] != '?'){
+            word[i] += 32;
+        }
+    }
+}
+
+void GameManager::toCapital(AgentMove &word){
+    for (int i=0; (int)i<word.tiles.size(); i++){
+        if (word.tiles[i] != '?'){
+            word.tiles[i] -= 32;
+        }
+    }
+}
+
+void GameManager:: toSmall(AgentMove &word){
+    for (int i=0; (int)i<word.tiles.size(); i++){
+        if (word.tiles[i] != '?'){
+            word.tiles[i] += 32;
+        }
+    }
 }
 
 GameManager::~GameManager()

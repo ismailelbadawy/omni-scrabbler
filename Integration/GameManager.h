@@ -45,5 +45,11 @@ void PlayAI(bool &ended);
 void PlayHuman(Board *board, Bag *bag, MoveGenerator *MovGen, map<string, double>* syn2, map<char, double>* worth);
 string GetMode();
 ~ GameManager();
+void toCapital(string &word);
+void toSmall(string &word);
+
+void toCapital(AgentMove &word);
+void toSmall(AgentMove &word);
+
 };
 
