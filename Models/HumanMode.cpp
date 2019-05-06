@@ -279,6 +279,7 @@ Play HumanMode::GetOpponentPlay(vector<WordGUI> wordVector, Rack &OpponentRack, 
     ActualPlay[0].GetIndex(row, col);
     p.SetStartPos(row, col);
     p.SetHorizontal(Horizontal);
+    p.SetScore(0);
     return p;
 }
 
@@ -344,7 +345,7 @@ AgentMove HumanMode::MoveToGui(Move move){
     aMove.tiles = moveToGui;
     aMove.col=move.GetPlay()->GetColumn();
     aMove.row = move.GetPlay()->GetRow();
-    aMove.score = move.GetPlay()->GetScore();
+    aMove.score = 0;//move.GetPlay()->GetScore();
     aMove.dir = move.GetPlay()->GetIsHorizontal();
     return aMove;
 }

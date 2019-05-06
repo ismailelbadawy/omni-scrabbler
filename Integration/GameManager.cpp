@@ -168,7 +168,7 @@ char *GameManager::ConvertMessageAI(int type)
     {   //terminate connection
         tempmessage = "-1";
     }
-    while (tempmessage.size() != 49)
+    while (tempmessage.size() <= 49)
     {
         tempmessage = tempmessage + "0";
     }
@@ -179,6 +179,8 @@ char *GameManager::ConvertMessageAI(int type)
 
 void GameManager::PlayHuman(Board *board, Bag *bag, MoveGenerator *movGen,  map<string, double>* syn2, map<char, double>* worth)
 {  
+    this->Score=0;
+    agentmove.score=0;
         vector<Move> moves;	
         moves.clear();
 
@@ -281,6 +283,9 @@ void GameManager::PlayHuman(Board *board, Bag *bag, MoveGenerator *movGen,  map<
 							FbMessage = "NO";
 							//send to GUI that move should include pos 7,7
 							//still opponent trun..
+                            hintmove = Human.MoveToGui(chosenMove);
+                         toCapital(hintmove);
+					
                             gui->Send(ConvertMessageHuman(5));
 							continue;
 						}
@@ -290,11 +295,16 @@ void GameManager::PlayHuman(Board *board, Bag *bag, MoveGenerator *movGen,  map<
 						//send to GUI invalid move
 						FbMessage = "NO";
 						//still opponent turn..
+                          hintmove = Human.MoveToGui(chosenMove);
+                         toCapital(hintmove);
                         gui->Send(ConvertMessageHuman(5));
 						continue;
 					}
 					else{
 						FbMessage ="YES";
+                        hintmove = Human.MoveToGui(chosenMove);
+                         toCapital(hintmove);
+                        gui->Send(ConvertMessageHuman(5));
 						//send to GUI valid
 					}
 				
@@ -473,7 +483,7 @@ string GameManager::GetCorrespondigLetter(int number)
 // start human mode
 
 char *GameManager::ConvertMessageHuman(int type) // TO SEND THE MESSAGE TO GUI
-{
+{Score = 0;
     string tempmessage = "\0";
     if (type == 1)
     { // send the rack and the scores only in case of game init or game exchhange
@@ -489,11 +499,12 @@ char *GameManager::ConvertMessageHuman(int type) // TO SEND THE MESSAGE TO GUI
         tempmessage = "5,0:00," + to_string(Score) + "," + to_string(agentmove.score) + "," + HumanRack + ",";
         tempmessage = tempmessage + hintmove.tiles + "," + to_string(hintmove.row) + "," + to_string(hintmove.col) + "," + to_string(hintmove.dir) + ","+FbMessage+","+Best+",";
     }
-    while (tempmessage.size() != 49)
+    while (tempmessage.size() <= 49)
     {
         tempmessage = tempmessage + "0";
     }
     tempmessage = tempmessage + ",\0";
+    string m="";
     char* message = new char[51];
     for (int i = 0; i < 50; i++)
     {
@@ -563,8 +574,8 @@ void GameManager::ConvertStringToMove(vector<string> tiles)
         WordGUI word;
         string tile=tiles[i];
         word.letter=tile[0];
-        word.row=tile[1];
-        word.col=tile[2];
+        word.row=tile[1]-48;
+        word.col=tile[2]-48;
         HumanMove.push_back(word);
     }
  

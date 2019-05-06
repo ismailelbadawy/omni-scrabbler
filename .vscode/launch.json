@@ -9,7 +9,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/Debug/omniscrabbler.exe",
+            "program": "${workspaceFolder}/build/omniscrabbler.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
