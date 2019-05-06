@@ -21,7 +21,7 @@ int GameManager::InitGame()
      gui = new GUI();
      gui->initConnection();
      char*mode= gui->Receive();
-     cout << "MODE " <<mode<<endl;
+     cout << "\n MODE: " <<mode<<endl;
      string tempString(mode);
      Mode= tempString;
     //char *message = "0,0:00,RedArmy,Youssef,0000000000000000,\0";
@@ -209,13 +209,13 @@ void GameManager::PlayHuman(Board *board, Bag *bag, MoveGenerator *movGen,  map<
         gui->Send(ConvertMessageHuman(1)); //send to GUI opponent rack
 
         while(!Human.CheckGameOver(MyMoves, OppMoves)){
-            char *move=gui->Receive();//receive from GUI
-            if(move[0]!='-' && move[1]!='1' && move[2]!=',' ){
+            char *move=gui->Receive();                 //receive from GUI
+            if(move[0]=='-' && move[1]=='1' && move[2]==',' ){
                 char*x="n,1234567891234567891234567S456789111111111111111,\0";
                 gui->Send(x);
             }
             else{
-                cout<<move<<endl;
+               cout<<move<<endl;
                 InterpretMessage(move);
                 
                 //string FbMessage="";
@@ -435,6 +435,7 @@ void GameManager::PlayHuman(Board *board, Bag *bag, MoveGenerator *movGen,  map<
            
             }
         }
+        gui->Receive();
     
     gui->Send(ConvertMessageHuman(4));  //terminate connection
 }
@@ -493,11 +494,12 @@ char *GameManager::ConvertMessageHuman(int type) // TO SEND THE MESSAGE TO GUI
         tempmessage = tempmessage + "0";
     }
     tempmessage = tempmessage + ",\0";
-    char* message = new char[50];
+    char* message = new char[51];
     for (int i = 0; i < 50; i++)
     {
         message[i]=tempmessage[i];
     }
+    message[50]='\0';
     
     return message;
 }

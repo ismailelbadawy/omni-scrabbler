@@ -1,14 +1,17 @@
 #include"GUI.h"
-#define BUFSIZE 512
+#include <windows.h> 
+#include <stdio.h> 
+#include <tchar.h>
+
 GUI::GUI()
 {
 }
 
 int GUI::initConnection()
 {
-   BOOL   fConnected = FALSE; 
-   DWORD  dwThreadId = 0; 
-   HANDLE hPipe = INVALID_HANDLE_VALUE, hThread = NULL; 
+   fConnected = FALSE; 
+   fSuccess = false;
+   hThread=NULL;
    LPTSTR lpszPipename = TEXT("\\\\.\\pipe\\newpipe");
 _tprintf(TEXT("\nPipe Server: Connection is initiated %s\n"), lpszPipename);
 
@@ -43,7 +46,7 @@ bool ConnectNamedP=ConnectNamedPipe(hnamedPipe,NULL);
 
 int GUI::Send(char * Message)
 {
-    printf("%s",Message);
+   // printf("%s",Message);
     DWORD cbResponse,cbWritten;
    cbResponse = strlen(Message);
  //  printf("%d",Message);
@@ -57,15 +60,10 @@ int GUI::Send(char * Message)
         wprintf(L"failure w/err 0x%08lx\n",GetLastError);
         return 1;
     }
-    printf("Send Bytes");
     return 0;
 }
  
 char* GUI::Receive(){
-TCHAR  chBuf[BUFSIZE];
-BOOL   fSuccess = FALSE; 
-DWORD  cbRead, cbToWrite, cbWritten, dwMode;
-
  fSuccess = ReadFile( 
         hnamedPipe,    // pipe handle 
          chBuf,    // buffer to receive reply 
@@ -73,7 +71,7 @@ DWORD  cbRead, cbToWrite, cbWritten, dwMode;
          &cbRead,  // number of bytes read 
          NULL);    // not overlapped 
          
-printf("finished reading");
+//printf("finished reading");
 char*message=TEXT(chBuf);
 return message;
 } 
