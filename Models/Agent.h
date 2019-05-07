@@ -17,6 +17,8 @@ class Agent{
     Bag *bag_;
     Rack *rack_;
     Move *chosenMove_;
+    
+    map<string, double> * doubleValued_; //temporary
 
     void Combination(int start, int size, string &rem, string &rackleave, double &MaxScore, string &BestRackLeave, map<string, double> *doubleValued);
     Rack OpponentRackEstimation(map<string, double> *doubleValued, vector <char> remainingletters, int numTilesByOpponent);
