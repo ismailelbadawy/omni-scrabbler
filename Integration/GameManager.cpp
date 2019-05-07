@@ -508,7 +508,7 @@ void GameManager::InterpretMessage(char *message)
     if (Parameters[0] == "0")
     {     
         //play
-       MoveType=0;
+        MoveType=0;
         Parameters.erase(Parameters.begin());
         ConvertStringToMove(Parameters);
     }

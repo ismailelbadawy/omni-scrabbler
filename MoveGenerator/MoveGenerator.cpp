@@ -1135,8 +1135,8 @@ bool MoveGenerator::IsValidMove(Play& play, string enemyRack){
 		}
 	}
 
-	if (!wordOnBoard){
-		if (!WordIsTouching(word,play.GetRow(),play.GetColumn(),play.GetIsHorizontal())){
+	if (!wordOnBoard && this->boardTiles_[7][7]->GetLetter()!='0'){
+		if ( !WordIsTouching(word,play.GetRow(),play.GetColumn(),play.GetIsHorizontal())){
 			return false;
 		}
 	}
