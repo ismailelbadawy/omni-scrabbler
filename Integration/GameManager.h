@@ -26,8 +26,10 @@ string FbMessage;            // feedback message about the move
 string Best;
 string ToExchange;
 int Score;
-int OpponentScore;
+//int OpponentScore;
 int MoveType;
+int OpponentScore;
+int AgentScore;
 void ConvertStringToVector(string tiles);
 char*ConvertMessageAI(int type); //convert gamestate object to a string containing the message
 char*ConvertMessageHuman(int type);

@@ -38,10 +38,10 @@ int main(){
 
 
 	GameManager gameManager;
-	//gameManager.InitGame();
-	//string Mode = gameManager.GetMode();
+	gameManager.InitGame();
+	string Mode = gameManager.GetMode();
 
-	string Mode = "AIMODE";
+//	string Mode = "AIMODE";
 
 	cout << "Mode = " << Mode << endl;
 

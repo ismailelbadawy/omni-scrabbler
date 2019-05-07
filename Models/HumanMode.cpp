@@ -169,6 +169,7 @@ Play HumanMode::GetOpponentPlay(vector<WordGUI> wordVector, Rack &OpponentRack, 
     int row = wordVector[0].row;
     int col = wordVector[0].col;
     //check horizontal
+    if (wordVector.size()>1){
     for (int i=1; i <(int)wordVector.size(); i++){
         if (wordVector[i].row != row){
             valid = false; 
@@ -194,6 +195,39 @@ Play HumanMode::GetOpponentPlay(vector<WordGUI> wordVector, Rack &OpponentRack, 
         }
     }else{
         Horizontal = true;
+    }
+    }
+    else if (wordVector.size()==1)
+    {
+        if(wordVector[0].row==0 && boardTiles[row+1][col]->GetLetter()!='0'){
+            Horizontal = false;
+            valid = true;
+        }
+        else if (wordVector[0].row==14 && boardTiles[row-1][col]->GetLetter()!='0'){
+            Horizontal = false;
+            valid = true;
+        }
+        else if (wordVector[0].col==14 && boardTiles[row][col-1]->GetLetter()!='0'){
+            Horizontal = true;
+            valid = true;
+        }
+        else if(wordVector[0].col==0 && boardTiles[row][col+1]->GetLetter()!='0'){
+            Horizontal = true;
+            valid = true;
+        }
+        else if (boardTiles[row+1][col]->GetLetter()!='0'||
+                boardTiles[row-1][col]->GetLetter()!='0'){
+            Horizontal=false;
+            valid = true;
+                }
+        else if(  boardTiles[row][col+1]->GetLetter()!='0'||
+                boardTiles[row][col-1]->GetLetter()!='0'){
+            Horizontal = true;
+            valid = true;
+                }
+        else{
+            valid = false;
+        }
     }
     
     //by here, word is on the same col or same row
@@ -281,7 +315,6 @@ Play HumanMode::GetOpponentPlay(vector<WordGUI> wordVector, Rack &OpponentRack, 
     ActualPlay[0].GetIndex(row, col);
     p.SetStartPos(row, col);
     p.SetHorizontal(Horizontal);
-    p.SetScore(0);
     return p;
 }
 

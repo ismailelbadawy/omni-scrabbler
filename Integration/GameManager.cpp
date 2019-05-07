@@ -191,6 +191,8 @@ char *GameManager::ConvertMessageAI(int type)
 
 void GameManager::PlayHuman(Board *board, Bag *bag, MoveGenerator *movGen,  map<string, double>* syn2, map<char, double>* worth)
 {  
+    OpponentScore=0;
+    AgentScore=0;
     this->Score=0;
     agentmove.score=0;
         vector<Move> moves;	
@@ -311,6 +313,7 @@ void GameManager::PlayHuman(Board *board, Bag *bag, MoveGenerator *movGen,  map<
 						//still opponent turn..
                         hintmove = Human.MoveToGui(chosenMove);
                         toCapital(hintmove);
+                        
                         gui->Send(ConvertMessageHuman(5));
 						continue;
 					}
@@ -318,28 +321,27 @@ void GameManager::PlayHuman(Board *board, Bag *bag, MoveGenerator *movGen,  map<
 						FbMessage ="YES";
                         hintmove = Human.MoveToGui(chosenMove);
                         toCapital(hintmove);
-                        this->Score+=ActualPlay.GetScore();
                       //  gui->Send(ConvertMessageHuman(5));
 						//send to GUI valid
 					}
 				
 					//Move is valid-> then calculate its score, take tiles from rack, put them on board
-					int OpponentScore = ActualPlay.GetScore();
+					 OpponentScore+= ActualPlay.GetScore();
 					OpponentRack = NewOpponent;
 					Human.AddPlayToBoard(ActualPlay, boardTiles);
 
-					if (chosenMoveScore > OpponentScore){
+					if (chosenMoveScore > ActualPlay.GetScore()){
 						//send opponent a feedback through the GUI: you didnt choose best move, best move was
 						//send best move
                         Best = "Less";
 						hintmove = Human.MoveToGui(chosenMove);
                         toCapital(hintmove);
 					}
-					else if (chosenMoveScore == OpponentScore){
+					else if (chosenMoveScore == ActualPlay.GetScore()){
 						//send opponent a feedback through the GUI: you chose the best move
 						Best = "Congratulations";
 					}
-					else if (chosenMoveScore < OpponentScore){
+					else if (chosenMoveScore < ActualPlay.GetScore()){
 						//send opponent a feedback through the GUI: you chose a better move than the evaluated
 						Best = "Better";
 					}    
@@ -416,20 +418,13 @@ void GameManager::PlayHuman(Board *board, Bag *bag, MoveGenerator *movGen,  map<
 					else if (BagSize == 0){
 						chosenMove = Human.EndGame(moves, syn2, worth, movGen, AgentRack, -1); //should return best move
 					}
-                        /*agentmove.col=chosenMove.GetPlay()->GetColumn();
-                        agentmove.row=chosenMove.GetPlay()->GetRow();
-                        agentmove.dir=chosenMove.GetPlay()->GetIsHorizontal();
-                        agentmove.tiles=chosenMove.GetPlay()->GetLetters();
-                        agentmove.score=chosenMove.GetPlay()->GetScore();
-                        toCapital(agentmove);
-                        gui->Send(ConvertMessageHuman(2));
-					    MyTurn = false;
-					    continue;*/
+                       AgentScore+=chosenMove.GetPlay()->GetScore();
 				}
 				else{
 					AgentMove SentMove = Human.PassMoveToGui(); //set -1 paramters
 					MyMoves = false;
                     agentmove.score+=SentMove.score;
+                    
 					//Send to GUI SentMove which is pass
                     agentmove = SentMove;
                     toCapital(agentmove);
@@ -519,17 +514,17 @@ char *GameManager::ConvertMessageHuman(int type) // TO SEND THE MESSAGE TO GUI
     string tempmessage = "\0";
     if (type == 1)
     { // send the rack and the scores only in case of game init or game exchhange
-        tempmessage = "1,0:00," + to_string(Score) + "," + to_string(agentmove.score) + "," +HumanRack + ",";
+        tempmessage = "1,0:00," + to_string(OpponentScore) + "," + to_string(AgentScore) + "," +HumanRack + ",";
     }
     else if (type==2){
-        tempmessage = "2,0:00," + to_string(Score) + "," + to_string(agentmove.score) + "," + HumanRack + ",";
+        tempmessage = "2,0:00," + to_string(OpponentScore) + "," + to_string(AgentScore) + "," + HumanRack + ",";
         tempmessage = tempmessage +agentmove.tiles + "," + to_string(14-agentmove.row) + "," + to_string(agentmove.col) + "," + to_string(agentmove.dir) + ",";
     }
     else if (type==4){
         tempmessage = "-1";
     }
     else if (type==5){
-        tempmessage = "5,0:00," + to_string(Score) + "," + to_string(agentmove.score) + "," + HumanRack + ",";
+        tempmessage = "5,0:00," + to_string(OpponentScore) + "," + to_string(AgentScore) + "," + HumanRack + ",";
         tempmessage = tempmessage + hintmove.tiles + "," + to_string(14-hintmove.row) + "," + to_string(hintmove.col) + "," + to_string(hintmove.dir) + ","+FbMessage+","+Best+",";
     }
     while (tempmessage.size() <= 49)
