@@ -145,6 +145,18 @@ void GameManager::PlayAI(bool &ended)
     // }
 }
 
+void printBoard(Board *board){
+    Tile * tiles [15][15];
+    board->GetTiles(tiles);
+    for (int i=0; i < 15; i ++){
+        for (int k=0; k <15; k++){
+            char c = tiles[i][k]->GetLetter();
+            cout << c << " ";
+        }
+        cout << endl;
+    }
+}
+
 char *GameManager::ConvertMessageAI(int type)
 {
     char *message;
@@ -183,7 +195,7 @@ void GameManager::PlayHuman(Board *board, Bag *bag, MoveGenerator *movGen,  map<
     agentmove.score=0;
         vector<Move> moves;	
         moves.clear();
-
+        //HumanMove.clear();
         cout << "moves cleared";
 
 		bool MyTurn = false;
@@ -211,6 +223,7 @@ void GameManager::PlayHuman(Board *board, Bag *bag, MoveGenerator *movGen,  map<
         gui->Send(ConvertMessageHuman(1)); //send to GUI opponent rack
 
         while(!Human.CheckGameOver(MyMoves, OppMoves)){
+            HumanMove.clear();
             char *move=gui->Receive();                 //receive from GUI
             if(move[0]=='-' && move[1]=='1' && move[2]==',' ){
                 char*x="n,1234567891234567891234567S456789111111111111111,\0";
@@ -264,6 +277,7 @@ void GameManager::PlayHuman(Board *board, Bag *bag, MoveGenerator *movGen,  map<
 						//send to GUI that word is not vertical or horizontal, or there are gaps between new tiles
 						//Still Opponent turn..
                         gui->Send(ConvertMessageHuman(5));
+                        HumanMove.clear();
 						continue;
 					}
 				
@@ -284,7 +298,7 @@ void GameManager::PlayHuman(Board *board, Bag *bag, MoveGenerator *movGen,  map<
 							//send to GUI that move should include pos 7,7
 							//still opponent trun..
                             hintmove = Human.MoveToGui(chosenMove);
-                         toCapital(hintmove);
+                            toCapital(hintmove);
 					
                             gui->Send(ConvertMessageHuman(5));
 							continue;
@@ -295,16 +309,17 @@ void GameManager::PlayHuman(Board *board, Bag *bag, MoveGenerator *movGen,  map<
 						//send to GUI invalid move
 						FbMessage = "NO";
 						//still opponent turn..
-                          hintmove = Human.MoveToGui(chosenMove);
-                         toCapital(hintmove);
+                        hintmove = Human.MoveToGui(chosenMove);
+                        toCapital(hintmove);
                         gui->Send(ConvertMessageHuman(5));
 						continue;
 					}
 					else{
 						FbMessage ="YES";
                         hintmove = Human.MoveToGui(chosenMove);
-                         toCapital(hintmove);
-                        gui->Send(ConvertMessageHuman(5));
+                        toCapital(hintmove);
+                        this->Score+=ActualPlay.GetScore();
+                      //  gui->Send(ConvertMessageHuman(5));
 						//send to GUI valid
 					}
 				
@@ -386,24 +401,35 @@ void GameManager::PlayHuman(Board *board, Bag *bag, MoveGenerator *movGen,  map<
             gui->Receive();
 //MY TURNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
 
+ printBoard(board);
+
                 int BagSize = (int)bag->GetRemainigLetters().size();
 				moves = movGen->Generate(&AgentRack, *board, board->GetCount()==0);
 
 				if (moves.size() > 0){
 					if (BagSize > 9){//MidGame
-						chosenMove = Human.MidGame(moves, syn2, worth, movGen); //should return best move
-					
-					}
+						chosenMove = Human.MidGame(moves, syn2, worth, movGen); 
+                    }
 					else if (BagSize > 0 && BagSize <=9){
 						chosenMove = Human.PreEndGame(syn2,worth, movGen,moves); //should return best move
 					}
 					else if (BagSize == 0){
 						chosenMove = Human.EndGame(moves, syn2, worth, movGen, AgentRack, -1); //should return best move
 					}
+                        /*agentmove.col=chosenMove.GetPlay()->GetColumn();
+                        agentmove.row=chosenMove.GetPlay()->GetRow();
+                        agentmove.dir=chosenMove.GetPlay()->GetIsHorizontal();
+                        agentmove.tiles=chosenMove.GetPlay()->GetLetters();
+                        agentmove.score=chosenMove.GetPlay()->GetScore();
+                        toCapital(agentmove);
+                        gui->Send(ConvertMessageHuman(2));
+					    MyTurn = false;
+					    continue;*/
 				}
 				else{
 					AgentMove SentMove = Human.PassMoveToGui(); //set -1 paramters
 					MyMoves = false;
+                    agentmove.score+=SentMove.score;
 					//Send to GUI SentMove which is pass
                     agentmove = SentMove;
                     toCapital(agentmove);
@@ -418,6 +444,7 @@ void GameManager::PlayHuman(Board *board, Bag *bag, MoveGenerator *movGen,  map<
 					AgentMove SentMove= Human.PassMoveToGui(); //send O
 					MyMoves = true;
 					//Send to GUI SentMove which is pass
+                    agentmove.score+=SentMove.score;
                     agentmove = SentMove;
                     toCapital(agentmove);
                     gui->Send(ConvertMessageHuman(2));
@@ -427,7 +454,11 @@ void GameManager::PlayHuman(Board *board, Bag *bag, MoveGenerator *movGen,  map<
 				MyMoves= true;
 				OppMoves = true;
 
+               
+
 				agentmove = Human.MoveToGui(chosenMove);
+                cout << "Agent Played: ";
+                cout << agentmove.tiles << " " << agentmove.row << " " << agentmove.col << " " << agentmove.dir << endl;
                 toCapital(agentmove);
 				//send agent move to GUI
 				//add word to board, remove letter from rack
@@ -436,6 +467,7 @@ void GameManager::PlayHuman(Board *board, Bag *bag, MoveGenerator *movGen,  map<
 				Human.SetMyRack(AgentRack);
                 MyRack = AgentRack.RackToString();
                 toCapital(MyRack);
+                cout<<"sending to gui : "<<ConvertMessageHuman(2)<<endl;
                 gui->Send(ConvertMessageHuman(2));
 				moves.clear();
 				MyTurn = false;
@@ -483,21 +515,22 @@ string GameManager::GetCorrespondigLetter(int number)
 // start human mode
 
 char *GameManager::ConvertMessageHuman(int type) // TO SEND THE MESSAGE TO GUI
-{Score = 0;
+{
     string tempmessage = "\0";
     if (type == 1)
     { // send the rack and the scores only in case of game init or game exchhange
         tempmessage = "1,0:00," + to_string(Score) + "," + to_string(agentmove.score) + "," +HumanRack + ",";
     }
     else if (type==2){
-        tempmessage="2,00.02,123,898,HYRKOFK,FATMAKL,07,01,0,";
+        tempmessage = "2,0:00," + to_string(Score) + "," + to_string(agentmove.score) + "," + HumanRack + ",";
+        tempmessage = tempmessage +agentmove.tiles + "," + to_string(14-agentmove.row) + "," + to_string(agentmove.col) + "," + to_string(agentmove.dir) + ",";
     }
     else if (type==4){
         tempmessage = "-1";
     }
     else if (type==5){
         tempmessage = "5,0:00," + to_string(Score) + "," + to_string(agentmove.score) + "," + HumanRack + ",";
-        tempmessage = tempmessage + hintmove.tiles + "," + to_string(hintmove.row) + "," + to_string(hintmove.col) + "," + to_string(hintmove.dir) + ","+FbMessage+","+Best+",";
+        tempmessage = tempmessage + hintmove.tiles + "," + to_string(14-hintmove.row) + "," + to_string(hintmove.col) + "," + to_string(hintmove.dir) + ","+FbMessage+","+Best+",";
     }
     while (tempmessage.size() <= 49)
     {
@@ -574,8 +607,12 @@ void GameManager::ConvertStringToMove(vector<string> tiles)
         WordGUI word;
         string tile=tiles[i];
         word.letter=tile[0];
-        word.row=tile[1]-48;
-        word.col=tile[2]-48;
+        char rowString[] = {tile[1] , tile[2]};
+        int rowInteger = atoi(rowString);
+        word.row = rowInteger;
+        char colString[] = {tile[3], tile[4]};
+        int columnInteger = atoi(colString);
+        word.col = columnInteger;
         HumanMove.push_back(word);
     }
  
