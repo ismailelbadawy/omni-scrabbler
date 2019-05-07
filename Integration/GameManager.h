@@ -3,6 +3,7 @@
 #include"Comm.h"
 #include"GUI.h"
 #include "../Models/HumanMode.h"
+#include "../Models/Agent.h"
 using namespace std;
 
 class GameManager
@@ -17,6 +18,12 @@ bool turn;  // true is our turn , false is their turn
 
 string Mode;
 
+MoveGenerator *MovGen_;
+map<string, double>* syn2_;
+map<char, double>* worth_;
+
+Rack AI_Rack;
+
 string MyRack;
 string HumanRack;
 AgentMove agentmove;
@@ -27,7 +34,12 @@ string Best;
 string ToExchange;
 int Score;
 int OpponentScore;
+int AgentScore;
+
+int numberTilesByOpponent;
+
 int MoveType;
+int GetCorrespondigInt(char letter);
 void ConvertStringToVector(string tiles);
 char*ConvertMessageAI(int type); //convert gamestate object to a string containing the message
 char*ConvertMessageHuman(int type);
@@ -40,8 +52,8 @@ void ConvertStringToMove(vector<string>);  // for human mode
 
 public:
 GameManager();
-int InitGame();
-void PlayAI(bool &ended);
+int InitGame(MoveGenerator *MovGen, map<string, double>* syn2, map<char, double>* worth);
+void PlayAI(bool &ended, Board *board, Bag *bag);
 void PlayHuman(Board *board, Bag *bag, MoveGenerator *MovGen, map<string, double>* syn2, map<char, double>* worth);
 string GetMode();
 ~ GameManager();

@@ -29,21 +29,30 @@ string Comm::CurrentState;
 string Comm::agentmove;
 std::vector<uint8_t> Comm::T;
 WebSocket::pointer Comm::ws;
+std::recursive_mutex Comm::g_lock;
 bool Comm::simulationfinished;
-
+bool Comm::rackreceived;
+bool Comm::playconfirmed;
+bool Comm::oppplayed;
+bool Comm::exchconfirmed;
 Comm::Comm(){
 	 //start=false;
 	// ChangeState=false;
+	for (int i=0;i<7;i++){
+		play.Tiles[i]=0;
+		exchanged.Tiles[i]=0;
+	}
      mystate=IDLE;
 	 simulationfinished=false;
-	 //StartAction=false;
-	 //ActionFinished=true;
+	 playconfirmed=false;
+	 oppplayed=false;
+	 exchconfirmed=false;
 	 Comm::ws=NULL;
      CurrentState = "INIT"; 
      #ifdef _WIN32
 	 INT rc;
 	 WSADATA wsaData;
-
+     rackreceived=false;
 	rc = WSAStartup(MAKEWORD(2, 2), &wsaData);
 	if (rc) {
 		printf("WSAStartup Failed.\n");
@@ -61,6 +70,16 @@ void Comm::ConnectServer(){
 
 		Comm::ws->dispatchBinary(&Comm::RecieveFromServer);
 	}
+}
+
+
+int* Converts(uint8_t tiles[7]){
+int *newtiles=new int[7];
+for (int i=0;i<7;i++){
+ newtiles[i]=(int)tiles[i];
+ std::cout<<"old tile: "<<tiles[i]<<" new tile: "<<newtiles[i]<<std::endl;
+}
+return newtiles;
 }
 
 void Comm::SetPlay(ServerPlay agentplay){
@@ -339,8 +358,7 @@ void Comm::RecieveFromServer(const std::vector<uint8_t>& message){
 		mystate=ENDCONNECTION;
 		EndState End = EndGame(message);
 		CurrentState = "READY";
-       // ActionFinished=false;
-	   // StartAction=true;
+       
 	}
 	if (MsgType == MessageTypes::NAME && CurrentState == "INIT")
 	{
@@ -357,10 +375,16 @@ void Comm::RecieveFromServer(const std::vector<uint8_t>& message){
 		mystate=RECEIVE_RACK;
 		int Order = message[1];
 		game = BufferToGameState(message);
-      //  ActionFinished=false;
-	   // StartAction=true;
+		// for (int i=0;i<15;i++){
+		// 	for (int j=0;j<15;j++){
+		// 		std::cout<<game.Board[i][j]<<"  "<<std::endl;
+		// 	}
+		// 	std::cout<<std::endl;
+		// }
+        rackreceived=true;
 		if (Order == 1)
-		{mystate=THINKING;
+		{   
+			mystate=THINKING;
 			CurrentState = "THINKING";
 
 		}
@@ -396,11 +420,13 @@ void Comm::RecieveFromServer(const std::vector<uint8_t>& message){
 
 				Tiles.Tiles[i] = message[1 + i];
 				game.ExchangedTiles[i] = Tiles.Tiles[i];
-
-				std::cout << int(game.ExchangedTiles[i]) << " ";
+   
+				std::cout << int(game.ExchangedTiles[i]) << " "<<std::endl;
 			}
-           // ActionFinished=false;
-		//	StartAction=true;	
+			 int*t=Converts(exchanged.Tiles);
+			 CompareTilesToRack(t,game.ExchangedTiles);
+			 exchconfirmed=true;
+    
 			CurrentState = "IDLE";
 		}
 
@@ -415,7 +441,7 @@ void Comm::RecieveFromServer(const std::vector<uint8_t>& message){
 
 			game.Player_Time = Times.Player_Time;
 			game.Total_Time = Times.Total_Time;
-mystate=THINKING;
+            mystate=THINKING;
 			CurrentState = "THINKING";
 		}
 		else if (MsgType == MessageTypes::CHALLENGE_REJECTED)
@@ -430,16 +456,17 @@ mystate=THINKING;
 		{
 			mystate=PLAY_RESPONSE;
 			TilesStruct Tiles;
-             game.Opponent_Score=game.Opponent_Score+play.Score;
+            game.Score=game.Score+play.Score;
 			for (int i = 0; i < 7; i++)
 			{
 				Tiles.Tiles[i] = message[1 + i];
 				game.NewTilesAfterPlay[i] = Tiles.Tiles[i];
-				std::cout << (int) message[1+i];
+				std::cout << (int) message[1+i]<<" "<<std::endl;
 				
 			}
-           // ActionFinished=false;
-			//StartAction=true;
+			int*t=Converts(play.Tiles);
+			CompareTilesToRack(t,game.NewTilesAfterPlay);
+			playconfirmed=true;
 			CurrentState = "IDLE";
 		}
 		else if (MsgType == MessageTypes::CHALLENGE_ACCEPTED)
@@ -451,14 +478,12 @@ mystate=THINKING;
 	{
 		if (MsgType == MessageTypes::PASS )
 		{
-             mystate=PASS_OPPONENT;
+            mystate=PASS_OPPONENT;
 			TimesOnly Times = Time(message);
-        
 			game.Player_Time = Times.Player_Time;
 			game.Total_Time = Times.Total_Time;
             game.OpponentMove.MoveType=1;
-		//	ActionFinished=false;
-			//StartAction=true;
+			oppplayed=true;
 			mystate=THINKING;
 			CurrentState = "THINKING";
 		}
@@ -472,8 +497,7 @@ mystate=THINKING;
             game.OpponentMove.MoveType=1;
 
 			std::cout << int(CountTimes.Count) << std::endl;
-          //  ActionFinished=false;
-			//StartAction=true;
+            oppplayed=true;
 			mystate=THINKING;
 			CurrentState = "THINKING";
 		}
@@ -481,8 +505,7 @@ mystate=THINKING;
 		{
 			mystate=PLAY_OPPONENT;
 			game.OpponentMove = Play_Agent(message);
-           // ActionFinished=false;
-			//StartAction=true;
+            oppplayed=true;
 			CurrentState = "AWAIT_AGENT_CHALLENGE";
 		}
 	}
@@ -494,7 +517,7 @@ mystate=THINKING;
 
 			game.Player_Time = Times.Player_Time;
 			game.Total_Time = Times.Total_Time;
-mystate=THINKING;
+            mystate=THINKING;
 			CurrentState = "THINKING";
 		}
 
@@ -523,66 +546,25 @@ void Comm::ThinkingThread(){
 	while (true)
 	{
 		if (CurrentState == "THINKING"){
-		    // mystate=THINKING;
-			// std::cout<<"i am thinking"<<endl;
-			// StartAction=true;
 		if (simulationfinished){
 			// to ensure that the  server doesn't receive the old data as it is in a separate thread.
-			 std::vector<uint8_t> buffer;
-			// std::string move;
+			std::vector<uint8_t> buffer;
 			simulationfinished=false;
-			//std::cout << "what will be your next move?(PLAY/PASS/EXCHANGE)" << std::endl;
-			//std::cin >> move;
-
 			if (agentmove == "PLAY")
-			{
-
-				// Play mover;
-				// std::cout << "enter column" << std::endl;
-				// std::cin >> mover.Column;
-				// std::cout << "enter row" << std::endl;
-				// std::cin >> mover.Row;
-				// std::cout << "enter direction" << std::endl;
-				// std::cin >> mover.Direction;
-				// std::cout << "enter titles" << std::endl;
-				// int count = 0;
-				// int x;
-				// while (count != 7)
-				// {
-				// 	std::cout << " Enter  " << count << ":";
-				// 	std::cin >> x;
-				// 	mover.Tiles[count] = static_cast<uint8_t>(x);
-				// 	count++;
-				// }
-				// std::cin >> mover.Score;
-
+			{		
+                std::cout <<"this is your play "<<std::endl;
+				for (int i=0;i<7;i++){
+					std::cout<<(int)play.Tiles[i]<<std::endl;
+				}
 				buffer = PlayToBuffer(play);
-				//buffer = PlayToBuffer(mover);
-                
 				ws->sendBinary(buffer);
-				//ActionFinished=true;
-				//StartAction=true;
 				CurrentState = "AWAIT_PLAY_RESPONSE";
 				std::cout << " Current State = " + CurrentState << std::endl;
 			}
 			else if (agentmove == "EXCHANGE")
 			{
-
-				// TilesStruct TilesExc;
-				// int count = 0;
-				// int x;
-				// while (count != 7)
-				// {
-				// 	std::cout << " Enter  " << count << ":";
-				// 	std::cin >> x;
-				// 	TilesExc.Tiles[count] = static_cast<uint8_t>(x);
-				// 	count++;
-				// }
 			   buffer = ExchangeToBuffer(exchanged);
-			   //buffer = ExchangeToBuffer(TilesExc);
 				ws->sendBinary(buffer);
-			//	ActionFinished=false;
-				//StartAction=true;
 				CurrentState = "AWAIT_EXCHANGE_RESPONSE";
 				std::cout << " Current State = " + CurrentState << std::endl;
 			}
@@ -599,6 +581,41 @@ void Comm::ThinkingThread(){
 		}
 	}
 }
+void Comm::CompareTilesToRack(int oldtiles[7],int newtiles[7]){
+vector<int> tempnewtiles;
+	for (int i=0;i<7;i++){
+        if ((int)newtiles[i]!=0){
+			tempnewtiles.push_back((int)newtiles[i]);
+			std::cout <<newtiles[i]<<std::endl;
+			}
+	}
+vector<int> playedtiles;
+	for (int j=0;j<7;j++){
+        if ((int)oldtiles[j]!=0){
+			playedtiles.push_back((int)oldtiles[j]);
+			std::cout <<oldtiles[j]<<std::endl;
+			}
+	}
+	std::cout<<"your calculated rack is:"<<std::endl;
+for (int k=0;k<playedtiles.size();k++){
+	for (int l=0;l<7;l++)
+	{
+		if (playedtiles[k]==game.Tiles[l])
+		{
+			std::cout<<"your condition is true: "<<std::endl;
+			game.Tiles[l]=newtiles[k];
+			std::cout<<game.Tiles[l]<<std::endl;
+			break;
+		}
+	}
+}	
+std::cout<<"your new rack is"<<std::endl;
+     for (int i=0;i<7;i++){
+		 cout<<game.Tiles[i]<<std::endl;
+	 }
+
+}
+
 Comm::~Comm(){
     delete ws; // alternatively, use unique_ptr<> if you have C++11
 #ifdef _WIN32

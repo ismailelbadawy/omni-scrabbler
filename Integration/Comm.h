@@ -8,7 +8,7 @@
 #endif
 using namespace std;
 using easywsclient::WebSocket;
-
+#include <mutex>
 
 class Comm{
  enum MessageTypes {
@@ -36,7 +36,7 @@ class Comm{
  static OpponentPlayState playstate;
  static EndState endstate;
  static string CurrentState;
-
+static std::recursive_mutex g_lock;
  static std::vector<uint8_t> T;
  static GameState BufferToGameState(const std::vector<uint8_t>& message);
  static std::vector<uint8_t> PlayToBuffer(ServerPlay Move);
@@ -48,7 +48,7 @@ class Comm{
  static EndState EndGame(const std::vector<uint8_t>& message);
  static CountTime CountWithTimes(const std::vector<uint8_t>& message);
  static void StringToAscii(std::vector<uint8_t>& T, std::string name);
-
+ static void CompareTilesToRack(int oldtiles[7],int newtiles[7]);
 public:
 enum States{
 	RECEIVE_RACK=0,
@@ -64,9 +64,14 @@ enum States{
 static WebSocket::pointer ws;
 static bool StartAction;
 static bool  ActionFinished;
+static bool rackreceived;
 static bool simulationfinished; 
 static States mystate;  
 static string agentmove;
+static bool playconfirmed;
+static bool oppplayed;
+static bool exchconfirmed;
+
 
  Comm();
  static void RecieveFromServer(const std::vector<uint8_t>& message);

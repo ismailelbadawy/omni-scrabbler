@@ -9,4 +9,4 @@ class TileScoreCalculator{
     TileScoreCalculator();
     ~TileScoreCalculator();
     int GetTileScore(char c);
-};
+};// da ? asl mesh ana el 3amlah sawany tayyeb

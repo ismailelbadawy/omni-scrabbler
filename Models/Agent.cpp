@@ -189,3 +189,19 @@ Move Agent::EndGame(vector<Move> moves, map<string, double> * syn2, map<char, do
         //convert to chosen move
 
 }
+
+AgentMove Agent::MoveToServer(Move move){
+
+    string moveToServer="";
+    for (int i = 0; i < (int)move.GetPlay()->GetLetters().size(); i++)
+    {
+        moveToServer+=move.GetPlay()->GetLetters()[i];
+    }
+    AgentMove aMove;
+    aMove.tiles = moveToServer;
+    aMove.col=move.GetPlay()->GetColumn();
+    aMove.row = move.GetPlay()->GetRow();
+    aMove.score = move.GetPlay()->GetScore();
+    aMove.dir = move.GetPlay()->GetIsHorizontal();
+    return aMove;
+}
