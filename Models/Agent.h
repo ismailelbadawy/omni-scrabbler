@@ -12,11 +12,15 @@
 #include"../MonteCarlo/MonteCarlo.h"
 #include"../EndGameSimulation/EndGameSim.h"
 
+#include "../Integration/Structs.cpp"
+
 class Agent{
     Board *board_;
     Bag *bag_;
     Rack *rack_;
     Move *chosenMove_;
+    
+    map<string, double> * doubleValued_; //temporary
 
     void Combination(int start, int size, string &rem, string &rackleave, double &MaxScore, string &BestRackLeave, map<string, double> *doubleValued);
     Rack OpponentRackEstimation(map<string, double> *doubleValued, vector <char> remainingletters, int numTilesByOpponent);
@@ -30,4 +34,6 @@ class Agent{
     Move EndGame(vector<Move> moves, map<string, double> * syn2, map<char, double> * worth, MoveGenerator * movGen,Rack MyRack, int numTilesByOpponent);
     Move GetChosenMove(); // Returns the proper move format to be sent (removes letters already on the board from the Play)
     Move GetPassMove();
+
+    AgentMove MoveToServer(Move move);
 };

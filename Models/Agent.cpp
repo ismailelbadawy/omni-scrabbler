@@ -5,8 +5,7 @@ Agent::Agent(Board *board, Bag* bag, Rack* rack){
     rack_ = rack;
 }
 
-double Agent::CalculateLeave(string rack, map<string, double> *doubleValued)
-{
+double Agent::CalculateLeave(string rack, map<string, double> *doubleValued){
 	double rackLeave = 0.0;
     for(int i = 0; i < (int)rack.length(); i++)
     {
@@ -83,6 +82,7 @@ Rack Agent::OpponentRackEstimation(map<string, double> *doubleValued, vector <ch
 }
 
 Move Agent::MidGame(vector <Move> moves, map<string, double> * syn2, map<char, double> * worth, MoveGenerator * movGen, int numTilesByEnemy){
+    this->doubleValued_ = syn2;
     MidgameEvaluator* evaluator = NULL;
     evaluator = new MidgameEvaluator(&moves, board_, syn2, worth);
 	vector<Move> * evaluatedMoves = evaluator->Evaluate();
@@ -94,11 +94,24 @@ Move Agent::MidGame(vector <Move> moves, map<string, double> * syn2, map<char, d
         Rack oponentRack = OpponentRackEstimation(syn2, remLettersBag, numTilesByEnemy);
         MonteCarlo Simulator(*this->board_,*evaluatedMoves,*rack_, *rack_,*this->bag_,movGen,syn2,worth,true, numTilesByEnemy); //bool true
         
+        //evaluated moves size is greater than zero
         this->chosenMove_ = &(*evaluatedMoves)[Simulator.Simulation()];
     }
     else{
-    //return best move
-    this->chosenMove_ = &(*evaluatedMoves)[0];
+        //return best move
+        this->chosenMove_ = &(*evaluatedMoves)[0];
+        int index=0;
+        if (board_->GetCount() == 0){//first move --> no bingo
+            while (chosenMove_->GetRack().length() == 0){//bingo
+                index++;
+                if (index <(int)  (*evaluatedMoves).size()){
+                    this->chosenMove_ = &(*evaluatedMoves)[index];
+                }
+                    
+            }
+            return GetChosenMove(); //if bingo is the only available move, play it, or return first none bingo move 
+        }   
+
     }
     return GetChosenMove();
 
@@ -165,14 +178,7 @@ Move Agent::EndGame(vector<Move> moves, map<string, double> * syn2, map<char, do
        Eval = new EndgameEvaluator(moves,*board_,syn2,worth,movGen,MyRack);
        
        vector<Move> * evaluatedMoves = Eval->Evaluate();
-       
-    //     MonteCarlo Simulator(*this->board_,*evaluatedMoves,*rack_, Eval->GetOppRack(),*this->bag_,movGen,syn2,worth,false,numTilesByOpponent); //bool false
-    // //send EvaluatorMoves to simulator 
-    //     this->chosenMove_ =&(*evaluatedMoves)[Simulator.Simulation()];
-    // //return best move by simulation
-    //     return GetChosenMove();
     
-   
 		SimulationEndGame * s =new SimulationEndGame(*movGen,*board_);
 		 int scoreMy=100;
 		 int scoreop=120;
@@ -180,5 +186,22 @@ Move Agent::EndGame(vector<Move> moves, map<string, double> * syn2, map<char, do
         //s->LookAhead(3,0,MyRack,Rackopp,*this->board_,0,0,Eval);
 		 Move *m= s->LookAhead(3,0,MyRack,Rackopp,*board_,scoreMy,scoreop,Eval);
         return *m;
+        //convert to chosen move
 
+}
+
+AgentMove Agent::MoveToServer(Move move){
+
+    string moveToServer="";
+    for (int i = 0; i < (int)move.GetPlay()->GetLetters().size(); i++)
+    {
+        moveToServer+=move.GetPlay()->GetLetters()[i];
+    }
+    AgentMove aMove;
+    aMove.tiles = moveToServer;
+    aMove.col=move.GetPlay()->GetColumn();
+    aMove.row = move.GetPlay()->GetRow();
+    aMove.score = move.GetPlay()->GetScore();
+    aMove.dir = move.GetPlay()->GetIsHorizontal();
+    return aMove;
 }

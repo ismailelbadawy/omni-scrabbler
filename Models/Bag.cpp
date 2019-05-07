@@ -180,7 +180,7 @@ void Bag::generateRandomRack(Rack&rack_)
 		rack_.SetTile(T.GetLetter(), i);
 	}
 }
-
+// howwa i think kan fi folder esmo calculate score 7aga kda momkennn sawany
 Bag::~Bag()
 {
 }

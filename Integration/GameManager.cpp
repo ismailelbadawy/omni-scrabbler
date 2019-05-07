@@ -1,23 +1,35 @@
 #include "GameManager.h"
 #include <string>
 #include <vector>
-
-
+#include <stdint.h>
+#include<inttypes.h>
 enum Opponent
 {
     Human,
     AI
 };
 
+
 GameManager::GameManager()
 {
 }
+int* Convert(uint8_t tiles[7]){
+int *newtiles=new int[7];
+for (int i=0;i<7;i++){
+ newtiles[i]=(int)tiles[i];
+ std::cout<<"old tile: "<<tiles[i]<<" new tile: "<<newtiles[i]<<std::endl;
+}
+return newtiles;
+}
 
-int GameManager::InitGame()
+int GameManager::InitGame(MoveGenerator *MovGen, map<string, double>* syn2, map<char, double>* worth)
 {
+    this->numberTilesByOpponent = 0;
+    this->MovGen_ = MovGen;
+    this->syn2_ = syn2;
+    this->worth_ = worth;
     // get mode , if AI init server
-    //Comm::GetGame().Score = 0;
-    //Comm::GetGame().Opponent_Score = 0;
+    //
      gui = new GUI();
      gui->initConnection();
      char*mode= gui->Receive();
@@ -26,120 +38,209 @@ int GameManager::InitGame()
      Mode= tempString;
     //char *message = "0,0:00,RedArmy,Youssef,0000000000000000,\0";
     //gui->Send(message);
-    if (Mode=="AI"){
+    if (Mode[0]='M' && Mode[1]=='a'){
         client = new Comm();
+        Comm::GetGame().Score = 0;
+        Comm::GetGame().Opponent_Score = 0;
+        std::cout<<"AI mode"<<std::endl;
     }
     return 0;
 }
 string GameManager::GetMode(){
     return Mode;
 }
+// waitttt sanya hashoof 7aga 
 
-void GameManager::PlayAI(bool &ended)
+void GameManager::PlayAI(bool &ended, Board *board, Bag *bag)
 {
-    // if (Comm::StartAction)
-    // {
-    if (Comm::mystate == Comm::States::RECEIVE_RACK || Comm::mystate == Comm::States::EXCHANGE_RESPONSE)
+    
+    if (Comm::mystate == Comm::States::RECEIVE_RACK)
     {
-        //  gui->Send(ConvertMessage(1)); //send rack to gui
-        // send rack to agent
         std::cout << "receive rack" << std::endl;
-        //Comm::StartAction = false;
-        //Comm::ActionFinished = true;
+        while(!Comm::rackreceived){      
+        }
+        string temprack=ConvertIntRackToString(Comm::GetGame().Tiles);
+        toSmall(temprack);
+        Rack RecRack(temprack);
+        this->AI_Rack = RecRack;
+        gui->Send(ConvertMessageAI(1)); //send rack to gui
+        std::cout << "sent rack" << std::endl;
+        
+        //Comm::mystate = Comm::States::IDLE;
+    }
+    else if (Comm::mystate == Comm::States::EXCHANGE_RESPONSE){
+         std::cout << "receive rack" << std::endl;
+        while(!Comm::exchconfirmed){      
+        }
+        string temprack=ConvertIntRackToString(Comm::GetGame().Tiles);
+        toSmall(temprack);
+        Rack RecRack(temprack);
+        this->AI_Rack = RecRack;
+        gui->Send(ConvertMessageAI(1)); //send rack to gui
+        // send rack to agent
+        std::cout << "exchanged tiles" << std::endl;
+        Comm::exchconfirmed=false;
         Comm::mystate = Comm::States::IDLE;
     }
     else if (Comm::mystate == Comm::States::THINKING)
     {
-        //call the agent's simulation function
-        std::cout << "please enter your move" << std::endl;
-        std::cin >> Comm::agentmove;
-        if (Comm::agentmove == "PLAY")
-        {
-            ServerPlay mover;
-            int y;
-            std::cout << "enter column" << std::endl;
-            std::cin >> y;
-            mover.Column = static_cast<uint8_t>(y);
-            std::cout << "column" << mover.Column << endl;
-            std::cout << "enter row" << std::endl;
-            std::cin >> y;
-            mover.Row = static_cast<uint8_t>(y);
-            std::cout << "row" << mover.Row << endl;
-            std::cout << "enter direction" << std::endl;
-            std::cin >> mover.Direction;
-            std::cout << "enter titles" << std::endl;
-            int count = 0;
-            int x;
-            while (count != 7)
-            {
-                std::cout << " Enter  " << count << ":";
-                std::cin >> x;
-                mover.Tiles[count] = static_cast<uint8_t>(x);
-                count++;
+        std::cout<<"please start playing"<<std::endl;
+        Agent AI_Agent(board, bag, &AI_Rack);
+        vector <Move> moves;
+        Move chosenMove;
+
+        int BagSize = (int)bag->GetRemainigLetters().size();
+        moves = MovGen_->Generate(&AI_Rack, *board, board->GetCount() == 0);
+
+        ///get it from server
+        //int numTilesByOpponent = 3;
+
+        if (moves.size() > 0){
+			if (BagSize > (9+7)){//MidGame
+				chosenMove = AI_Agent.MidGame(moves, this->syn2_, this->worth_,this->MovGen_, this->numberTilesByOpponent); //should return best move
+					
+			}
+			else if (BagSize > (0+7) && BagSize <= (9+7)){
+				chosenMove = AI_Agent.PreEndGame(this->syn2_,this->worth_,this->MovGen_,moves, this->numberTilesByOpponent); //should return best move
+			}
+			else if (BagSize == (0+7)){
+				//chosenMove = AI_Agent.EndGame(moves, this->syn2_, this->worth_, this->MovGen_, this->AI_Rack, this->numberTilesByOpponent);
+			}
+
+            Move PassMove = AI_Agent.GetPassMove();
+
+            if (chosenMove.GetScore() < PassMove.GetScore()){
+				//Send Pass
+                Comm::agentmove = "PASS";
+			}
+            else {
+                Comm::agentmove = "PLAY";
+                //Send chosen move to server
+                ServerPlay finalmove;
+                AgentMove finalMoveConv= AI_Agent.MoveToServer(chosenMove);
+                std::cout<<"your move is : "<<std::endl;
+                finalmove.Column = static_cast<uint8_t>(finalMoveConv.col+1);
+                std::cout<<"Columns: "<<finalmove.Column;
+                finalmove.Row = static_cast<uint8_t>(finalMoveConv.row+1);
+                std::cout<<"Rows: "<<finalmove.Row;
+                finalmove.Direction = static_cast<uint8_t>(finalMoveConv.dir);
+                std::cout<<"Direction: "<<finalmove.Direction;
+                finalmove.Score = finalMoveConv.score;
+                std::cout<<"Score: "<<finalmove.Score;
+                for (int i=0; i<7; i++){
+                    if (i < finalMoveConv.tiles.length()){
+                        finalmove.Tiles[i] = static_cast<uint8_t>(GetCorrespondigInt(finalMoveConv.tiles[i]));
+                    }else{
+                        finalmove.Tiles[i] = static_cast<uint8_t>(0);
+                    }
+                    std::cout<<"Tile "<<i<<finalmove.Tiles[i]<<" "<<std::endl;
+                } 
+                Comm::SetPlay(finalmove);
+               
             }
-            std::cin >> mover.Score;
-            Comm::SetPlay(mover);
-        }
-        else if (Comm::agentmove == "EXCHANGE")
+		}
+        else {
+			    //Send Pass
+                Comm::agentmove = "PASS";
+		}    
+        if (Comm::agentmove == "EXCHANGE")
         {
             TilesStruct extiles;
-            int count = 0;
-            int x;
-            while (count != 7)
-            {
-                std::cout << " Enter  " << count << ":";
-                std::cin >> x;
-                extiles.Tiles[count] = static_cast<uint8_t>(x);
-                count++;
-            }
             Comm::SetExchanged(extiles);
         }
-
+        std::cout<<"you finished your play"<<std::endl;
         Comm::simulationfinished = true;
         Comm::mystate = Comm::States::IDLE;
-        // Comm::StartAction = false;
-        // Comm::ActionFinished = true;
+      
     }
     else if (Comm::mystate == Comm::States::PLAY_RESPONSE)
     {
         std::cout << "play response is trueeeeeeeeeee";
-        // send the new rack to the agent
-        //gui->Send(ConvertMessage(2)); // sending the move and the rack to the gui
-        //Comm::StartAction = false;
-        //Comm::ActionFinished = true;
+      
+        while(!Comm::playconfirmed){
+        }
+        string temprack=ConvertIntRackToString(Comm::GetGame().Tiles);
+        toSmall(temprack);
+        Rack RecRack(temprack);
+        this->AI_Rack = RecRack;
+        cout<<"You sent :"<<ConvertMessageAI(2)<<std::endl;
+        gui->Send(ConvertMessageAI(2)); // sending the move and the rack to the gui
+        std::cout<<"Play received"<<std::endl;
+        Comm::playconfirmed=false;
         Comm::mystate = Comm::States::IDLE;
     }
     else if (Comm::mystate == Comm::States::PLAY_OPPONENT)
     {
         std::cout << "opponent played" << std::endl;
+        while(!Comm::oppplayed){
+        }
+        AgentMove opponent;
+        opponent.row=(int) Comm::GetGame().OpponentMove.Row;
+        opponent.col=(int)Comm::GetGame().OpponentMove.Column;
+        opponent.dir=(int)Comm::GetGame().OpponentMove.Direction;
+        opponent.tiles="\0";
+        for (int i=0;i<7;i++){
+            if (( int)Comm::GetGame().OpponentMove.Tiles[i]!=0){
+             string temp=GetCorrespondigLetter((int)Comm::GetGame().OpponentMove.Tiles[i]);
+             toSmall(temp);
+             opponent.tiles=opponent.tiles+ temp; //howa leh hena plus?
+             // 3ashan da string fa ba3mel concatenate ayywa sahh tamam fehemt, temo di char wahed, sah?heya string bas fi 7arf wa7ed yes bezabt
+             //habtedy tayyebb fightinngg yes
+            }      
+        }
+       //hena ba7ot el moves fel oppnent di , hena momken t update el board, okaay
+        // sending  the new board to the agentssssssss\sss
+        this->numberTilesByOpponent = opponent.tiles.length(); //tamam khalast
+        Tile * tiles [15][15]; // okaay habda2 a run ,hanel3ab ded agent b cin w cout , ya3ni da w wa7ed 3al console 
+        board->GetTiles(tiles); // howwa m3alla2 bas sawani
+        int StartRow= opponent.row;
+        int StartCol= opponent.col;
+        int Dir= opponent.dir;
+        string oppMove = opponent.tiles;
+        TileScoreCalculator tilescorecalculator_;
+        while (oppMove.length() > 0){
+            if (tiles[StartRow][StartCol]->GetLetter() == '0'){
+                board->Probe(oppMove[0], StartRow, StartCol, tilescorecalculator_.GetTileScore(tiles[StartRow][StartCol]->GetLetter())); //howa ana khalast bas fadel agib el score , bta3 meen ?el tile nafsaha kan fi fun bas mesh la3yaha
+                oppMove.erase(oppMove.begin());
+            }
+            if (Dir == 0){//di horizontal wala vertical??  horizontal fadel bas law mehtaga ahawel capital wala la2, bas ghaleban la2, fa yalla n test howwa ana 7ateet el 7aga fel opponent move di small yes yes i know
+            //asdy call el calculator mesh 3arfa beya5od small wala capital, ismail mesh beyrod bas mesh moshkla, heyya ghaleban sah keda
+        // okaay tamam abda2 a run el server ?sawany nessit haga
+                StartCol++;
+            }
+            else{
+                StartRow++;
+            }
+        }
 
-        // sending  the new board to the agent
-        //gui->Send(ConvertMessage(3)); // send the rack and the opponent's move to gui
-        Comm::StartAction = false;
-        Comm::ActionFinished = true;
+        gui->Send(ConvertMessageAI(3)); // send the rack and the opponent's move to gui
+        std::cout<<"Opponent play received"<<std::endl;
         Comm::mystate = Comm::States::THINKING;
+        Comm::oppplayed=false;
         //  Comm::mystate=Comm::States::IDLE;
     }
     else if (Comm::mystate == Comm::States::EXCHANGE_OPPONENT)
     {
+         while(!Comm::oppplayed){
+        }
         std::cout << "opponent exchanged" << std::endl;
+        Comm::oppplayed=false;
         // inform agent about the opponent's move
-        //Comm::StartAction = false;
-        //Comm::ActionFinished = true;
-        //Comm::mystate=Comm::States::IDLE;
+        Comm::mystate=Comm::States::THINKING;
     }
     else if (Comm::mystate == Comm::States::PASS_OPPONENT)
     {
+        while(!Comm::oppplayed){
+        }
         std::cout << "opponent passed" << std::endl;
         // inform agent about the opponent's move
-        // Comm::StartAction = false;
-        //Comm::ActionFinished = true;
+        Comm::oppplayed=false;
         Comm::mystate = Comm::States::THINKING;
         // Comm::mystate=Comm::States::IDLE;
     }
     else if (Comm::mystate == Comm::States::ENDCONNECTION)
     {
-        //gui->Send(ConvertMessage(4)); // send terminate connection to gui
+        gui->Send(ConvertMessageAI(4)); // send terminate connection to gui
         ended = true;
     }
     // }
@@ -147,22 +248,28 @@ void GameManager::PlayAI(bool &ended)
 
 char *GameManager::ConvertMessageAI(int type)
 {
-    char *message;
+    //char *message;
     string tempmessage = "\0";
     if (type == 1)
     { // send the rack and the scores only in case of game init or game exchhange
         tempmessage = "1,0:00," + to_string(Comm::GetGame().Score) + "," + to_string(Comm::GetGame().Opponent_Score) + "," + ConvertIntRackToString(Comm::GetGame().Tiles) + ",";
     }
     else if (type == 2)
-    {
+    {   std::cout<<"we will send this to the gui"<<std::endl;
+        
+        int *t=Convert(Comm::GetPlay().Tiles);
+       // std::cout<<ConvertIntRackToString(t)<<std::endl;
         // send the rack with a move
         tempmessage = "2,0:00," + to_string(Comm::GetGame().Score) + "," + to_string(Comm::GetGame().Opponent_Score) + "," + ConvertIntRackToString(Comm::GetGame().Tiles) + ",";
-        tempmessage = tempmessage + ConvertIntRackToString((int *)Comm::GetPlay().Tiles) + "," + to_string(Comm::GetPlay().Row) + "," + to_string(Comm::GetPlay().Column) + "," + to_string(Comm::GetPlay().Direction) + ",";
+        tempmessage = tempmessage + ConvertIntRackToString(t) + "," + to_string(14-Comm::GetPlay().Row+1) + "," + to_string(Comm::GetPlay().Column-1) + "," + to_string(Comm::GetPlay().Direction-48) + ",";
+        std::cout<<tempmessage<<std::endl;
+    
     }
     else if (type == 3)
     {   //send a rack with the opponent's move
+         int *t=Convert(Comm::GetGame().OpponentMove.Tiles);
         tempmessage = "3,0:00," + to_string(Comm::GetGame().Score) + "," + to_string(Comm::GetGame().Opponent_Score) + "," + ConvertIntRackToString(Comm::GetGame().Tiles) + ",";
-        tempmessage = tempmessage + ConvertIntRackToString((int *)Comm::GetGame().OpponentMove.Tiles) + "," + to_string(Comm::GetGame().OpponentMove.Row) + "," + to_string(Comm::GetGame().OpponentMove.Column) + "," + to_string(Comm::GetGame().OpponentMove.Direction) + ",";
+        tempmessage = tempmessage + ConvertIntRackToString(t) + "," + to_string(14-Comm::GetGame().OpponentMove.Row+1) + "," + to_string(Comm::GetGame().OpponentMove.Column-1) + "," + to_string(Comm::GetGame().OpponentMove.Direction) + ",";
     }
     else if (type == 4)
     {   //terminate connection
@@ -173,7 +280,13 @@ char *GameManager::ConvertMessageAI(int type)
         tempmessage = tempmessage + "0";
     }
     tempmessage = tempmessage + ",\0";
-    message = const_cast<char *>(tempmessage.c_str());
+
+    char* message = new char[51];
+    for (int i = 0; i < 50; i++)
+    {
+        message[i]=tempmessage[i];
+    }
+    message[50]='\0';
     return message;
 }
 
@@ -444,8 +557,10 @@ string GameManager::ConvertIntRackToString(int tiles[7])
 {   //converts the rack to a single string to send it
     // to the gui
     string rack = GetCorrespondigLetter(tiles[0]);
+    std::cout<<"before conversion"<<std::endl;
     for (int i = 1; i < 7; i++)
     {
+        std::cout<<(int)tiles[i]<<endl;
         rack = rack + GetCorrespondigLetter(tiles[i]);
     }
     return rack;
@@ -463,10 +578,27 @@ string GameManager::ConvertVecRackToString(vector<string> srack)
 }
 
 string GameManager::GetCorrespondigLetter(int number)
-{
-    char letterchar = (char)64 + number;
+{  
+    if (number!=0){
+    char letterchar = (char)64 +(int)number;
     string letter(1, letterchar);
+    //std::cout<<"your converted rack to string is:" <<letter<<std::endl;
     return letter;
+    }
+    else
+    return "0"; 
+}
+
+
+int GameManager::GetCorrespondigInt(char letter)
+{  
+    
+    int intletter = 98-(int)letter;
+   
+    //std::cout<<"your converted rack to string is:" <<letter<<std::endl;
+    return intletter;
+    
+  
 }
 /////////////////////////////////////
 
@@ -510,7 +642,7 @@ void GameManager::InterpretMessage(char *message)
     if (Parameters[0] == "0")
     {     
         //play
-       MoveType=0;
+        MoveType=0;
         Parameters.erase(Parameters.begin());
         ConvertStringToMove(Parameters);
     }
@@ -563,8 +695,8 @@ void GameManager::ConvertStringToMove(vector<string> tiles)
         WordGUI word;
         string tile=tiles[i];
         word.letter=tile[0];
-        word.row=tile[1];
-        word.col=tile[2];
+        word.row=tile[1]-48;
+        word.col=tile[2]-48;
         HumanMove.push_back(word);
     }
  
