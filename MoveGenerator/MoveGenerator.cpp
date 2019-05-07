@@ -1135,14 +1135,14 @@ bool MoveGenerator::IsValidMove(Play& play, string enemyRack){
 		}
 	}
 
-	if (!wordOnBoard){
+	if (this->boardTiles_[7][7]->GetLetter()!='0' && !wordOnBoard){
 		if (!WordIsTouching(word,play.GetRow(),play.GetColumn(),play.GetIsHorizontal())){
 			return false;
 		}
 	}
 	
 
-	if(!CheckOtherDimension(word,play.GetRow(),play.GetColumn(), play.GetIsHorizontal(),additionalScore))
+	if(this->boardTiles_[7][7]->GetLetter()!='0' && !CheckOtherDimension(word,play.GetRow(),play.GetColumn(), play.GetIsHorizontal(),additionalScore))
 	{
 		return false;
 	}

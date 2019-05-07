@@ -34,11 +34,9 @@ string Best;
 string ToExchange;
 int Score;
 int OpponentScore;
+int AgentScore;
 
 int numberTilesByOpponent;
-
-// i am backkkkkkkkkk ouiiiiiii
-//shaifanii ? okaay yalla nkammel , tayyeb akteb el fn delwa2ty?? yess
 
 int MoveType;
 int GetCorrespondigInt(char letter);

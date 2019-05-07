@@ -86,9 +86,11 @@ Move HumanMode::MidGame(vector <Move> moves, map<string, double> * syn2, map<cha
                     }
                     
                 }
-                return GetChosenMove(); //if bingo is the only available move, play it, or return first none bingo move 
+                //return GetChosenMove(); //if bingo is the only available move, play it, or return first none bingo move 
+                return *chosenMove_;
             }   
-            return GetChosenMove();
+            //return GetChosenMove();
+            return *chosenMove_;
         }
         else{
             Move NullMove;
@@ -167,6 +169,7 @@ Play HumanMode::GetOpponentPlay(vector<WordGUI> wordVector, Rack &OpponentRack, 
     int row = wordVector[0].row;
     int col = wordVector[0].col;
     //check horizontal
+    if (wordVector.size()>1){
     for (int i=1; i <(int)wordVector.size(); i++){
         if (wordVector[i].row != row){
             valid = false; 
@@ -177,7 +180,7 @@ Play HumanMode::GetOpponentPlay(vector<WordGUI> wordVector, Rack &OpponentRack, 
     if (!valid){
         valid = true;
         for (int i=1; i <(int)wordVector.size(); i++){
-            if (wordVector[i].row != row){
+            if (wordVector[i].col != col){
                 valid = false; 
             }
         }
@@ -192,6 +195,39 @@ Play HumanMode::GetOpponentPlay(vector<WordGUI> wordVector, Rack &OpponentRack, 
         }
     }else{
         Horizontal = true;
+    }
+    }
+    else if (wordVector.size()==1)
+    {
+        if(wordVector[0].row==0 && boardTiles[row+1][col]->GetLetter()!='0'){
+            Horizontal = false;
+            valid = true;
+        }
+        else if (wordVector[0].row==14 && boardTiles[row-1][col]->GetLetter()!='0'){
+            Horizontal = false;
+            valid = true;
+        }
+        else if (wordVector[0].col==14 && boardTiles[row][col-1]->GetLetter()!='0'){
+            Horizontal = true;
+            valid = true;
+        }
+        else if(wordVector[0].col==0 && boardTiles[row][col+1]->GetLetter()!='0'){
+            Horizontal = true;
+            valid = true;
+        }
+        else if (boardTiles[row+1][col]->GetLetter()!='0'||
+                boardTiles[row-1][col]->GetLetter()!='0'){
+            Horizontal=false;
+            valid = true;
+                }
+        else if(  boardTiles[row][col+1]->GetLetter()!='0'||
+                boardTiles[row][col-1]->GetLetter()!='0'){
+            Horizontal = true;
+            valid = true;
+                }
+        else{
+            valid = false;
+        }
     }
     
     //by here, word is on the same col or same row
@@ -345,7 +381,7 @@ AgentMove HumanMode::MoveToGui(Move move){
     aMove.col=move.GetPlay()->GetColumn();
     aMove.row = move.GetPlay()->GetRow();
     aMove.score = move.GetPlay()->GetScore();
-    aMove.dir = move.GetPlay()->GetIsHorizontal();
+    aMove.dir = move.GetPlay()->GetIsHorizontal() == 0? 1 : 0;
     return aMove;
 }
 
