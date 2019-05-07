@@ -1088,7 +1088,8 @@ void MoveGenerator::CalculatePlayScore(Play *p, int addedScore){
 				((rowIterator==2 || rowIterator == 12)&&(columnIterator==6 || columnIterator == 8))||
 				((rowIterator==3 || rowIterator == 11)&&(columnIterator==0 || columnIterator==7 || columnIterator==14))||
 				((rowIterator==6 || rowIterator == 8)&&(columnIterator==2 ||columnIterator==6 || columnIterator==8 || columnIterator==12))||
-				((rowIterator == 7)&&(columnIterator == 3 || columnIterator==11)))
+				((rowIterator == 7)&&(columnIterator == 3 || columnIterator==11)) || 
+				(rowIterator==7 && columnIterator == 7))
 			{
 				score+=(p->GetTile(i).GetScore()*2);
 			}

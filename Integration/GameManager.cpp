@@ -399,7 +399,10 @@ void GameManager::PlayHuman(Board *board, Bag *bag, MoveGenerator *movGen,  map<
 
             // send the move to agent
             //gui->Send(ConvertMessageHuman(5));
-            gui->Receive();
+            if (MoveType!=1)
+            {
+                gui->Receive();
+            }
 //MY TURNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
 
  printBoard(board);
