@@ -360,7 +360,8 @@ void GameManager::PlayHuman(Board *board, Bag *bag, MoveGenerator *movGen,  map<
 				}
 				else if (MoveType == 2){//hint
 					//send best move to GUI and wait for opponent to play, if oppMoves = false, send no possible moves
-					
+					FbMessage="YES";
+                    Best="hint";
 					MyTurn = false;
 				    hintmove = Human.MoveToGui(chosenMove);
                     toCapital(hintmove);
@@ -369,13 +370,13 @@ void GameManager::PlayHuman(Board *board, Bag *bag, MoveGenerator *movGen,  map<
 					continue;
 				}
 				else if (MoveType == 3) { // Exchange tiles
-					vector<char> toBeExchanged = { 'p','i'};
+					
 					vector<int> toBeExchangedLocations;
 					Rack OpRack2(OpponentRack);
-					for (int i = 0; i < (int)toBeExchanged.size(); i++)
+					for (int i = 0; i < (int)this->ToExchange.size(); i++)
 					{
 						/* code */
-						toBeExchangedLocations.push_back(OpRack2.GetPosition(toBeExchanged[i]));
+						toBeExchangedLocations.push_back(OpRack2.GetPosition(ToExchange[i]));
 					}
 					bag->swapRack(OpponentRack,toBeExchangedLocations);
 					string opponentRackToGui="";
